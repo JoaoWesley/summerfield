@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="inspire">    
     <v-navigation-drawer
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
@@ -32,10 +32,10 @@
             :key="item.text"
             v-model="item.model"
             :prepend-icon="item.model ? item.icon : item['icon-alt']"
-            append-icon=""
+            append-icon=""            
           >
             <template v-slot:activator>
-              <v-list-item-content>
+              <v-list-item-content >
                 <v-list-item-title>
                   {{ item.text }}
                 </v-list-item-title>
@@ -44,7 +44,7 @@
             <v-list-item
               v-for="(child, i) in item.children"
               :key="i"
-              link
+              link              
             >
               <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
@@ -60,6 +60,7 @@
             v-else
             :key="item.text"
             link
+            @click="handleMenuItems(item)"
           >
             <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -96,6 +97,10 @@
         class="hidden-sm-and-down"
       />
       <v-spacer />
+       <v-btn icon title="Você sabe 45 palavras em inglês">
+        <v-icon>mdi-counter</v-icon>
+        45                
+      </v-btn>
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -116,11 +121,8 @@
           /></v-avatar>
       </v-btn>
     </v-app-bar>
-    <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
+    <v-content>   
+      <v-container >
         <nuxt />    
       </v-container>
     </v-content>
@@ -229,7 +231,7 @@
       dialog: false,
       drawer: null,
       items: [
-        { icon: 'mdi-contacts', text: 'Contacts' },
+        { icon: 'mdi-pencil', text: 'Lições' },
         { icon: 'mdi-history', text: 'Frequently contacted' },
         { icon: 'mdi-content-copy', text: 'Duplicates' },
         {
@@ -261,5 +263,13 @@
         { icon: 'mdi-keyboard', text: 'Go to the old version' },
       ],
     }),
+
+    methods: {
+      handleMenuItems(item) {        
+        if(item.text === 'Lições') {          
+          location.href = 'lesson';
+        }        
+      }
+    }
   }
 </script>
