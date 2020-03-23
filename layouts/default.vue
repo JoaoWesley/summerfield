@@ -142,8 +142,8 @@
       width="800px"
     >
       <v-card>
-        <v-card-title class="grey darken-2">
-          Create contact
+        <v-card-title class="headline grey lighten-2">
+          Criar lição
         </v-card-title>
         <v-container>
           <v-row class="mx-2">
@@ -154,58 +154,30 @@
               <v-row
                 align="center"
                 class="mr-0"
-              >
-                <v-avatar
-                  size="40px"
-                  class="mx-3"
-                >
-                  <img
-                    src="//ssl.gstatic.com/s2/oz/images/sge/grey_silhouette.png"
-                    alt=""
-                  >
-                </v-avatar>
+              >            
                 <v-text-field
-                  placeholder="Name"
+                  placeholder="Título"
                 />
               </v-row>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                prepend-icon="mdi-account-card-details-outline"
-                placeholder="Company"
-              />
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                placeholder="Job title"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                prepend-icon="mdi-mail"
-                placeholder="Email"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                type="tel"
-                prepend-icon="mdi-phone"
-                placeholder="(000) 000 - 0000"
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                prepend-icon="mdi-text"
-                placeholder="Notes"
-              />
+            </v-col>            
+          </v-row>
+
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-textarea
+                solo
+                name="input-7-4"
+                label="Insira o texto aqui."
+                auto-grow
+                outlined
+                rounded
+              ></v-textarea>
             </v-col>
           </v-row>
+
         </v-container>
-        <v-card-actions>
-          <v-btn
-            text
-            color="primary"
-          >More</v-btn>
+
+        <v-card-actions>        
           <v-spacer />
           <v-btn
             text
