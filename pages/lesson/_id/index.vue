@@ -5,7 +5,7 @@
         v-model="window"
         class="elevation-1 $window-controls-top"
         :vertical="vertical"
-        :show-arrows="showArrows"        
+        :show-arrows="showArrows"
         :reverse="reverse"        
       >
         <v-window-item
@@ -39,6 +39,80 @@
         </v-window-item>
       </v-window>
     </v-col>
+
+    <v-row >  
+      <v-col cols="12" sm="12"  md="12" lg="12">
+        <v-window
+          v-model="window"
+          class="elevation-1 $window-controls-top"
+          :vertical="vertical"      
+          :reverse="reverse"
+          style="height:35vw;"
+        >
+        <v-btn icon>
+          <v-icon>mdi-play</v-icon>          
+        </v-btn>
+        Language      
+        
+        <br />
+        <v-chip
+          class="ma-2"
+          @click="something()"
+          color="indigo"
+          text-color="white"
+          :input-value="true"
+          label
+        >
+          Linguagem
+        </v-chip>
+        
+        <v-chip
+          class="ma-2"
+          @click="something()"
+          color="indigo"
+          text-color="white"
+          :input-value="true"
+          label
+        >
+          Linguagem2
+        </v-chip>
+
+        <br>
+        <v-chip
+          class="ma-2"
+          @click="something()"
+          color="indigo"
+          text-color="white"
+          :input-value="true"
+          label
+        >
+          Linguagem3
+        </v-chip>
+         
+        <br />
+
+        <br />
+        <v-chip
+          class="ma-2 "
+          @click="show()"
+          color="teal"
+          text-color="white"
+          :input-value="true"
+          filter
+        >
+          Já sei essa palavra           
+        </v-chip>
+
+        <br>
+
+        <!-- <div class="text-center">
+            <v-btn rounded color="primary" dark>Crie sua própria tradução</v-btn>
+        </div> -->
+
+        </v-window>
+      </v-col>
+    </v-row>
+
   </v-row>
 </template>
 
