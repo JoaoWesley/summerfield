@@ -6,31 +6,33 @@
         class="elevation-1 $window-controls-top"
         :vertical="vertical"
         :show-arrows="showArrows"
-        :reverse="reverse"        
+        :reverse="reverse"                
       >
         <v-window-item
-          v-for="n in length"
-          :key="n"          
-        >   
+          v-for="(section, index) in lesson.sections"
+          :key="index"          
+        >          
         <v-row align="center">
           <v-col cols="1" sm="1"  md="1" lg="1"></v-col>
           <v-col cols="10" sm="10"  md="10" lg="10">
-            <v-card flat >
+            <v-card flat style="min-height: 510px">
               <v-card-text >
                 <v-row class="mb-4" align="center">
                   <v-avatar color="grey" class="mr-4"></v-avatar>
-                  <strong class="title">Title {{ n }}</strong>
+                  <strong class="title">{{lesson.title}}</strong>
                   <v-spacer></v-spacer>
                   <v-btn icon>
                     <v-icon>mdi-play-circle</v-icon>
                   </v-btn>
                 </v-row>            
-                <p class="title font-weight-light" style="color: black;">
-                  Natural Language refers to a language that we, humans use for everyday communication such as English, Hindi, or Portuguese. In contrast to artificial languages such as programming languages, mathematical notations etc., natural languages keep evolving with every generation, thus are hard to pin down with explicit rules. Natural Language Processing covers any kind of computer manipulation of natural language. It could be as simple as counting word frequencies to compare different writing styles or it can involve comprehension of complete human utterances, at least to the extent of being able to respond with meaningful answers.
-                </p>
+                <p>                  
 
-                <p class="title font-weight-light" style="color: black;">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                  <span class="title font-weight-light" style="color: black;" v-for="(token, index) in section.tokens"  v-bind:key="token.text + index" v-bind:style="[!checkIfTokenIsPunctuation(token) ? { 'margin-right': '4px'} : {'margin-left': '-4px', 'margin-right': '4px'}]" 
+                    v-bind:class="{'new-word': (token.status === 'NEW' && token.type === 'WORD'), 'learning-word':(token.status === 'LEARNING' && token.type === 'WORD')}"
+                  >
+                     {{token.text}}                     
+                  </span>
+
                 </p>               
               </v-card-text>
             </v-card>
@@ -45,12 +47,12 @@
         <v-window
           v-model="window"
           class="elevation-1 $window-controls-top"
-          :vertical="vertical"      
+          :vertical="vertical"
           :reverse="reverse"
           style="height:35vw;"
         >
         <v-btn icon>
-          <v-icon>mdi-play</v-icon>          
+          <v-icon>mdi-play</v-icon>
         </v-btn>
         Language      
         
@@ -94,7 +96,7 @@
         <br />
         <v-chip
           class="ma-2 "
-          @click="show()"
+          @click="getLesson($event)"
           color="teal"
           text-color="white"
           :input-value="true"
@@ -117,22 +119,77 @@
 </template>
 
 <script>
+import axios from "axios";
 
 export default {
-    data: () => ({
-      length: 3,
-      window: 0,
-      showArrows: true,
-      vertical: false,
-      reverse: false,
-      autorun: false,
-    }),
+   async asyncData({req, res}){		
+		if (process.server) {			
+      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e8a848bcc036d5a274cf5f1`, {headers: req.headers})).data
+      let sections = []
+      
 
-    created () {
-      setInterval(() => {
-        if (!this.autorun) return
-        if (++this.window >= this.length) this.window = 0
-      }, 1000)
+      const getSections = (sections, tokens) => {        
+        if(tokens.length === 0) return
+        sections.push({tokens: tokens.splice(0, 107)})
+        return getSections(sections, tokens)
+      }
+
+      getSections(sections, lesson.tokens)
+      
+      lesson.sections = sections
+      console.log(lesson.sections)
+
+      return {
+        lesson
+      }
+	  }
+	},
+
+  data: () => ({
+    length: 3,
+    window: 0,
+    showArrows: true,
+    vertical: false,
+    reverse: false,
+    autorun: false,
+  }),
+
+  created () {
+  },
+  methods:{
+    checkIfTokenIsPunctuation(token) {
+      if(!token) {
+        return false
+      }      
+
+      return !token.text.match(/[a-z]+/) && !(token.text.match(/[0-9]+/))
     },
+
+    async getLesson (event) {
+      event.preventDefault()
+      const response = await axios.get(`${process.env.API_URL}/lesson/5e8a2be2cc036d5a274cf5ee`);
+      this.lesson = response.data;
+      console.log(response.data);
+    }
+  }
 }
 </script>
+<style scoped>
+  .new-word{
+    background: rgb(175, 227, 241);
+    /* background:  rgb(255, 140, 0) Orange alternative*/
+  }
+  .learning-word {
+    background: rgb(255, 229, 120);
+  }
+  span {
+    cursor:pointer;
+    display: inline-block !important;
+    margin-bottom: 10px !important;
+    border-radius: 5px;
+  }
+  span:hover {
+    opacity: 0.8;
+  }
+
+</style>
