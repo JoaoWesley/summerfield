@@ -60,7 +60,7 @@
           v-model="window"
           class="elevation-1 $window-controls-top"
           :vertical="vertical"
-          :reverse="reverse"          
+          :reverse="reverse"
           style="min-height:36.65vw;"
         >
           <v-btn icon>
@@ -87,7 +87,8 @@
                 color="teal"
                 text-color="white"
                 :input-value="true"
-                filter 
+                filter
+                @click="updateWordStatusToKnown"
               >
                 Já sei essa palavra
               </v-chip>
@@ -114,6 +115,7 @@
 import axios from "axios";
 import WordTranslation from "@/components/lesson/word-translation"
 import SnackbarWordSavedStudy from "@/components/lesson/snackbar-word-saved-study"
+import wordStatusType from "@/commons/wordStatusType"
 
 export default {
   components: {
@@ -169,6 +171,19 @@ export default {
       this.wordTapped = token;
       //chmar api que vai retornar traducão da palavra
       this.wordTranslations = ['Linguagem', 'Lingua', 'Idioma'];
+    },
+
+    async updateWordStatusToKnown() {
+      this.wordTapped.status = wordStatusType.KNOWN
+        const wordObject = {
+            words: [
+               {
+                 "text": this.wordTapped.text,
+                 "status": wordStatusType.KNOWN,
+               }
+            ]
+        }
+        const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
     }
   }
 }

@@ -19,6 +19,7 @@
 <script>
 import axios from "axios";
 import wordStatusType from "@/commons/wordStatusType"
+
 export default {
     
     props: {
@@ -37,7 +38,7 @@ export default {
                 wordPhrase: this.wordTranslation,
                 translation: this.wordTapped.text
             }
-            const response = await axios.post(`${process.env.API_URL}/study`, study);            
+            const response = await axios.post(`${process.env.API_URL}/study`, study);
             await this.updateWordStatus();
         },
 
