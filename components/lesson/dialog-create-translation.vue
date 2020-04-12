@@ -29,7 +29,7 @@
                 auto-grow
                 outlined
                 rounded
-                v-model="wordTranslation"
+                v-model="translation"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -69,9 +69,14 @@ export default {
     },
 
     data: function () {
-        return {
-            wordTranslation: null
-        }
+      return {
+        translation: null
+      }
+    },
+    watch: {
+      wordTapped: function () {        
+        this.translation = null;
+      }        
     },
 
     methods: {
@@ -83,10 +88,11 @@ export default {
             
             const study = {
                 wordPhrase: this.wordTapped.text,
-                translation: this.wordTranslation
+                translation: this.translation
             }
             const response = await axios.post(`${process.env.API_URL}/study`, study);
             await this.updateWordStatus();
+            this.closeModal();
         },
 
         async updateWordStatus() {
