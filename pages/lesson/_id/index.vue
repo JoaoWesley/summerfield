@@ -96,7 +96,9 @@
           </v-row>
 
           <div class="text-center">
-              <v-btn rounded color="primary" dark @click="modalDialogCreateTranslation = true">Criar tradução</v-btn>
+              <v-btn rounded color="primary" dark 
+                @click="modalDialogCreateTranslation = true"                
+                >Criar tradução</v-btn>
           </div>
 
         </v-window>
@@ -111,6 +113,7 @@
   <DialogCreatetranslation 
     :modalDialogCreateTranslation="modalDialogCreateTranslation"
     :wordTapped="wordTapped"
+    v-on:closeCreateTranslationModal="modalDialogCreateTranslation = false"
   />
   </v-row>
 
@@ -161,9 +164,7 @@ export default {
     wordTranslations: [],
     wordTapped: {},
     SnackBarWordSaved: false,
-    modalDialogCreateTranslation: false,
-    var1: 'variabel1',
-    var2: null
+    modalDialogCreateTranslation: false,    
   }),
 
   created () {
@@ -177,8 +178,7 @@ export default {
       return !token.text.match(/[a-z]+/) && !(token.text.match(/[0-9]+/))
     },
 
-    async translateWord(token) {      
-      this.var2 = 'variable2';
+    async translateWord(token) {            
       this.wordTapped = token;
       //chmar api que vai retornar traducão da palavra
       this.wordTranslations = ['Linguagem', 'Lingua', 'Idioma'];
@@ -196,12 +196,7 @@ export default {
         }
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
     }
-  },
-  watch : { 
-    modalDialogCreateTranslation: function () {
-      console.log('asasas')  
-    }    
-  }
+  } 
 }
 </script>
 

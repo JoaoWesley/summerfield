@@ -52,10 +52,10 @@ export default {
                }
              ]
           }
-          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-          this.$emit('wordSavedForStudyEvent')
+          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);          
+           this.$eventBus.$emit('wordSavedForStudyEvent');
         }
-    }
+    }    
 }
 </script>
 

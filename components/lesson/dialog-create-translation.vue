@@ -41,7 +41,7 @@
           <v-btn
             text
             color="primary"
-            @click="modalDialogCreateTranslation = false"
+            @click="closeModal"
           >Cancel</v-btn>
           <v-btn
             text
@@ -75,11 +75,15 @@ export default {
     },
 
     methods: {
+        async closeModal() {          
+          this.$emit('closeCreateTranslationModal');
+        },
+
         async saveWordToStudy() {
-            this.modalDialogCreateTranslation = false;
+            
             const study = {
-                wordPhrase: this.wordTranslation,
-                translation: this.wordTapped.text
+                wordPhrase: this.wordTapped.text,
+                translation: this.wordTranslation
             }
             const response = await axios.post(`${process.env.API_URL}/study`, study);
             await this.updateWordStatus();
@@ -95,8 +99,8 @@ export default {
                }
              ]
           }
-          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-          this.$emit('wordSavedForStudyEvent')
+          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);          
+          this.$eventBus.$emit('wordSavedForStudyEvent');
         }
     }
 }

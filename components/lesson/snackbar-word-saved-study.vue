@@ -1,8 +1,9 @@
 <template>
      <v-snackbar
-      v-model="SnackBarWordSaved"
+      v-model="snackbar"
       :multi-line="multiLine"
-      color="info"      
+      color="info"
+      :timeout="timeout"
     >
       Palavra salva para estudo
       <v-btn
@@ -16,17 +17,21 @@
 </template>
 
 <script>
-export default {
-    props: {
-        SnackBarWordSaved: {
-            type: Boolean,
-            required: true
-        }     
+export default {   
+    created() {
+      if(process.client) {
+        this.$eventBus.$on('wordSavedForStudyEvent', (message) => {          
+            this.snackbar = true;
+        });
+      }
     },
+
     data: () =>  ({        
         multiLine: false,
-        timeout: 1500
+        timeout: 1500,
+        snackbar: false
     }),
+   
 }
 </script>
 
