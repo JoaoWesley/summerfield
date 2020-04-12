@@ -12,7 +12,7 @@
         <v-window-item
           v-for="(section, index) in lesson.sections"
           :key="index"
-        >
+        >   
           <v-row align="center">
             <v-col cols="1" sm="1"  md="1" lg="1"></v-col>
             <v-col cols="10" sm="10"  md="10" lg="10">
@@ -96,7 +96,7 @@
           </v-row>
 
           <div class="text-center">
-              <v-btn rounded color="primary" dark>Criar tradução</v-btn>
+              <v-btn rounded color="primary" dark @click="modalDialogCreateTranslation = true">Criar tradução</v-btn>
           </div>
 
         </v-window>
@@ -107,20 +107,27 @@
     v-bind:SnackBarWordSaved="SnackBarWordSaved"
     v-on:hideSnackbarWordSavedStudy="SnackBarWordSaved = false"    
     />
+
+  <DialogCreatetranslation 
+    :modalDialogCreateTranslation="modalDialogCreateTranslation"
+    :wordTapped="wordTapped"
+  />
   </v-row>
 
 </template>
 
 <script>
 import axios from "axios";
+import wordStatusType from "@/commons/wordStatusType"
 import WordTranslation from "@/components/lesson/word-translation"
 import SnackbarWordSavedStudy from "@/components/lesson/snackbar-word-saved-study"
-import wordStatusType from "@/commons/wordStatusType"
+import DialogCreatetranslation from "@/components/lesson/dialog-create-translation"
 
 export default {
   components: {
     WordTranslation,
-    SnackbarWordSavedStudy
+    SnackbarWordSavedStudy,
+    DialogCreatetranslation
   },
 
   async asyncData({req, res}){
@@ -152,8 +159,11 @@ export default {
     reverse: false,
     autorun: false,
     wordTranslations: [],
-    wordTapped: null,
+    wordTapped: {},
     SnackBarWordSaved: false,
+    modalDialogCreateTranslation: false,
+    var1: 'variabel1',
+    var2: null
   }),
 
   created () {
@@ -167,7 +177,8 @@ export default {
       return !token.text.match(/[a-z]+/) && !(token.text.match(/[0-9]+/))
     },
 
-    async translateWord(token) {
+    async translateWord(token) {      
+      this.var2 = 'variable2';
       this.wordTapped = token;
       //chmar api que vai retornar traducão da palavra
       this.wordTranslations = ['Linguagem', 'Lingua', 'Idioma'];
@@ -185,6 +196,11 @@ export default {
         }
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
     }
+  },
+  watch : { 
+    modalDialogCreateTranslation: function () {
+      console.log('asasas')  
+    }    
   }
 }
 </script>
