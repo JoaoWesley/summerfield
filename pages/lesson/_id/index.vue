@@ -12,6 +12,8 @@
         <v-window-item
           v-for="(section, index) in lesson.sections"
           :key="index"
+            @mousedown="setMouseDownState(true)"
+            @mouseup="setMouseDownState(false)"
         >   
           <v-row align="center">
             <v-col cols="1" sm="1"  md="1" lg="1"></v-col>
@@ -26,25 +28,29 @@
                       <v-icon>mdi-play-circle</v-icon>
                     </v-btn> -->
                   </v-row>
-                  <p>
+                  <p style="">
+                    <slot  v-for="(token, index) in section.tokens"  
+                          >
+                      <span 
 
-                    <span 
-                      class="title font-weight-light"
-                      style="color: black;"
-                      @click="translateWord(token)" 
-                      v-for="(token, index) in section.tokens"  
-                      v-bind:key="token.text + index" 
-                      v-bind:style="[!checkIfTokenIsPunctuation(token) 
-                        ? { 'margin-right': '4px'} 
-                        : {'margin-left': '-4px', 'margin-right': '4px'}]" 
-                      v-bind:class="{
-                        'new-word': (token.status === 'NEW' && token.type === 'WORD'), 
-                        'learning-word':(token.status === 'LEARNING' && token.type === 'WORD')
-                        }"
-                    >
-                      {{ token.text }}
-                    </span>
-
+                          class="title font-weight-light "
+                          style="color: black; padding-bottom: -30px "
+                          @click="translateWord(token)" 
+                         v-bind:key="token.text + index" 
+                          v-bind:style="[!checkIfTokenIsPunctuation(token) 
+                          ? { 'margin-right': '0'} 
+                          : { 'margin-left': '0', 'margin-right': '0px'}]" 
+                          v-bind:class="{
+                          'new-word': (token.status === 'NEW' && token.type === 'WORD'), 
+                          'learning-word':(token.status === 'LEARNING' && token.type === 'WORD')
+                          }"
+                      >{{ token.text }}
+                      </span>
+                      
+                      <slot v-if="!checkIfTokenIsPunctuation(section.tokens[index + 1])">
+                       &nbsp;
+                      </slot>
+                    </slot>
                   </p>
                 </v-card-text>
               </v-card>
@@ -66,8 +72,8 @@
           <v-btn icon>
             <v-icon>mdi-play</v-icon>
           </v-btn>
-
-          Language
+          
+          {{ wordTapped.text }}
 
           <div style="min-height:15vw;">
             <WordTranslation 
@@ -132,29 +138,7 @@ export default {
     SnackbarWordSavedStudy,
     DialogCreatetranslation
   },
-
-  async asyncData({req, res}){
-  if (process.server) {
-    const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e8a848bcc036d5a274cf5f1`, {headers: req.headers})).data
-    let sections = []    
-
-    const getSections = (sections, tokens) => {
-      if(tokens.length === 0) return
-      sections.push({tokens: tokens.splice(0, 107)})
-      return getSections(sections, tokens)
-    }
-
-    getSections(sections, lesson.tokens)
-    
-    lesson.sections = sections      
-
-    return {
-      lesson
-    }
-  }
-	},
-
-  data: () => ({
+  data: () => ({    
     length: 3,
     window: 0,
     showArrows: true,
@@ -164,12 +148,32 @@ export default {
     wordTranslations: [],
     wordTapped: {},
     SnackBarWordSaved: false,
-    modalDialogCreateTranslation: false,    
+    modalDialogCreateTranslation: false,
+    mouseDown: false,    
   }),
 
-  created () {
+  async asyncData({req, res}){
+    if (process.server) {
+      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e8a848bcc036d5a274cf5f1`, {headers: req.headers})).data
+      let sections = []    
+
+      const getSections = (sections, tokens) => {
+        if(tokens.length === 0) return
+        sections.push({tokens: tokens.splice(0, 107)})
+        return getSections(sections, tokens)
+      }
+
+      getSections(sections, lesson.tokens)
+      
+      lesson.sections = sections      
+
+      return {
+        lesson
+      }
+    }
   },
-  methods:{
+
+  methods: {
     checkIfTokenIsPunctuation(token) {
       if(!token) {
         return false
@@ -195,8 +199,21 @@ export default {
             ]
         }
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
+    },   
+
+    setMouseDownState(state) {
+      this.mouseDown = state;
+      console.log('mouse down');
+    },  
+  },
+  watch: {
+      mouseDown: function () {
+        if(!this.mouseDown) {
+          const selObj = window.getSelection();
+          console.log('selecionado', selObj.toString());
+        }
+      }
     }
-  } 
 }
 </script>
 
@@ -207,15 +224,24 @@ export default {
   }
   .learning-word {
     background: rgb(255, 229, 120);
-  }
+  }  
   span {
     cursor:pointer;
-    display: inline-block !important;
-    margin-bottom: 10px !important;
-    border-radius: 5px;
+    /* display: inline-block !important;      */
+    /* user-select: all !important; */
+    /* margin-bottom: 10px !important; */
+    border-radius: 5px;    
   }
   span:hover {
     opacity: 0.8;
   }
+
+  ::selection {
+    /* background: none; */
+    background: #318dff;
+    border-color: green;
+    border-radius: 2rem !important;
+    outline: 8px ridge rgba(170, 50, 220, .6);
+  }  
 
 </style>
