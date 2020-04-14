@@ -4,16 +4,16 @@
       <v-window
        v-model="window"
         class="elevation-1 $window-controls-top"
-        :vertical="vertical"
-        :show-arrows="showArrows"
-        :reverse="reverse"
+        :vertical="false"
+        :show-arrows="true"
+        :reverse="false"
         style="min-height:35vw;"
       >
         <v-window-item
           v-for="(section, index) in lesson.sections"
           :key="index"
-            @mousedown="setMouseDownState(true)"
-            @mouseup="setMouseDownState(false)"
+            @mousedown="setMouseState(true)"
+            @mouseup="setMouseState(false)"
         >   
           <v-row align="center">
             <v-col cols="1" sm="1"  md="1" lg="1"></v-col>
@@ -65,8 +65,8 @@
         <v-window
           v-model="window"
           class="elevation-1 $window-controls-top"
-          :vertical="vertical"
-          :reverse="reverse"
+          :vertical="false"
+          :reverse="false"
           style="min-height:36.65vw;"
         >
           <v-btn icon>
@@ -138,18 +138,13 @@ export default {
     SnackbarWordSavedStudy,
     DialogCreatetranslation
   },
-  data: () => ({    
-    length: 3,
-    window: 0,
-    showArrows: true,
-    vertical: false,
-    reverse: false,
-    autorun: false,
+  data: () => ({
+    window: 0,   
     wordTranslations: [],
     wordTapped: {},
     SnackBarWordSaved: false,
     modalDialogCreateTranslation: false,
-    mouseDown: false,    
+    mouseIsDown: false,
   }),
 
   async asyncData({req, res}){
@@ -165,7 +160,7 @@ export default {
 
       getSections(sections, lesson.tokens)
       
-      lesson.sections = sections      
+      lesson.sections = sections
 
       return {
         lesson
@@ -201,14 +196,14 @@ export default {
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
     },   
 
-    setMouseDownState(state) {
-      this.mouseDown = state;
+    setMouseState(state) {
+      this.mouseIsDown = state;
       console.log('mouse down');
     },  
   },
   watch: {
-      mouseDown: function () {
-        if(!this.mouseDown) {
+      mouseIsDown: function () {
+        if(!this.mouseIsDown) {
           const selObj = window.getSelection();
           console.log('selecionado', selObj.toString());
         }
@@ -219,8 +214,7 @@ export default {
 
 <style scoped>
   .new-word{
-    background: rgb(175, 227, 241);
-    /* background:  rgb(255, 140, 0) Orange alternative*/
+    background: rgb(175, 227, 241);   
   }
   .learning-word {
     background: rgb(255, 229, 120);
