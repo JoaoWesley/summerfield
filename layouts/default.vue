@@ -97,9 +97,9 @@
         class="hidden-sm-and-down"
       />
       <v-spacer />
-       <v-btn icon title="Você sabe 45 palavras em inglês">
+       <v-btn icon v-bind:title="`Você sabe ${wordsKnownCount} palavras em inglês`">
         <v-icon>mdi-counter</v-icon>
-        45                
+        {{ wordsKnownCount }}
       </v-btn>
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
@@ -195,11 +195,19 @@
 </template>
 
 <script>
+  import axios from "axios";
   export default {
     props: {
       source: String,
     },
+
+    async beforeCreate() {
+      const response =  (await axios.get(`${process.env.API_URL}/word/status-report`)).data      
+      this.wordsKnownCount = response.learning.count;      
+    },  
+
     data: () => ({
+      wordsKnownCount: 0,
       dialog: false,
       drawer: null,
       items: [
