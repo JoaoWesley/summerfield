@@ -30,13 +30,17 @@ export default {
         wordTapped: {
             type: Object,
             required: true
+        },
+        phraseSelected: {
+          type: String,
+          required: true
         }
     },
     methods: {
         async saveWordToStudy() {
             const study = {
-                wordPhrase: this.wordTranslation,
-                translation: this.wordTapped.text
+                wordPhrase: this.wordTapped.text || this.phraseSelected,
+                translation: this.wordTranslation
             }
             const response = await axios.post(`${process.env.API_URL}/study`, study);
             await this.updateWordStatus();

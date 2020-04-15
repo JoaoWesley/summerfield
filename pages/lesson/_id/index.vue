@@ -31,8 +31,7 @@
                   <p style="">
                     <slot  v-for="(token, index) in section.tokens"  
                           >
-                      <span 
-
+                      <span                           
                           class="title font-weight-light "
                           style="color: black; padding-bottom: -30px "
                           @click="translateWord(token)" 
@@ -73,12 +72,13 @@
             <v-icon>mdi-play</v-icon>
           </v-btn>
           
-          {{ wordTapped.text }}
+          {{ wordTapped.text ? wordTapped.text : phraseSelected }}
 
           <div style="min-height:15vw;">
             <WordTranslation 
               :wordTranslation="wordTranslation" 
-              :wordTapped="wordTapped" 
+              :wordTapped="wordTapped"
+              :phraseSelected="phraseSelected"
               v-for="(wordTranslation, index) in wordTranslations" 
                 :key="wordTranslation + index" 
               v-on:wordSavedForStudyEvent="SnackBarWordSaved = true"
@@ -126,11 +126,13 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
+
 import wordStatusType from "@/commons/wordStatusType"
 import WordTranslation from "@/components/lesson/word-translation"
 import SnackbarWordSavedStudy from "@/components/lesson/snackbar-word-saved-study"
 import DialogCreatetranslation from "@/components/lesson/dialog-create-translation"
+
 
 export default {
   components: {
@@ -142,12 +144,13 @@ export default {
     window: 0,   
     wordTranslations: [],
     wordTapped: {},
+    phraseSelected: null,
     SnackBarWordSaved: false,
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
   }),
 
-  async asyncData({req, res}){
+  async asyncData({req, res}){    
     if (process.server) {
       const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e8a848bcc036d5a274cf5f1`, {headers: req.headers})).data
       let sections = []    
@@ -177,10 +180,17 @@ export default {
       return !token.text.match(/[a-z]+/) && !(token.text.match(/[0-9]+/))
     },
 
-    async translateWord(token) {            
+    async translateWord(token) {
+      this.phraseSelected = '';
       this.wordTapped = token;
       //chmar api que vai retornar traducão da palavra
       this.wordTranslations = ['Linguagem', 'Lingua', 'Idioma'];
+    },
+
+    async translatePhrase(phrase) {
+      this.wordTapped = {};
+      this.phraseSelected = phrase;
+      this.wordTranslations = ['A traducão da frase'];
     },
 
     async updateWordStatusToKnown() {
@@ -194,18 +204,27 @@ export default {
             ]
         }
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-    },   
+    },
+
+    async trimPhrase(phrase) {
+      const trimmedPhrase = (
+        await axios.post(`${process.env.API_URL}/study/trim-phrase`, 
+        {
+          phrase: phrase
+        })).data.phrase;
+
+      return trimmedPhrase
+    },
 
     setMouseState(state) {
-      this.mouseIsDown = state;
-      console.log('mouse down');
-    },  
+      this.mouseIsDown = state;      
+    },    
   },
   watch: {
-      mouseIsDown: function () {
+      mouseIsDown: async function () {
         if(!this.mouseIsDown) {
-          const selObj = window.getSelection();
-          console.log('selecionado', selObj.toString());
+          const phraseSelected = window.getSelection().toString();          
+          await this.translatePhrase(await this.trimPhrase(phraseSelected));          
         }
       }
     }
@@ -221,7 +240,7 @@ export default {
   }  
   span {
     cursor:pointer;
-    /* display: inline-block !important;      */
+    /* display: inline-block !important;      */    
     /* user-select: all !important; */
     /* margin-bottom: 10px !important; */
     border-radius: 5px;    
