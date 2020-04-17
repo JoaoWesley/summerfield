@@ -203,7 +203,7 @@
 
     async beforeCreate() {
       const response =  (await axios.get(`${process.env.API_URL}/word/status-report`)).data      
-      this.wordsKnownCount = response.learning.count;      
+      this.wordsKnownCount = response.known.count;      
     },  
 
     data: () => ({

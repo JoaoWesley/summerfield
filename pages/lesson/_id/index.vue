@@ -34,7 +34,7 @@
                       <span                           
                           class="title font-weight-light "
                           style="color: black; padding-bottom: -30px "
-                          @click="translateWord(token)" 
+                          @click="translateWord(token, section.tokens)" 
                          v-bind:key="token.text + index" 
                           v-bind:style="[!checkIfTokenIsPunctuation(token) 
                           ? { 'margin-right': '0'} 
@@ -76,11 +76,12 @@
 
           <div style="min-height:15vw;">
             <WordTranslation 
-              :wordTranslation="wordTranslation" 
+              :wordOrPhraseTranlation="wordOrPhraseTranlation" 
               :wordTapped="wordTapped"
+              :sectionTokens="sectionTokens"
               :phraseSelected="phraseSelected"
-              v-for="(wordTranslation, index) in wordTranslations" 
-                :key="wordTranslation + index" 
+              v-for="(wordOrPhraseTranlation, index) in wordOrPhraseTranlations" 
+                :key="wordOrPhraseTranlation + index" 
               v-on:wordSavedForStudyEvent="SnackBarWordSaved = true"
               />
           </div>
@@ -142,17 +143,19 @@ export default {
   },
   data: () => ({
     window: 0,   
-    wordTranslations: [],
+    wordOrPhraseTranlations: [],
+    sectionTokens: [],
     wordTapped: {},
     phraseSelected: null,
     SnackBarWordSaved: false,
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
+    
   }),
 
   async asyncData({req, res}){    
     if (process.server) {
-      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e8a848bcc036d5a274cf5f1`, {headers: req.headers})).data
+      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e979789550ea870ed46d505`, {headers: req.headers})).data
       let sections = []    
 
       const getSections = (sections, tokens) => {
@@ -180,20 +183,21 @@ export default {
       return !token.text.match(/[a-z]+/) && !(token.text.match(/[0-9]+/))
     },
 
-    async translateWord(token) {
+    async translateWord(token, sectionTokens) {
       this.phraseSelected = '';
       this.wordTapped = token;
+      this.sectionTokens = sectionTokens;
       //chmar api que vai retornar traducão da palavra
-      this.wordTranslations = ['Linguagem', 'Lingua', 'Idioma'];
+      this.wordOrPhraseTranlations = ['Linguagem', 'Lingua', 'Idioma'];
     },
 
     async translatePhrase(phrase) {
       this.wordTapped = {};
       this.phraseSelected = phrase;
-      this.wordTranslations = ['A traducão da frase'];
+      this.wordOrPhraseTranlations = ['A traducão da frase'];
     },
 
-    async updateWordStatusToKnown() {
+    async updateWordStatusToKnown() {      
       this.wordTapped.status = wordStatusType.KNOWN
         const wordObject = {
             words: [
@@ -223,8 +227,10 @@ export default {
   watch: {
       mouseIsDown: async function () {
         if(!this.mouseIsDown) {
-          const phraseSelected = window.getSelection().toString();          
-          await this.translatePhrase(await this.trimPhrase(phraseSelected));          
+          const phraseSelected = window.getSelection().toString();
+          if (phraseSelected) {
+            await this.translatePhrase(await this.trimPhrase(phraseSelected));
+          }
         }
       }
     }
