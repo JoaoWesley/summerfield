@@ -21,7 +21,7 @@ export default {
     created() {
       if(process.client) {
         this.$eventBus.$on('wordSavedForStudyEvent', (message) => {          
-            this.snackbar = true;
+          this.snackbar = true;
         });
       }
     },

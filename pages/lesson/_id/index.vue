@@ -76,13 +76,13 @@
 
           <div style="min-height:15vw;">
             <WordTranslation 
-              :wordOrPhraseTranlation="wordOrPhraseTranlation" 
+              :wordPhraseTranslation="wordPhraseTranslation" 
               :wordTapped="wordTapped"
               :sectionTokens="sectionTokens"
               :phraseSelected="phraseSelected"
-              v-for="(wordOrPhraseTranlation, index) in wordOrPhraseTranlations" 
-                :key="wordOrPhraseTranlation + index" 
-              v-on:wordSavedForStudyEvent="SnackBarWordSaved = true"
+              v-for="(wordPhraseTranslation, index) in wordPhraseTranslations" 
+                :key="wordPhraseTranslation + index" 
+              
               />
           </div>
 
@@ -112,14 +112,14 @@
       </v-col>
     </v-row>
 
-   <SnackbarWordSavedStudy 
-    v-bind:SnackBarWordSaved="SnackBarWordSaved"
-    v-on:hideSnackbarWordSavedStudy="SnackBarWordSaved = false"    
-    />
+  <SnackbarWordSavedStudy/>    
 
   <DialogCreatetranslation 
     :modalDialogCreateTranslation="modalDialogCreateTranslation"
     :wordTapped="wordTapped"
+    :studyItems="studyItems"
+    :phraseSelected="phraseSelected"
+    :sectionTokens="sectionTokens"
     v-on:closeCreateTranslationModal="modalDialogCreateTranslation = false"
   />
   </v-row>
@@ -143,19 +143,26 @@ export default {
   },
   data: () => ({
     window: 0,   
-    wordOrPhraseTranlations: [],
+    wordPhraseTranslations: [],
     sectionTokens: [],
     wordTapped: {},
-    phraseSelected: null,
-    SnackBarWordSaved: false,
+    phraseSelected: '',    
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
     
   }),
 
+  created() {
+    if(process.client) {
+      this.$eventBus.$on('wordSavedForStudyEvent', (message) => {        
+        this.studyItems.push(message);        
+      });
+    }
+  },
+
   async asyncData({req, res}){    
     if (process.server) {
-      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e979789550ea870ed46d505`, {headers: req.headers})).data
+      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e9a7218ebf8351853940e7b`, {headers: req.headers})).data
       let sections = []    
 
       const getSections = (sections, tokens) => {
@@ -168,8 +175,10 @@ export default {
       
       lesson.sections = sections
 
+      const studyItems = (await axios.get(`${process.env.API_URL}/study/`, {headers: req.headers})).data.items;
       return {
-        lesson
+        lesson,
+        studyItems
       }
     }
   },
@@ -187,14 +196,30 @@ export default {
       this.phraseSelected = '';
       this.wordTapped = token;
       this.sectionTokens = sectionTokens;
+      
+      const wordTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === token.text)    
+      if(wordTranslatedAlready.length > 0) {
+        this.wordPhraseTranslations = [];
+        this.wordPhraseTranslations.push(wordTranslatedAlready.pop().translation);
+        return;
+      }
+
       //chmar api que vai retornar traducão da palavra
-      this.wordOrPhraseTranlations = ['Linguagem', 'Lingua', 'Idioma'];
+      this.wordPhraseTranslations = ['Linguagem', 'Lingua', 'Idioma'];
     },
 
     async translatePhrase(phrase) {
       this.wordTapped = {};
       this.phraseSelected = phrase;
-      this.wordOrPhraseTranlations = ['A traducão da frase'];
+
+      const phraseranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === phrase)
+      
+      if(phraseranslatedAlready.length > 0) {
+        this.wordPhraseTranslations.push(phraseranslatedAlready.pop().translation);
+        return;
+      }
+      //chamar api que vai retornar traducão da palavra
+      this.wordPhraseTranslations = ['A traducão da frase'];
     },
 
     async updateWordStatusToKnown() {      
@@ -222,12 +247,12 @@ export default {
 
     setMouseState(state) {
       this.mouseIsDown = state;      
-    },    
+    }
   },
   watch: {
       mouseIsDown: async function () {
         if(!this.mouseIsDown) {
-          const phraseSelected = window.getSelection().toString();
+          const phraseSelected = window.getSelection().toString();          
           if (phraseSelected) {
             await this.translatePhrase(await this.trimPhrase(phraseSelected));
           }

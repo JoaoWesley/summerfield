@@ -10,7 +10,7 @@
                 label    
                 style="width: 80%"
                 >
-            {{ wordOrPhraseTranlation }}
+            {{ wordPhraseTranslation }}
             </v-chip>
         </v-col>
     </v-row>
@@ -23,7 +23,7 @@ import wordStatusType from "@/commons/wordStatusType"
 export default {
     
     props: {
-        wordOrPhraseTranlation: {
+        wordPhraseTranslation: {
             type: String,
             required: true
         },
@@ -35,14 +35,14 @@ export default {
           type: String,
           required: true
         },
-        sectionTokens : {
+        sectionTokens: {
           type: Array,
           required: true
-        }        
+        }
     },
     methods: {
         async saveWordToStudy() {            
-            const study = this.buildStudyObject();           
+            const study = this.buildStudyObject();
             const response = await axios.post(`${process.env.API_URL}/study`, study);
             await this.updateWordStatus();
         },
@@ -50,14 +50,14 @@ export default {
         buildStudyObject() {
           if(this.phraseSelected) {
             return {
-              wordPhrase : this.phraseSelected,
-              translation:  this.wordOrPhraseTranlation
+              wordPhrase: this.phraseSelected,
+              translation:  this.wordPhraseTranslation
             }
-          }          
+          }
 
           return {
-             wordPhrase : this.wordTapped.text,
-             translation:  this.wordOrPhraseTranlation,
+             wordPhrase: this.wordTapped.text,
+             translation:  this.wordPhraseTranslation,
              wordContext:  this.getWordContext()
           }
         },
@@ -93,7 +93,7 @@ export default {
             wordContext += '...';
           }
 
-          return wordContext;          
+          return wordContext;
         },
 
         async updateWordStatus() {
@@ -105,9 +105,12 @@ export default {
                  "status": wordStatusType.LEARNING,
                }
              ]
-          }
+          }          
           const response = await axios.post(`${process.env.API_URL}/word`, wordObject);          
-           this.$eventBus.$emit('wordSavedForStudyEvent');
+          this.$eventBus.$emit('wordSavedForStudyEvent', {
+            wordPhrase: this.wordTapped.text,
+            translation: this.wordPhraseTranslation
+          });
         }
     }    
 }
