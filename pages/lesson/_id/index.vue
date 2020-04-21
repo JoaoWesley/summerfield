@@ -79,13 +79,28 @@
               :wordPhraseTranslation="wordPhraseTranslation" 
               :wordTapped="wordTapped"
               :sectionTokens="sectionTokens"
-              :phraseSelected="phraseSelected"
+              :phraseSelected="phraseSelected"              
               v-for="(wordPhraseTranslation, index) in wordPhraseTranslations" 
-                :key="wordPhraseTranslation + index" 
+              :key="wordPhraseTranslation + index" 
               
               />
           </div>
-
+          
+           <v-row class="text-center" v-if="phraseWordTranslatedAlready">
+              <v-col cols="12">
+                  <v-chip          
+                      class="ma-2  text-center"
+                      @click="showOtherTranslations"
+                      color="indigo"
+                      text-color="white"
+                      :input-value="true"
+                      label    
+                      style="width: 80%"
+                      >
+                  MOSTRAR OUTRAS TRADUÇÕES
+                  </v-chip>
+              </v-col>
+            </v-row>
           <br />
           <v-row class="text-center">
             <v-col cols="12">
@@ -149,6 +164,7 @@ export default {
     phraseSelected: '',    
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
+    phraseWordTranslatedAlready: false
     
   }),
 
@@ -199,10 +215,13 @@ export default {
       
       const wordTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === token.text)    
       if(wordTranslatedAlready.length > 0) {
+        this.phraseWordTranslatedAlready = true;
         this.wordPhraseTranslations = [];
         this.wordPhraseTranslations.push(wordTranslatedAlready.pop().translation);
         return;
       }
+
+      this.phraseWordTranslatedAlready = false;
 
       //chmar api que vai retornar traducão da palavra
       this.wordPhraseTranslations = ['Linguagem', 'Lingua', 'Idioma'];
@@ -212,12 +231,13 @@ export default {
       this.wordTapped = {};
       this.phraseSelected = phrase;
 
-      const phraseranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === phrase)
+      const phraseTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === phrase)
       
-      if(phraseranslatedAlready.length > 0) {
-        this.wordPhraseTranslations.push(phraseranslatedAlready.pop().translation);
+      if(phraseTranslatedAlready.length > 0) {        
+        this.wordPhraseTranslations = [];
+        this.wordPhraseTranslations.push(phraseTranslatedAlready.pop().translation);
         return;
-      }
+      }      
       //chamar api que vai retornar traducão da palavra
       this.wordPhraseTranslations = ['A traducão da frase'];
     },
@@ -247,6 +267,13 @@ export default {
 
     setMouseState(state) {
       this.mouseIsDown = state;      
+    },
+
+    showOtherTranslations() {
+      //chamar api de traducao.
+      this.wordPhraseTranslations.push('Another Translation');
+      this.wordPhraseTranslations.push('Mais uma Translation');
+      this.phraseWordTranslatedAlready = false;
     }
   },
   watch: {

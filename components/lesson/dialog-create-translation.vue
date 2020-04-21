@@ -9,8 +9,7 @@
         </v-card-title>
         <v-container>
             <v-chip
-                class="ma-2"
-                @click="saveWordToStudy"
+                class="ma-2"                
                 color="indigo"
                 text-color="white"
                 :input-value="true"
@@ -182,6 +181,10 @@ export default {
         },
 
         async updateWordStatus() {
+          if(!this.wordTapped || !this.wordTapped.text) {
+            return;
+          }
+
           this.wordTapped.status = wordStatusType.LEARNING;
           const wordObject = {
              words: [

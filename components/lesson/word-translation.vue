@@ -97,6 +97,10 @@ export default {
         },
 
         async updateWordStatus() {
+          if(!this.wordTapped || !this.wordTapped.text)  {
+            return;
+          }
+
           this.wordTapped.status = wordStatusType.LEARNING;
           const wordObject = {
              words: [
