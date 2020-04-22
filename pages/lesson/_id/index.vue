@@ -170,8 +170,16 @@ export default {
 
   created() {
     if(process.client) {
-      this.$eventBus.$on('wordSavedForStudyEvent', (message) => {        
-        this.studyItems.push(message);        
+      this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
+        this.studyItems.push(message);
+      });
+
+      this.$eventBus.$on('wordStatusUpdated', (message) => {
+        this.sectionTokens.forEach( (token) => {
+          if (token.text.toLowerCase() === message.word.toLowerCase()) {
+            token.status = message.newStatus;
+          }
+        })
       });
     }
   },
@@ -254,6 +262,10 @@ export default {
             ]
         }
         const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
+        this.$eventBus.$emit('wordStatusUpdated', {
+          word: this.wordTapped.text,
+          newStatus: wordStatusType.KNOWN
+        });
     },
 
     async trimPhrase(phrase) {

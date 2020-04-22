@@ -44,6 +44,10 @@ export default {
         async saveWordToStudy() {            
             const study = this.buildStudyObject();
             const response = await axios.post(`${process.env.API_URL}/study`, study);
+            this.$eventBus.$emit('wordSavedForStudyEvent', {
+              wordPhrase: this.wordTapped.text,
+              translation: this.wordPhraseTranslation
+            });
             await this.updateWordStatus();
         },
 
@@ -101,6 +105,8 @@ export default {
             return;
           }
 
+          //word, newStatus
+
           this.wordTapped.status = wordStatusType.LEARNING;
           const wordObject = {
              words: [
@@ -110,10 +116,10 @@ export default {
                }
              ]
           }          
-          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);          
-          this.$eventBus.$emit('wordSavedForStudyEvent', {
-            wordPhrase: this.wordTapped.text,
-            translation: this.wordPhraseTranslation
+          //const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
+          this.$eventBus.$emit('wordStatusUpdated', {
+            word: this.wordTapped.text,
+            newStatus: wordStatusType.LEARNING
           });
         }
     }    
