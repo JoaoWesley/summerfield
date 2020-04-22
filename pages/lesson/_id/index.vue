@@ -34,7 +34,8 @@
                       <span                           
                           class="title font-weight-light "
                           style="color: black; padding-bottom: -30px "
-                          @click="translateWord(token, section.tokens)" 
+                          @click="translateWord(token, section.tokens)"
+                          @mouseover="setSelectionRangeStart($event)" 
                          v-bind:key="token.text + index" 
                           v-bind:style="[!checkIfTokenIsPunctuation(token) 
                           ? { 'margin-right': '0'} 
@@ -164,8 +165,9 @@ export default {
     phraseSelected: '',    
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
-    phraseWordTranslatedAlready: false
-    
+    phraseWordTranslatedAlready: false,
+    selectionRangeStart: null,
+    currentHoveredElement: null
   }),
 
   created() {
@@ -287,15 +289,36 @@ export default {
       this.wordPhraseTranslations.push('Another Translation');
       this.wordPhraseTranslations.push('Mais uma Translation');
       this.phraseWordTranslatedAlready = false;
+    },
+
+    setSelectionRangeStart($event) {
+      if(this.mouseIsDown && !this.selectionRangeStart) {
+        this.selectionRangeStart = $event.target;
+      }
+
+      if(this.mouseIsDown) {
+        this.currentHoveredElement = $event.target;
+      }
+    },
+
+    getPhraseSelected() {      
+      var range = document.createRange();      
+      range.setStartBefore(this.selectionRangeStart);
+      range.setEndAfter(this.currentHoveredElement.lastChild);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return window.getSelection().toString();
     }
   },
   watch: {
       mouseIsDown: async function () {
-        if(!this.mouseIsDown) {
-          const phraseSelected = window.getSelection().toString();          
+        if(!this.mouseIsDown && window.getSelection().toString()) {          
+          const phraseSelected = this.getPhraseSelected();
           if (phraseSelected) {
             await this.translatePhrase(await this.trimPhrase(phraseSelected));
           }
+          this.selectionRangeStart = null;
         }
       }
     }
