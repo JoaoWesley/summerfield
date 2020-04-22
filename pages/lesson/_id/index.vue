@@ -213,7 +213,7 @@ export default {
       this.wordTapped = token;
       this.sectionTokens = sectionTokens;
       
-      const wordTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === token.text)    
+      const wordTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase())    
       if(wordTranslatedAlready.length > 0) {
         this.phraseWordTranslatedAlready = true;
         this.wordPhraseTranslations = [];
@@ -231,7 +231,7 @@ export default {
       this.wordTapped = {};
       this.phraseSelected = phrase;
 
-      const phraseTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase === phrase)
+      const phraseTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase.toLowerCase() === phrase.toLowerCase())
       
       if(phraseTranslatedAlready.length > 0) {        
         this.wordPhraseTranslations = [];
@@ -244,6 +244,7 @@ export default {
 
     async updateWordStatusToKnown() {      
       this.wordTapped.status = wordStatusType.KNOWN
+      this.sectionTokens
         const wordObject = {
             words: [
                {

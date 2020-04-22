@@ -103,15 +103,15 @@ export default {
     },
     watch: {
       wordTapped: function () {        
-        this.translation = null;
-        const wordAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase === item.wordPhrase);      
+        this.translation = null;        
+        const wordAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase());
         if(wordAlreadyTranslated.length > 0) {
           this.translation = wordAlreadyTranslated.pop().translation;
         }
       },
 
       phraseSelected: function () {
-        const phraseAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase === item.wordPhrase);      
+        const phraseAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase());
         if(phraseAlreadyTranslated.length > 0) {
           this.translation = phraseAlreadyTranslated.pop().translation;
         }
