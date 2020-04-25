@@ -157,6 +157,7 @@
               >            
                 <v-text-field
                   placeholder="Título"
+                  v-model="lesson.title"
                 />
               </v-row>
             </v-col>            
@@ -171,6 +172,7 @@
                 auto-grow
                 outlined
                 rounded
+                v-model="lesson.text"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -186,7 +188,7 @@
           >Cancel</v-btn>
           <v-btn
             text
-            @click="dialog = false"
+            @click="dialog = false; createLesson()"
           >Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -207,6 +209,7 @@
     },  
 
     data: () => ({
+      lesson: {},
       wordsKnownCount: 0,
       dialog: false,
       drawer: null,
@@ -249,6 +252,10 @@
         if(item.text === 'Lições') {
           location.href = location.href.replace(/lesson\/.*/g, 'lesson');          
         }        
+      },
+      async createLesson() {
+        const lessonCreated = (await axios.post(`${process.env.API_URL}/lesson`, this.lesson)).data;
+        this.$eventBus.$emit('lessonCreated', lessonCreated);
       }
     }
   }

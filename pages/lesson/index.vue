@@ -43,7 +43,7 @@
 import axios from "axios";
 
 export default {
-    async asyncData({req, res}){    
+    async asyncData({req, res}){
         if (process.server) {
             const lessons =  (await axios.get(`${process.env.API_URL}/lesson/`, {headers: req.headers})).data            
             const imgs = [];
@@ -56,10 +56,19 @@ export default {
                 element.img = imgs[Math.floor(Math.random() * 4)]
             });
             return {
-                lessons
+                lessons,
+                imgs
             }
         }
        
-    }
+    },
+    created() {
+      if(process.client) {
+        this.$eventBus.$on('lessonCreated', (lesson) => {  
+          lesson.img = this.imgs[Math.floor(Math.random() * 4)]
+          this.lessons.push(lesson);
+        });
+      }
+    },
 }
 </script>
