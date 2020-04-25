@@ -188,7 +188,7 @@
           >Cancel</v-btn>
           <v-btn
             text
-            @click="dialog = false; createLesson()"
+            @click="dialog = false; saveLesson()"
           >Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -202,6 +202,16 @@
     props: {
       source: String,
     },
+
+    created() {
+      if(process.client) {
+        this.$eventBus.$on('editLesson', (lesson) => {  
+          this.lesson = lesson;
+          this.dialog = true;
+        });
+      }
+    },
+    
 
     async beforeCreate() {
       const response =  (await axios.get(`${process.env.API_URL}/word/status-report`)).data      
@@ -253,9 +263,16 @@
           location.href = location.href.replace(/lesson\/.*/g, 'lesson');          
         }        
       },
-      async createLesson() {
+      async saveLesson() {
+        if(this.lesson._id) {
+          this.updateLesson();
+          return;
+        }
         const lessonCreated = (await axios.post(`${process.env.API_URL}/lesson`, this.lesson)).data;
-        this.$eventBus.$emit('lessonCreated', lessonCreated);
+        this.$eventBus.$emit('lessonSaved', lessonCreated);
+      },
+      async updateLesson() {
+        const lessonCreated = (await axios.put(`${process.env.API_URL}/lesson/`, this.lesson)).data;
       }
     }
   }

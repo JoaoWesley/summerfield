@@ -306,7 +306,7 @@ export default {
         return null;
       }
 
-      var range = document.createRange();      
+      var range = document.createRange();
       range.setStartBefore(this.selectionRangeStart);
       range.setEndAfter(this.currentHoveredElement.lastChild);
       var sel = window.getSelection();
