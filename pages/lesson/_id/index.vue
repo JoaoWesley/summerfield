@@ -301,7 +301,11 @@ export default {
       }
     },
 
-    getPhraseSelected() {      
+    getPhraseSelected() {
+      if(!this.selectionRangeStart && !this.currentHoveredElement) {
+        return null;
+      }
+
       var range = document.createRange();      
       range.setStartBefore(this.selectionRangeStart);
       range.setEndAfter(this.currentHoveredElement.lastChild);
@@ -313,7 +317,8 @@ export default {
   },
   watch: {
       mouseIsDown: async function () {
-        if(!this.mouseIsDown && window.getSelection().toString()) {          
+        if(!this.mouseIsDown && window.getSelection().toString()) {
+          console.log('select string', window.getSelection().toString())
           const phraseSelected = this.getPhraseSelected();
           if (phraseSelected) {
             await this.translatePhrase(await this.trimPhrase(phraseSelected));
