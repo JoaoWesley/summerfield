@@ -62,7 +62,7 @@ export default {
           return {
              wordPhrase: this.wordTapped.text,
              translation:  this.wordPhraseTranslation,
-             wordContext:  this.getWordContext()
+             ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
           }
         },
 
@@ -73,7 +73,7 @@ export default {
           const endIndex = this.wordTapped.index + 5 > this.sectionTokens[this.sectionTokens.length -1].index
             ? this.sectionTokens[this.sectionTokens.length -1].index
             : this.wordTapped.index + 7
-        
+
           const contextRange = this.sectionTokens.slice(startIndex, endIndex);          
           const contextRangeWords = contextRange.map( (token) => token.text);
           let wordContext = '';

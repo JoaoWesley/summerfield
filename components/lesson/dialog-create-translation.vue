@@ -150,7 +150,7 @@ export default {
           return {
              wordPhrase: this.wordTapped.text,
              translation:  this.translation,
-             wordContext:  this.getWordContext()
+             ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
           }
         },
 
