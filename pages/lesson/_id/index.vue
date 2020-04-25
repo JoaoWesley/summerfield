@@ -1,5 +1,5 @@
 <template>
-  <v-row align="center">  
+  <v-row align="center">     
     <v-col cols="11" sm="12"  md="9" lg="9">
       <v-window
        v-model="window"
@@ -186,9 +186,11 @@ export default {
     }
   },
 
-  async asyncData({req, res}){    
+  async asyncData({ params }){
     if (process.server) {
-      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/5e9a7218ebf8351853940e7b`, {headers: req.headers})).data
+      console.log('what the fuck', params.id);
+
+      const lesson =  (await axios.get(`${process.env.API_URL}/lesson/${params.id}`)).data
       let sections = []    
 
       const getSections = (sections, tokens) => {
@@ -201,7 +203,7 @@ export default {
       
       lesson.sections = sections
 
-      const studyItems = (await axios.get(`${process.env.API_URL}/study/`, {headers: req.headers})).data.items;
+      const studyItems = (await axios.get(`${process.env.API_URL}/study/`)).data.items;
       return {
         lesson,
         studyItems

@@ -246,8 +246,8 @@
 
     methods: {
       handleMenuItems(item) {        
-        if(item.text === 'Lições') {          
-          location.href = 'lesson';
+        if(item.text === 'Lições') {
+          location.href = location.href.replace(/lesson\/.*/g, 'lesson');          
         }        
       }
     }
