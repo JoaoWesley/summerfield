@@ -9,7 +9,7 @@
                 <v-row 
                     class="mb-6"
                     no-gutters   >   
-                    <v-col    sm="3"  md="3" lg="3" v-for="lesson in lessons" :key="lesson.title">
+                    <v-col sm="3"  md="3" lg="3" v-for="lesson in lessons" :key="lesson.title" >                        
                         <v-card
                             class="pa-2"
                             outlined
@@ -28,7 +28,7 @@
                                 :src="lesson.img"                                    
                             ></v-img>
                             <v-card-title> {{ lesson.title }} </v-card-title>                            
-                            <v-card-text > {{lesson.text.length < 30 ? lesson.text : lesson.text.substr(0, 27) + '...'}} </v-card-text>
+                            <v-card-text > {{ getLessonText(lesson) }} </v-card-text>
                         </v-card>
                     </v-col>
                 </v-row>     
@@ -52,6 +52,7 @@ import axios from "axios";
 
 export default {
     data: () => ({
+        currentLesson: {},
         rounded: true,
         lessonClicked: null,
         showMenu: false,
@@ -61,7 +62,8 @@ export default {
             { title: 'Editar', id: 'edit' },
             { title: 'Deletar', id: 'delete' }
         ]
-    }),
+    }),   
+
     async asyncData({req, res}){
         if (process.server) {
             const lessons =  (await axios.get(`${process.env.API_URL}/lesson/`, {headers: req.headers})).data
@@ -110,7 +112,11 @@ export default {
                const index = this.lessons.indexOf(this.lessonClicked);
                this.lessons.splice(index, 1);               
             }
+        },
+
+        getLessonText(lesson) {
+            return lesson.text.length < 30 ? lesson.text : lesson.text.substr(0, 27) + '...';
         }
-    }
+    }   
 }
 </script>
