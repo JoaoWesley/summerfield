@@ -188,8 +188,6 @@ export default {
 
   async asyncData({ params }){
     if (process.server) {
-      console.log('what the fuck', params.id);
-
       const lesson =  (await axios.get(`${process.env.API_URL}/lesson/${params.id}`)).data
       let sections = []    
 

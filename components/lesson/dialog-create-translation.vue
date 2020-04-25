@@ -127,11 +127,19 @@ export default {
         async saveWordToStudy() {            
            const study = this.buildStudyObject();
             const response = await axios.post(`${process.env.API_URL}/study`, study);
-            await this.updateWordStatus();
+            this.$eventBus.$emit('wordSavedForStudyEvent', {
+              wordPhrase: this.wordPhrase,
+              translation: this.translation
+            });
+
+            if(this.wordTapped.status != wordStatusType.LEARNING) {
+              await this.updateWordStatus();
+            }
+            
             this.closeModal();
         },
 
-        buildStudyObject() {
+        buildStudyObject() {          
           if(this.phraseSelected) {
             return {
               wordPhrase: this.phraseSelected,
@@ -194,11 +202,7 @@ export default {
                }
              ]
           }
-          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-          this.$eventBus.$emit('wordSavedForStudyEvent', {
-            wordPhrase: this.wordPhrase,
-            translation: this.translation
-          });
+          const response = await axios.post(`${process.env.API_URL}/word`, wordObject);         
         }
     }
 }
