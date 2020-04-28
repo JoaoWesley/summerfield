@@ -83,11 +83,12 @@
               :phraseSelected="phraseSelected"              
               v-for="(wordPhraseTranslation, index) in wordPhraseTranslations" 
               :key="wordPhraseTranslation + index" 
+              :wordAlreadyTranslated="wordAlreadyTranslated"
               
               />
           </div>
           
-           <v-row class="text-center" v-if="phraseWordTranslatedAlready">
+           <v-row class="text-center" v-if="wordAlreadyTranslated">
               <v-col cols="12">
                   <v-chip          
                       class="ma-2  text-center"
@@ -165,7 +166,7 @@ export default {
     phraseSelected: '',    
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
-    phraseWordTranslatedAlready: false,
+    wordAlreadyTranslated: null,
     selectionRangeStart: null,
     currentHoveredElement: null
   }),
@@ -225,13 +226,13 @@ export default {
       
       const wordTranslatedAlready = this.studyItems.filter( (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase())    
       if(wordTranslatedAlready.length > 0) {
-        this.phraseWordTranslatedAlready = true;
+        this.wordAlreadyTranslated = wordTranslatedAlready.pop();
         this.wordPhraseTranslations = [];
-        this.wordPhraseTranslations.push(wordTranslatedAlready.pop().translation);
+        this.wordPhraseTranslations.push(this.wordAlreadyTranslated.translation);
         return;
       }
 
-      this.phraseWordTranslatedAlready = false;
+      this.wordAlreadyTranslated = null;
 
       //chmar api que vai retornar traducão da palavra
       this.wordPhraseTranslations = ['Linguagem', 'Lingua', 'Idioma'];
@@ -253,21 +254,13 @@ export default {
     },
 
     async updateWordStatusToKnown() {      
-      this.wordTapped.status = wordStatusType.KNOWN
-      this.sectionTokens
-        const wordObject = {
-            words: [
-               {
-                 "text": this.wordTapped.text,
-                 "status": wordStatusType.KNOWN,
-               }
-            ]
-        }
-        const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-        this.$eventBus.$emit('wordStatusUpdated', {
-          word: this.wordTapped.text,
-          newStatus: wordStatusType.KNOWN
-        });
+      this.wordTapped.status = wordStatusType.KNOWN      
+            
+      const response = await axios.put(`${process.env.API_URL}/word`, { word: this.wordTapped });
+      this.$eventBus.$emit('wordStatusUpdated', {
+        word: this.wordTapped.text,
+        newStatus: wordStatusType.KNOWN
+      });
     },
 
     async trimPhrase(phrase) {
@@ -288,7 +281,7 @@ export default {
       //chamar api de traducao.
       this.wordPhraseTranslations.push('Another Translation');
       this.wordPhraseTranslations.push('Mais uma Translation');
-      this.phraseWordTranslatedAlready = false;
+      this.wordAlreadyTranslated = null;
     },
 
     setSelectionRangeStart($event) {

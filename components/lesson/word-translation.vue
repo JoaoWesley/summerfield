@@ -20,8 +20,7 @@
 import axios from "axios";
 import wordStatusType from "@/commons/wordStatusType"
 
-export default {
-    
+export default {    
     props: {
         wordPhraseTranslation: {
             type: String,
@@ -38,91 +37,110 @@ export default {
         sectionTokens: {
           type: Array,
           required: true
+        },
+        wordAlreadyTranslated: {
+          require: true,
         }
     },
     methods: {
-        async saveWordToStudy() {            
-            const study = this.buildStudyObject();
-            const response = await axios.post(`${process.env.API_URL}/study`, study);
-            this.$eventBus.$emit('wordSavedForStudyEvent', {
-              wordPhrase: this.wordTapped.text,
-              translation: this.wordPhraseTranslation
-            });
-            await this.updateWordStatus();
-        },
+      async saveWordToStudy() {            
+        const study = this.buildStudyObject();
 
-        buildStudyObject() {
-          if(this.phraseSelected) {
-            return {
-              wordPhrase: this.phraseSelected,
-              translation:  this.wordPhraseTranslation
-            }
-          }
+        if(this.wordAlreadyTranslated) {
+            this.updateTranslation(study);
+        }
 
+        const response = await axios.post(`${process.env.API_URL}/study`, study);
+        this.$eventBus.$emit('wordSavedForStudyEvent', {
+          wordPhrase: this.wordTapped.text,
+          translation: this.wordPhraseTranslation
+        });
+
+        if (this.wordTapped.status === wordStatusType.LEARNING || this.wordTapped.status === wordStatusType.KNOWN) {
+          await this.updateWordStatus();
+          return;
+        }
+
+        await this.saveWord();
+
+      },
+
+      async saveWord(word) {
+        this.wordTapped.status = wordStatusType.LEARNING
+
+        const response = await axios.post(`${process.env.API_URL}/word`, { words: [ this.wordTapped ] });
+      },
+
+      async updateTranslation(study) {
+        const response = await axios.put(`${process.env.API_URL}/study`, study);
+        this.$eventBus.$emit('wordSavedForStudyEvent', {
+          wordPhrase: this.wordTapped.text,
+          translation: this.wordPhraseTranslation
+        });          
+      },
+
+      buildStudyObject() {
+        if(this.phraseSelected) {
           return {
-             wordPhrase: this.wordTapped.text,
-             translation:  this.wordPhraseTranslation,
-             ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
+            wordPhrase: this.phraseSelected,
+            translation:  this.wordPhraseTranslation
           }
-        },
+        }
 
-        getWordContext () {
-          const startIndex = this.wordTapped.index - 5 >= 0 
-            ? this.wordTapped.index - 5 
-            : 0
-          const endIndex = this.wordTapped.index + 5 > this.sectionTokens[this.sectionTokens.length -1].index
-            ? this.sectionTokens[this.sectionTokens.length -1].index
-            : this.wordTapped.index + 7
+        return {
+            wordPhrase: this.wordTapped.text,
+            translation:  this.wordPhraseTranslation,
+            ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
+        }
+      },
 
-          const contextRange = this.sectionTokens.slice(startIndex, endIndex);          
-          const contextRangeWords = contextRange.map( (token) => token.text);
-          let wordContext = '';
+      getWordContext () {
+        const startIndex = this.wordTapped.index - 5 >= 0 
+          ? this.wordTapped.index - 5 
+          : 0
+        const endIndex = this.wordTapped.index + 5 > this.sectionTokens[this.sectionTokens.length -1].index
+          ? this.sectionTokens[this.sectionTokens.length -1].index
+          : this.wordTapped.index + 7
 
-          if(this.wordTapped.index - 5 > 0) {
-            wordContext = '...';
-          }
+        const contextRange = this.sectionTokens.slice(startIndex, endIndex);          
+        const contextRangeWords = contextRange.map( (token) => token.text);
+        let wordContext = '';
 
-          contextRangeWords.forEach( (word, index) => {
-            const nextWord = contextRangeWords[index + 1];
-            if(!nextWord){
-              return;
-            }
-            wordContext += word;
-            if(nextWord.match(/[a-z]+/) || (nextWord.match(/[0-9]+/))) {
-                wordContext += ' ';
-            }
-          })
+        if(this.wordTapped.index - 5 > 0) {
+          wordContext = '...';
+        }
 
-          if(endIndex < this.sectionTokens[this.sectionTokens.length -1].index) {
-            wordContext += '...';
-          }
-
-          return wordContext;
-        },
-
-        async updateWordStatus() {
-          if(!this.wordTapped || !this.wordTapped.text)  {
+        contextRangeWords.forEach( (word, index) => {
+          const nextWord = contextRangeWords[index + 1];
+          if(!nextWord){
             return;
           }
+          wordContext += word;
+          if(nextWord.match(/[a-z]+/) || (nextWord.match(/[0-9]+/))) {
+              wordContext += ' ';
+          }
+        })
 
-          //word, newStatus
-
-          this.wordTapped.status = wordStatusType.LEARNING;
-          const wordObject = {
-             words: [
-               {
-                 "text": this.wordTapped.text,
-                 "status": wordStatusType.LEARNING,
-               }
-             ]
-          }          
-          //const response = await axios.post(`${process.env.API_URL}/word`, wordObject);
-          this.$eventBus.$emit('wordStatusUpdated', {
-            word: this.wordTapped.text,
-            newStatus: wordStatusType.LEARNING
-          });
+        if(endIndex < this.sectionTokens[this.sectionTokens.length -1].index) {
+          wordContext += '...';
         }
-    }    
+
+        return wordContext;
+      },
+
+      async updateWordStatus() {
+        if(!this.wordTapped || !this.wordTapped.text)  {
+          return;
+        }        
+
+        this.wordTapped.status = wordStatusType.LEARNING;       
+        const response = await axios.put(`${process.env.API_URL}/word`, { word: this.wordTapped });
+        this.$eventBus.$emit('wordStatusUpdated', {
+          word: this.wordTapped.text,
+          newStatus: wordStatusType.LEARNING
+        });
+      }
+  }
 }
 </script>
 
