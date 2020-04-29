@@ -28,7 +28,7 @@
                 auto-grow
                 outlined
                 rounded
-                v-model="translation"
+                v-model="wordPhraseTranslation"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -82,14 +82,14 @@ export default {
     created() {
       if(process.client) {
         this.$eventBus.$on('wordSavedForStudyEvent', (message) => {  
-          this.translation = message.translation;
+          this.wordPhraseTranslation = message.wordPhraseTranslation;
         });
       }
     },
 
     data: function () {
       return {
-        translation: null
+        wordPhraseTranslation: null
       }
     },
     computed: {
@@ -103,17 +103,17 @@ export default {
     },
     watch: {
       wordTapped: function () {        
-        this.translation = null;        
+        this.wordPhraseTranslation = null;        
         const wordAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase());
         if(wordAlreadyTranslated.length > 0) {
-          this.translation = wordAlreadyTranslated.pop().translation;
+          this.wordPhraseTranslation = wordAlreadyTranslated.pop().wordPhraseTranslation;
         }
       },
 
       phraseSelected: function () {
         const phraseAlreadyTranslated = this.studyItems.filter((item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase());
         if(phraseAlreadyTranslated.length > 0) {
-          this.translation = phraseAlreadyTranslated.pop().translation;
+          this.wordPhraseTranslation = phraseAlreadyTranslated.pop().wordPhraseTranslation;
         }
       },
 
@@ -124,12 +124,17 @@ export default {
           this.$emit('closeCreateTranslationModal');
         },
 
-        async saveWordToStudy() {            
-           const study = this.buildStudyObject();
+        async saveWordToStudy() {          
+           const study = this.$studyService.buildStudyObject(
+            this.phraseSelected, 
+            this.wordPhraseTranslation,
+            this.wordTapped,
+            this.sectionTokens
+          );
             const response = await axios.post(`${process.env.API_URL}/study`, study);
             this.$eventBus.$emit('wordSavedForStudyEvent', {
               wordPhrase: this.wordPhrase,
-              translation: this.translation
+              wordPhraseTranslation: this.wordPhraseTranslation
             });
 
             if(this.wordTapped.status != wordStatusType.LEARNING) {
@@ -137,22 +142,7 @@ export default {
             }
             
             this.closeModal();
-        },
-
-        buildStudyObject() {          
-          if(this.phraseSelected) {
-            return {
-              wordPhrase: this.phraseSelected,
-              translation:  this.translation
-            }
-          }
-
-          return {
-             wordPhrase: this.wordTapped.text,
-             translation:  this.translation,
-             ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
-          }
-        },
+        },       
 
         getWordContext () {
           const startIndex = this.wordTapped.index - 5 >= 0 

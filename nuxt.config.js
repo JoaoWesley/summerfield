@@ -29,7 +29,8 @@ export default {
   */
   plugins: [
     { src: '~plugins/eventBus.client' },
-    { src: '~plugins/wordService.client.js' }
+    { src: '~plugins/services/wordService.client.js' },
+    { src: '~plugins/services/studyService.client.js' }
   ],
   /*
   ** Nuxt.js dev-modules

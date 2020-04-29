@@ -43,8 +43,13 @@ export default {
         }
     },
     methods: {
-      async saveWordToStudy() {            
-        const study = this.buildStudyObject();
+      async saveWordToStudy() {        
+        const study = this.$studyService.buildStudyObject(
+          this.phraseSelected, 
+          this.wordPhraseTranslation,
+          this.wordTapped,
+          this.sectionTokens
+        );
 
         if(this.wordAlreadyTranslated) {
             this.updateTranslation(study);
@@ -67,7 +72,6 @@ export default {
 
       async saveWord(word) {
         this.wordTapped.status = wordStatusType.LEARNING
-
         const response = await axios.post(`${process.env.API_URL}/word`, { words: [ this.wordTapped ] });
       },
 
@@ -77,55 +81,6 @@ export default {
           wordPhrase: this.wordTapped.text,
           translation: this.wordPhraseTranslation
         });          
-      },
-
-      buildStudyObject() {
-        if(this.phraseSelected) {
-          return {
-            wordPhrase: this.phraseSelected,
-            translation:  this.wordPhraseTranslation
-          }
-        }
-
-        return {
-            wordPhrase: this.wordTapped.text,
-            translation:  this.wordPhraseTranslation,
-            ...(this.wordTapped.status != wordStatusType.LEARNING ? { wordContext: this.getWordContext() } : {})
-        }
-      },
-
-      getWordContext () {
-        const startIndex = this.wordTapped.index - 5 >= 0 
-          ? this.wordTapped.index - 5 
-          : 0
-        const endIndex = this.wordTapped.index + 5 > this.sectionTokens[this.sectionTokens.length -1].index
-          ? this.sectionTokens[this.sectionTokens.length -1].index
-          : this.wordTapped.index + 7
-
-        const contextRange = this.sectionTokens.slice(startIndex, endIndex);          
-        const contextRangeWords = contextRange.map( (token) => token.text);
-        let wordContext = '';
-
-        if(this.wordTapped.index - 5 > 0) {
-          wordContext = '...';
-        }
-
-        contextRangeWords.forEach( (word, index) => {
-          const nextWord = contextRangeWords[index + 1];
-          if(!nextWord){
-            return;
-          }
-          wordContext += word;
-          if(nextWord.match(/[a-z]+/) || (nextWord.match(/[0-9]+/))) {
-              wordContext += ' ';
-          }
-        })
-
-        if(endIndex < this.sectionTokens[this.sectionTokens.length -1].index) {
-          wordContext += '...';
-        }
-
-        return wordContext;
       },
 
       async updateWordStatus() {
@@ -140,7 +95,7 @@ export default {
           newStatus: wordStatusType.LEARNING
         });
       }
-  }
+  }  
 }
 </script>
 
