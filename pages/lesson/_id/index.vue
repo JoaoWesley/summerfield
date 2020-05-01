@@ -194,8 +194,7 @@ export default {
   watch: {
     mouseIsDown: async function () {
       if (!this.mouseIsDown && window.getSelection().toString()) {
-        const phraseSelected = this.getPhraseSelected()
-        console.log('mouse is not down', window.getSelection().toString())
+        const phraseSelected = this.getPhraseSelected()        
         if (phraseSelected) {
           await this.translatePhrase(await this.trimPhrase(phraseSelected))
         }
@@ -211,6 +210,7 @@ export default {
         this.wordPhraseTranslations = [message.wordPhraseTranslation]
       })
 
+      //update all words on same words on section with the same status
       this.$eventBus.$on('wordStatusUpdated', (message) => {
         this.sectionTokens.forEach((token) => {
           if (token.text.toLowerCase() === message.word.toLowerCase()) {
@@ -269,9 +269,19 @@ export default {
     },
 
     async updateWordStatusToKnown() {
+      // se é status é NEW não existe palara no aramazenada ainda
+      if(this.wordTapped.status === wordStatusType.NEW) {
+        this.wordTapped.status = wordStatusType.KNOWN
+          await axios.post(`${process.env.API_URL}/word`, {
+            words: [this.wordTapped]
+        })
+        this.$eventBus.$emit('wordStatusUpdated', {
+          word: this.wordTapped.text,
+          newStatus: wordStatusType.KNOWN,
+        })
+        return;
+      }      
       this.wordTapped.status = wordStatusType.KNOWN
-
-      console.log('chamou', this.wordTapped)
 
       await axios.put(`${process.env.API_URL}/word`, {
         word: this.wordTapped,
@@ -313,10 +323,7 @@ export default {
       }
     },
 
-    getPhraseSelected() {
-      console.log('chamar aqui shajkhkjahkjsha')
-      console.log('start', this.selectionRangeStart)
-      // console.log('currentHoveredElement', this.currentHoveredElement);
+    getPhraseSelected() {      
       if (!this.selectionRangeStart && !this.currentHoveredElement) {
         return null
       }
@@ -326,8 +333,7 @@ export default {
       range.setEndAfter(this.currentHoveredElement.lastChild)
       var sel = window.getSelection()
       sel.removeAllRanges()
-      sel.addRange(range)
-      console.log('phrase selected', window.getSelection().toString())
+      sel.addRange(range)      
       return window.getSelection().toString()
     },
   },
