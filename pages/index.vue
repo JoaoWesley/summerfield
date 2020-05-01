@@ -1,16 +1,7 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
-    
-  </v-layout>
+  <v-layout column justify-center align-center />
 </template>
 
 <script>
-
-export default {
-
-}
+export default {}
 </script>

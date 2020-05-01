@@ -1,7 +1,7 @@
 const wordStatusType = {
   NEW: 'NEW',
   LEARNING: 'LEARNING',
-  KNOWN: 'KNOWN'
+  KNOWN: 'KNOWN',
 }
 
 export default wordStatusType

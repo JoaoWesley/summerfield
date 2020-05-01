@@ -5,12 +5,11 @@ export const saveWordToStudy = async (wordPhrase, translation) => {
 }
 
 export const getWordContextFromSection = (word, sectionTokens) => {
-  const startIndex = word.index - 5 >= 0
-    ? word.index - 5
-    : 0
-  const endIndex = word.index + 5 > sectionTokens[sectionTokens.length - 1].index
-    ? sectionTokens[sectionTokens.length - 1].index
-    : word.index + 7
+  const startIndex = word.index - 5 >= 0 ? word.index - 5 : 0
+  const endIndex =
+    word.index + 5 > sectionTokens[sectionTokens.length - 1].index
+      ? sectionTokens[sectionTokens.length - 1].index
+      : word.index + 7
 
   const contextRange = sectionTokens.slice(startIndex, endIndex)
   const contextRangeWords = contextRange.map((token) => token.text)
@@ -26,7 +25,7 @@ export const getWordContextFromSection = (word, sectionTokens) => {
       return
     }
     wordContext += word
-    if (nextWord.match(/[a-z]+/) || (nextWord.match(/[0-9]+/))) {
+    if (nextWord.match(/[a-z]+/) || nextWord.match(/[0-9]+/)) {
       wordContext += ' '
     }
   })
@@ -37,7 +36,7 @@ export const getWordContextFromSection = (word, sectionTokens) => {
 
   return wordContext
 }
-
-export default ({ app }, inject) => {
+// eslint-disable-next-line
+export default ({ app }, inject) => {  
   inject('wordService', { saveWordToStudy, getWordContextFromSection })
 }

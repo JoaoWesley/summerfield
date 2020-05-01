@@ -10,7 +10,7 @@ export const buildStudyObject = (
   if (phraseSelected) {
     return {
       wordPhrase: phraseSelected,
-      translation: wordPhraseTranslation
+      translation: wordPhraseTranslation,
     }
   }
 
@@ -18,11 +18,14 @@ export const buildStudyObject = (
     wordPhrase: wordTapped.text,
     translation: wordPhraseTranslation,
     ...(wordTapped.status !== wordStatusType.LEARNING
-      ? { wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens) }
-      : {})
+      ? {
+          wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
+        }
+      : {}),
   }
 }
 
+// eslint-disable-next-line
 export default ({ app }, inject) => {
   inject('studyService', { buildStudyObject })
 }

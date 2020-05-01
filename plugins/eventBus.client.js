@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 const eventBus = new Vue()
 
-export default ({ app }, inject) => {
+// eslint-disable-next-line
+export default ({ app }, inject) => {  
   inject('eventBus', eventBus)
 }
