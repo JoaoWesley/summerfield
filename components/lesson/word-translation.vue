@@ -39,10 +39,11 @@ export default {
       required: true,
     },
     wordAlreadyTranslated: {
-      type: String,
+      type: [String, Object],
       required: true,
     },
   },
+
   methods: {
     async saveWordToStudy() {
       const study = this.$studyService.buildStudyObject(
@@ -59,7 +60,7 @@ export default {
       await axios.post(`${process.env.API_URL}/study`, study)
       this.$eventBus.$emit('wordSavedForStudyEvent', {
         wordPhrase: this.wordTapped.text,
-        translation: this.wordPhraseTranslation,
+        wordPhraseTranslation: this.wordPhraseTranslation,
       })
 
       if (

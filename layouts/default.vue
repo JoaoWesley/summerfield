@@ -122,7 +122,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn text color="primary" @click="dialog = false">
-            Cancel
+            Fechar
           </v-btn>
           <v-btn
             text
@@ -131,7 +131,7 @@
               saveLesson()
             "
           >
-            Save
+            Salvar
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -190,7 +190,7 @@ export default {
 
   async beforeCreate() {
     const response = (await axios.get(`${process.env.API_URL}/word/status-report`)).data
-    this.wordsKnownCount = response.known.count  
+    this.wordsKnownCount = response.known.count
   },
 
   methods: {

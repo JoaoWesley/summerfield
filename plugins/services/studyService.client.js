@@ -1,5 +1,4 @@
 import * as wordService from './wordService.client'
-import wordStatusType from '../../commons/wordStatusType'
 
 export const buildStudyObject = (
   phraseSelected,
@@ -17,11 +16,7 @@ export const buildStudyObject = (
   return {
     wordPhrase: wordTapped.text,
     translation: wordPhraseTranslation,
-    ...(wordTapped.status !== wordStatusType.LEARNING
-      ? {
-          wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
-        }
-      : {}),
+    wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
   }
 }
 

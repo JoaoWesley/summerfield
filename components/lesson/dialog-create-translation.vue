@@ -34,10 +34,16 @@
       <v-card-actions>
         <v-spacer />
         <v-btn text color="primary" @click="closeModal">
-          Cancel
+          Fechar
         </v-btn>
-        <v-btn text @click="saveWordToStudy">
-          Save
+        <v-btn
+          text
+          @click="
+            saveWordToStudy()
+            closeModal()
+          "
+        >
+          Salvar
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -70,6 +76,10 @@ export default {
       type: Array,
       required: true,
     },
+    wordAlreadyTranslated: {
+      type: [String, Object],
+      required: true,
+    },
   },
 
   data: function () {
@@ -93,7 +103,7 @@ export default {
         (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
       )
       if (wordAlreadyTranslated.length > 0) {
-        this.wordPhraseTranslation = wordAlreadyTranslated.pop().wordPhraseTranslation
+        this.wordPhraseTranslation = wordAlreadyTranslated.pop().translation
       }
     },
 
@@ -102,7 +112,7 @@ export default {
         (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
       )
       if (phraseAlreadyTranslated.length > 0) {
-        this.wordPhraseTranslation = phraseAlreadyTranslated.pop().wordPhraseTranslation
+        this.wordPhraseTranslation = phraseAlreadyTranslated.pop().translation
       }
     },
   },
@@ -127,6 +137,13 @@ export default {
         this.wordTapped,
         this.sectionTokens
       )
+
+      console.log('this.wordAlreadyTranslated', this.wordAlreadyTranslated)
+      if (this.wordAlreadyTranslated) {
+        this.updateTranslation(study)
+        return
+      }
+
       await axios.post(`${process.env.API_URL}/study`, study)
       this.$eventBus.$emit('wordSavedForStudyEvent', {
         wordPhrase: this.wordPhrase,
@@ -140,37 +157,12 @@ export default {
       this.closeModal()
     },
 
-    getWordContext() {
-      const startIndex = this.wordTapped.index - 5 >= 0 ? this.wordTapped.index - 5 : 0
-      const endIndex =
-        this.wordTapped.index + 5 > this.sectionTokens[this.sectionTokens.length - 1].index
-          ? this.sectionTokens[this.sectionTokens.length - 1].index
-          : this.wordTapped.index + 7
-
-      const contextRange = this.sectionTokens.slice(startIndex, endIndex)
-      const contextRangeWords = contextRange.map((token) => token.text)
-      let wordContext = ''
-
-      if (this.wordTapped.index - 5 > 0) {
-        wordContext = '...'
-      }
-
-      contextRangeWords.forEach((word, index) => {
-        const nextWord = contextRangeWords[index + 1]
-        if (!nextWord) {
-          return
-        }
-        wordContext += word
-        if (nextWord.match(/[a-z]+/) || nextWord.match(/[0-9]+/)) {
-          wordContext += ' '
-        }
+    async updateTranslation(study) {
+      await axios.put(`${process.env.API_URL}/study`, study)
+      this.$eventBus.$emit('wordSavedForStudyEvent', {
+        wordPhrase: this.wordTapped.text,
+        wordPhraseTranslation: this.wordPhraseTranslation,
       })
-
-      if (endIndex < this.sectionTokens[this.sectionTokens.length - 1].index) {
-        wordContext += '...'
-      }
-
-      return wordContext
     },
 
     async updateWordStatus() {

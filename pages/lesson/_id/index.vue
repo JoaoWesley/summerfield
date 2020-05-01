@@ -136,6 +136,7 @@
       :study-items="studyItems"
       :phrase-selected="phraseSelected"
       :section-tokens="sectionTokens"
+      :word-already-translated="wordAlreadyTranslated"
       @closeCreateTranslationModal="modalDialogCreateTranslation = false"
     />
   </v-row>
@@ -207,6 +208,7 @@ export default {
     if (process.client) {
       this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
         this.studyItems.push(message)
+        this.wordPhraseTranslations = [message.wordPhraseTranslation]
       })
 
       this.$eventBus.$on('wordStatusUpdated', (message) => {
