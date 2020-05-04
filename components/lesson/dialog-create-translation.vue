@@ -137,7 +137,7 @@ export default {
         this.wordTapped,
         this.sectionTokens
       )
-      
+
       if (this.wordAlreadyTranslated) {
         this.updateTranslation(study)
         return

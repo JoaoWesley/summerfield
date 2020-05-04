@@ -34,21 +34,25 @@
                         :key="token.text + index"
                         class="title font-weight-light"
                         style="color: black; padding-bottom: -30px;"
-                        :style="
-                          !checkIfTokenIsPunctuation(token)
-                            ? { 'margin-right': '0' }
-                            : { 'margin-left': '0', 'margin-right': '0px' }
-                        "
                         :class="{
                           'new-word': token.status === 'NEW' && token.type === 'WORD',
                           'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
+                          token:
+                            section.tokens[index - 1] &&
+                            section.tokens[index - 1].status === 'KNOWN' &&
+                            token.type === 'PUNCTUATION',
                         }"
                         @mouseover="setSelectionRangeStart($event)"
                         @click="translateWord(token, section.tokens)"
                         >{{ token.text }}
                       </span>
 
-                      <slot v-if="!checkIfTokenIsPunctuation(section.tokens[index + 1])">
+                      <slot
+                        v-if="
+                          section.tokens[index + 1] &&
+                          section.tokens[index + 1].type !== 'PUNCTUATION'
+                        "
+                      >
                         &nbsp;
                       </slot>
                     </slot>
@@ -194,7 +198,7 @@ export default {
   watch: {
     mouseIsDown: async function () {
       if (!this.mouseIsDown && window.getSelection().toString()) {
-        const phraseSelected = this.getPhraseSelected()        
+        const phraseSelected = this.getPhraseSelected()
         if (phraseSelected) {
           await this.translatePhrase(await this.trimPhrase(phraseSelected))
         }
@@ -222,14 +226,6 @@ export default {
   },
 
   methods: {
-    checkIfTokenIsPunctuation(token) {
-      if (!token) {
-        return false
-      }
-
-      return !token.text.match(/[a-z]+/) && !token.text.match(/[0-9]+/)
-    },
-
     async translateWord(token, sectionTokens) {
       this.phraseSelected = ''
       this.wordTapped = token
@@ -270,17 +266,17 @@ export default {
 
     async updateWordStatusToKnown() {
       // se é status é NEW não existe palara no aramazenada ainda
-      if(this.wordTapped.status === wordStatusType.NEW) {
+      if (this.wordTapped.status === wordStatusType.NEW) {
         this.wordTapped.status = wordStatusType.KNOWN
-          await axios.post(`${process.env.API_URL}/word`, {
-            words: [this.wordTapped]
+        await axios.post(`${process.env.API_URL}/word`, {
+          words: [this.wordTapped],
         })
         this.$eventBus.$emit('wordStatusUpdated', {
           word: this.wordTapped.text,
           newStatus: wordStatusType.KNOWN,
         })
-        return;
-      }      
+        return
+      }
       this.wordTapped.status = wordStatusType.KNOWN
 
       await axios.put(`${process.env.API_URL}/word`, {
@@ -323,7 +319,7 @@ export default {
       }
     },
 
-    getPhraseSelected() {      
+    getPhraseSelected() {
       if (!this.selectionRangeStart && !this.currentHoveredElement) {
         return null
       }
@@ -333,7 +329,7 @@ export default {
       range.setEndAfter(this.currentHoveredElement.lastChild)
       var sel = window.getSelection()
       sel.removeAllRanges()
-      sel.addRange(range)      
+      sel.addRange(range)
       return window.getSelection().toString()
     },
   },
@@ -341,6 +337,9 @@ export default {
 </script>
 
 <style scoped>
+.token {
+  margin-left: -4px;
+}
 .new-word {
   background: rgb(175, 227, 241);
 }
@@ -349,10 +348,11 @@ export default {
 }
 span {
   cursor: pointer;
-  /* display: inline-block !important;      */
-  /* user-select: all !important; */
-  /* margin-bottom: 10px !important; */
   border-radius: 5px;
+}
+span.title {
+  font-size: 1.6em !important;
+  line-height: 1.6em;
 }
 span:hover {
   opacity: 0.8;
