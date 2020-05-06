@@ -8,6 +8,7 @@
         :show-arrows="true"
         :reverse="false"
         style="min-height: 35vw;"
+        @change="updateNewWordsToKnown(false)"
       >
         <v-window-item
           v-for="(section, index1) in lesson.sections"
@@ -24,16 +25,16 @@
                     <v-avatar color="grey" class="mr-4" />
                     <strong class="title">{{ lesson.title }}</strong>
                     <v-spacer />
-                    <!-- <v-btn icon>
+                    <v-btn icon>
                       <v-icon>mdi-play-circle</v-icon>
-                    </v-btn> -->
+                    </v-btn>
                   </v-row>
-                  <p style="">
+                  <p>
                     <slot v-for="(token, index) in section.tokens">
                       <span
                         :key="token.text + index"
                         class="title font-weight-light"
-                        style="color: black; padding-bottom: -30px;"
+                        style="color: black;"
                         :class="{
                           'new-word': token.status === 'NEW' && token.type === 'WORD',
                           'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
@@ -44,8 +45,7 @@
                         }"
                         @mouseover="setSelectionRangeStart($event)"
                         @click="translateWord(token, section.tokens)"
-                        >{{ token.text }}
-                      </span>
+                        >{{ token.text }}</span>
 
                       <slot
                         v-if="
@@ -57,6 +57,26 @@
                       </slot>
                     </slot>
                   </p>
+
+                  <div
+                    v-if="lesson.sections.length - 1 === window"
+                    class="text-center"
+                    style="float: right; bottom: 0;"
+                  >
+                    <v-chip
+                      class="ma-2 text-center"
+                      color="indigo"
+                      text-color="white"
+                      :input-value="true"
+                      label
+                      @click="
+                        updateNewWordsToKnown(true)
+                        redirectToLessons()
+                      "
+                    >
+                      FINALIZAR
+                    </v-chip>
+                  </div>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -214,7 +234,7 @@ export default {
         this.wordPhraseTranslations = [message.wordPhraseTranslation]
       })
 
-      //update all words on same words on section with the same status
+      //update all same words on section with the same status
       this.$eventBus.$on('wordStatusUpdated', (message) => {
         this.sectionTokens.forEach((token) => {
           if (token.text.toLowerCase() === message.word.toLowerCase()) {
@@ -226,6 +246,33 @@ export default {
   },
 
   methods: {
+    redirectToLessons() {
+      location.href = location.href.replace(/lesson\/.*/g, 'lesson')
+    },
+    async updateNewWordsToKnown(end) {
+      let section
+      if (!end) {
+        section = this.lesson.sections[this.window - 1]
+          ? this.lesson.sections[this.window - 1]
+          : this.lesson.sections[this.window]
+      } else {
+        section = this.lesson.sections[this.window]
+      }
+
+      const wordsToChangedInSection = section.tokens.filter((token) => {
+        if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
+          token.status = wordStatusType.KNOWN
+          return token
+        }
+      })
+
+      if (wordsToChangedInSection.length > 0) {
+        await axios.post(`${process.env.API_URL}/word`, {
+          words: wordsToChangedInSection,
+        })
+      }
+    },
+
     async translateWord(token, sectionTokens) {
       this.phraseSelected = ''
       this.wordTapped = token
@@ -337,6 +384,9 @@ export default {
 </script>
 
 <style scoped>
+.space-right {
+  margin-right: 4px !important;
+}
 .token {
   margin-left: -4px;
 }
