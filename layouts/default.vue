@@ -200,12 +200,17 @@ export default {
       }
     },
     async saveLesson() {
+      if(!this.lesson.title || !this.lesson.text) {
+        return;
+      }
+
       if (this.lesson._id) {
         this.updateLesson()
         return
       }
       const lessonCreated = (await axios.post(`${process.env.API_URL}/lesson`, this.lesson)).data
       this.$eventBus.$emit('lessonSaved', lessonCreated)
+      this.lesson = {};
     },
     async updateLesson() {
       await axios.put(`${process.env.API_URL}/lesson/`, this.lesson)

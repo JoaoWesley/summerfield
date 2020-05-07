@@ -312,7 +312,7 @@ export default {
     },
 
     async updateWordStatusToKnown() {
-      // se é status é NEW não existe palara no aramazenada ainda
+      // se é status é NEW não existe palara no armazenada ainda
       if (this.wordTapped.status === wordStatusType.NEW) {
         this.wordTapped.status = wordStatusType.KNOWN
         await axios.post(`${process.env.API_URL}/word`, {
