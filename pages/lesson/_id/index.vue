@@ -1,25 +1,26 @@
 <template>
   <v-row align="center">
-    <v-col cols="11" sm="12" md="9" lg="9">
+    <v-col cols="3" sm="12" md="9" lg="9">
       <v-window
         v-model="window"
         class="elevation-1 $window-controls-top"
         :vertical="false"
         :show-arrows="true"
         :reverse="false"
-        style="min-height: 35vw;"
-        @change="updateNewWordsToKnown(false)"
+        style="min-height: 75vh;"
+        @change="updateNewWordsToKnown(false, $event)"
       >
         <v-window-item
           v-for="(section, index1) in lesson.sections"
           :key="index1"
+          style="min-height: 75vh;"
           @mousedown="setMouseState(true)"
           @mouseup="setMouseState(false)"
         >
           <v-row align="center">
             <v-col cols="1" sm="1" md="1" lg="1" />
             <v-col cols="10" sm="10" md="10" lg="10">
-              <v-card flat style="min-height: 35vw;">
+              <v-card flat>
                 <v-card-text>
                   <v-row class="mb-4" align="center">
                     <v-avatar color="grey" class="mr-4" />
@@ -45,7 +46,9 @@
                         }"
                         @mouseover="setSelectionRangeStart($event)"
                         @click="translateWord(token, section.tokens)"
-                        >{{ token.text }}</span>
+                      >
+                        {{ token.text }}
+                      </span>
 
                       <slot
                         v-if="
@@ -58,24 +61,22 @@
                     </slot>
                   </p>
 
-                  <div
-                    v-if="lesson.sections.length - 1 === window"
-                    class="text-center"
-                    style="float: right; bottom: 0;"
-                  >
-                    <v-chip
-                      class="ma-2 text-center"
-                      color="indigo"
-                      text-color="white"
-                      :input-value="true"
-                      label
-                      @click="
-                        updateNewWordsToKnown(true)
-                        redirectToLessons()
-                      "
-                    >
-                      FINALIZAR
-                    </v-chip>
+                  <div v-if="lesson.sections.length - 1 === window && showFinnishButtom">
+                    <v-card class="d-flex flex-row-reverse" flat tile>
+                      <v-chip
+                        class="ma-2"
+                        color="indigo"
+                        text-color="white"
+                        :input-value="true"
+                        label
+                        @click="
+                          updateNewWordsToKnown(true)
+                          redirectToLessons()
+                        "
+                      >
+                        FINALIZAR
+                      </v-chip>
+                    </v-card>
                   </div>
                 </v-card-text>
               </v-card>
@@ -85,35 +86,50 @@
       </v-window>
     </v-col>
 
-    <v-row>
-      <v-col cols="12" sm="12" md="12" lg="12">
-        <v-window
-          v-model="window"
-          class="elevation-1 $window-controls-top"
-          :vertical="false"
-          :reverse="false"
-          style="min-height: 36.65vw;"
-        >
-          <v-btn icon>
-            <v-icon>mdi-play</v-icon>
-          </v-btn>
+    <v-col cols="3" sm="3" md="3" lg="3">
+      <v-window
+        v-model="window"
+        class="elevation-1 $window-controls-top"
+        :vertical="false"
+        :reverse="false"
+        style="height: 75vh;"
+      >
+        <v-alert v-if="!wordTapped.text && !phraseSelected" type="info" style="height: 100%;">
+          1 - Clique em qualquer palavra para ver a tradução.<br /><br />
+          2 - Clique em uma tradução para salvar a palavra para estudo.<br /><br />
+          3 - Também é possível criar a sua própria tradução. no botão 'Criar tradução' <br /><br />
+          4 - Palavras em branco são palavras conhecidas.<br /><br />
+          5 - Palavras azul são palavras novas.<br /><br />
+          6 - Palavras em amarelo são palavras sendo estudadas.<br /><br />
+        </v-alert>
 
-          {{ wordTapped.text ? wordTapped.text : phraseSelected }}
+        <v-row style="height: 10vh;">
+          <v-col cols="2">
+            <v-btn v-if="wordTapped.text || phraseSelected" icon>
+              <v-icon>mdi-play</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col cols="10" style="margin-top: 7px;">
+            <span style="word-break: break-all;">
+              {{ wordTapped.text ? wordTapped.text : phraseSelected }}
+            </span>
+          </v-col>
+        </v-row>
 
-          <div style="min-height: 15vw;">
-            <WordTranslation
-              v-for="(wordPhraseTranslation, index) in wordPhraseTranslations"
-              :key="wordPhraseTranslation + index"
-              :word-phrase-translation="wordPhraseTranslation"
-              :word-tapped="wordTapped"
-              :section-tokens="sectionTokens"
-              :phrase-selected="phraseSelected"
-              :word-already-translated="wordAlreadyTranslated"
-            />
-          </div>
+        <div style="height: 35vh;">
+          <WordTranslation
+            v-for="(wordPhraseTranslation, index) in wordPhraseTranslations"
+            :key="wordPhraseTranslation + index"
+            :word-phrase-translation="wordPhraseTranslation"
+            :word-tapped="wordTapped"
+            :section-tokens="sectionTokens"
+            :phrase-selected="phraseSelected"
+            :word-already-translated="wordAlreadyTranslated"
+            style="height: 30%;"
+          />
 
-          <v-row v-if="wordAlreadyTranslated" class="text-center">
-            <v-col cols="12">
+          <v-row class="text-center">
+            <v-col v-if="wordAlreadyTranslated" cols="12">
               <v-chip
                 class="ma-2 text-center"
                 color="indigo"
@@ -127,30 +143,32 @@
               </v-chip>
             </v-col>
           </v-row>
-          <br />
-          <v-row class="text-center">
-            <v-col cols="12">
-              <v-chip
-                class="ma-2 text-center"
-                color="teal"
-                text-color="white"
-                :input-value="true"
-                filter
-                @click="updateWordStatusToKnown"
-              >
-                Já sei essa palavra
-              </v-chip>
-            </v-col>
-          </v-row>
+        </div>
 
-          <div class="text-center">
-            <v-btn rounded color="primary" dark @click="modalDialogCreateTranslation = true">
-              Criar tradução
-            </v-btn>
-          </div>
-        </v-window>
-      </v-col>
-    </v-row>
+        <br />
+
+        <v-row v-if="wordTapped.text || phraseSelected" class="text-center" style="height: 8vh;">
+          <v-col cols="12">
+            <v-chip
+              class="ma-2 text-center"
+              color="teal"
+              text-color="white"
+              :input-value="true"
+              filter
+              @click="updateWordStatusToKnown"
+            >
+              Já sei essa palavra
+            </v-chip>
+          </v-col>
+        </v-row>
+        <br />
+        <div v-if="wordTapped.text || phraseSelected" class="text-center">
+          <v-btn rounded color="primary" dark @click="modalDialogCreateTranslation = true">
+            Criar tradução
+          </v-btn>
+        </div>
+      </v-window>
+    </v-col>
 
     <SnackbarWordSavedStudy />
 
@@ -163,6 +181,8 @@
       :word-already-translated="wordAlreadyTranslated"
       @closeCreateTranslationModal="modalDialogCreateTranslation = false"
     />
+
+    <ConfirmModal ref="confirm" />
   </v-row>
 </template>
 
@@ -173,12 +193,14 @@ import wordStatusType from '@/commons/wordStatusType'
 import WordTranslation from '@/components/lesson/word-translation'
 import SnackbarWordSavedStudy from '@/components/lesson/snackbar-word-saved-study'
 import DialogCreatetranslation from '@/components/lesson/dialog-create-translation'
+import ConfirmModal from '@/components/confirm-modal'
 
 export default {
   components: {
     WordTranslation,
     SnackbarWordSavedStudy,
     DialogCreatetranslation,
+    ConfirmModal,
   },
 
   async asyncData({ params }) {
@@ -197,9 +219,13 @@ export default {
       lesson.sections = sections
 
       const studyItems = (await axios.get(`${process.env.API_URL}/study/`)).data.items
+
+      const statusReport = (await axios.get(`${process.env.API_URL}/word/status-report`)).data
+      const wordsKnownCount = statusReport.known.count
       return {
         lesson,
         studyItems,
+        wordsKnownCount,
       }
     }
   },
@@ -214,6 +240,7 @@ export default {
     wordAlreadyTranslated: '',
     selectionRangeStart: null,
     currentHoveredElement: null,
+    showFinnishButtom: false,
   }),
   watch: {
     mouseIsDown: async function () {
@@ -249,7 +276,30 @@ export default {
     redirectToLessons() {
       location.href = location.href.replace(/lesson\/.*/g, 'lesson')
     },
-    async updateNewWordsToKnown(end) {
+    async updateNewWordsToKnown(end, $forward) {
+      if (
+        this.wordsKnownCount === 0 &&
+        $forward === 1 &&
+        !(await this.$refs.confirm.open(
+          'Confirmar',
+          'Ao mudar de seção todas as palavras em azul serão consideradas palavras conhecidas.',
+          { color: 'red' }
+        ))
+      ) {
+        const prevButton = document.querySelector('.v-window__prev button')
+        prevButton.click()
+        return
+      }
+
+      //Delay to show buttom finalizar buttom
+      if ($forward) {
+        setTimeout(() => {
+          this.showFinnishButtom = true
+        }, 200)
+      } else {
+        this.showFinnishButtom = false
+      }
+
       let section
       if (!end) {
         section = this.lesson.sections[this.window - 1]

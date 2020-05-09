@@ -114,6 +114,7 @@
                 auto-grow
                 outlined
                 rounded
+                class="normal-text-area"
               />
             </v-col>
           </v-row>
@@ -200,8 +201,8 @@ export default {
       }
     },
     async saveLesson() {
-      if(!this.lesson.title || !this.lesson.text) {
-        return;
+      if (!this.lesson.title || !this.lesson.text) {
+        return
       }
 
       if (this.lesson._id) {
@@ -210,7 +211,7 @@ export default {
       }
       const lessonCreated = (await axios.post(`${process.env.API_URL}/lesson`, this.lesson)).data
       this.$eventBus.$emit('lessonSaved', lessonCreated)
-      this.lesson = {};
+      this.lesson = {}
     },
     async updateLesson() {
       await axios.put(`${process.env.API_URL}/lesson/`, this.lesson)
@@ -218,3 +219,13 @@ export default {
   },
 }
 </script>
+
+<style>
+textarea {
+  cursor: pointer;
+}
+
+.normal-text-area textarea {
+  cursor: text !important;
+}
+</style>

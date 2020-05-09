@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="grey lighten-5">
     <v-row class="mb-6" no-gutters>
-      <v-col cols="11" sm="12" md="9" lg="9">
+      <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
           <v-col v-for="lesson in lessons" :key="lesson.title" sm="3" md="3" lg="3">
             <v-card

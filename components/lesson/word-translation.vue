@@ -1,17 +1,19 @@
 <template>
-  <v-row class="text-center">
+  <v-row>
     <v-col cols="12">
-      <v-chip
-        class="ma-2"
-        color="indigo"
-        text-color="white"
-        :input-value="true"
-        label
-        style="width: 80%;"
+      <v-textarea
+        rows="1"
+        auto-grow
+        dense
+        readonly
+        outlined
+        rounded
+        success
+        solo
+        :value="wordPhraseTranslation"
         @click="saveWordToStudy"
       >
-        {{ wordPhraseTranslation }}
-      </v-chip>
+      </v-textarea>
     </v-col>
   </v-row>
 </template>
@@ -120,5 +122,9 @@ span {
 }
 span:hover {
   opacity: 0.8;
+}
+
+fieldset {
+  cursor: pointer !important;
 }
 </style>
