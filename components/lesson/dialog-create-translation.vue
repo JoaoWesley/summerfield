@@ -26,6 +26,7 @@
               auto-grow
               outlined
               rounded
+              class="normal-text-area"
             />
           </v-col>
         </v-row>
