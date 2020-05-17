@@ -1,21 +1,21 @@
 <template>
-  <v-card  class="d-flex align-stretch" >
-     <v-card  style="width: 68%; margin-right: 2%" raised shaped outlined>
+  <v-card class="d-flex align-stretch">
+    <v-card style="width: 68%; margin-right: 2%;" raised shaped outlined>
       <v-window
         v-model="window"
         class="elevation-1 $window-controls-top"
         :vertical="false"
         :show-arrows="true"
         :reverse="false"
-        style="height: 100%"
+        style="height: 100%;"
         @change="updateNewWordsToKnown(false, $event)"
       >
         <v-window-item
           v-for="(section, index1) in lesson.sections"
-          :key="index1"        
+          :key="index1"
+          style="height: 100%;"
           @mousedown="setMouseState(true)"
           @mouseup="setMouseState(false)"
-          style="height: 100%"
         >
           <v-row>
             <v-col cols="1" sm="1" md="1" lg="1" />
@@ -84,17 +84,17 @@
           </v-row>
         </v-window-item>
       </v-window>
-     </v-card>
+    </v-card>
 
-    <v-card style="width: 30%; min-height:87vh" raised outlined>
+    <v-card style="width: 30%; min-height: 87vh;" raised outlined>
       <v-window
         v-model="window"
         class="elevation-1 $window-controls-top"
         :vertical="false"
-        :reverse="false"        
-        style="height: 100%"
+        :reverse="false"
+        style="height: 100%;"
       >
-        <v-alert v-if="!wordTapped.text && !phraseSelected" type="info" style="height: 100%">
+        <v-alert v-if="!wordTapped.text && !phraseSelected" type="info" style="height: 100%;">
           1 - Clique em qualquer palavra para ver a tradução.<br /><br />
           2 - Clique em uma tradução para salvar a palavra para estudo.<br /><br />
           3 - Também é possível criar a sua própria tradução. no botão 'Criar tradução'.<br /><br />
@@ -104,9 +104,9 @@
         </v-alert>
 
         <div style="height: 60%;">
-          <v-row style="height: 10%; margin-bottom: 20px">
-            <v-col cols="2">             
-               <v-btn icon v-if="wordTapped.text || phraseSelected">
+          <v-row style="height: 10%; margin-bottom: 20px;">
+            <v-col cols="2">
+              <v-btn v-if="wordTapped.text || phraseSelected" icon>
                 <v-icon>mdi-play-circle</v-icon>
               </v-btn>
             </v-col>
@@ -117,7 +117,7 @@
             </v-col>
           </v-row>
 
-          <div style="min-height:50%">
+          <div style="min-height: 50%;">
             <WordTranslation
               v-for="(wordPhraseTranslation, index) in wordPhraseTranslations"
               :key="wordPhraseTranslation + index"
@@ -125,14 +125,13 @@
               :word-tapped="wordTapped"
               :section-tokens="sectionTokens"
               :phrase-selected="phraseSelected"
-              :word-already-translated="wordAlreadyTranslated"              
-              
-            /> 
-          </div>       
+              :word-already-translated="wordAlreadyTranslated"
+            />
+          </div>
 
           <v-row class="text-center">
-            <v-col v-if="wordAlreadyTranslated" cols="12">             
-              <v-btn rounded color="primary" dark  @click="showOtherTranslations">
+            <v-col v-if="wordAlreadyTranslated" cols="12">
+              <v-btn rounded color="primary" dark @click="showOtherTranslations">
                 Mostrar outras traduções
               </v-btn>
             </v-col>
@@ -179,7 +178,6 @@
 
     <ConfirmModal ref="confirm" />
   </v-card>
-
 </template>
 
 <script>
@@ -233,7 +231,7 @@ export default {
     phraseSelected: '',
     modalDialogCreateTranslation: false,
     mouseIsDown: false,
-    wordAlreadyTranslated: '',
+    wordAlreadyTranslated: {},
     selectionRangeStart: null,
     currentHoveredElement: null,
     showFinnishButtom: false,
@@ -253,7 +251,10 @@ export default {
   created() {
     if (process.client) {
       this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
-        this.studyItems.push(message)
+        this.studyItems.push({
+          wordPhrase: message.wordPhrase,
+          translation: message.wordPhraseTranslation,
+        })
         this.wordPhraseTranslations = [message.wordPhraseTranslation]
       })
 
@@ -319,7 +320,7 @@ export default {
       }
     },
 
-    async translateWord(token, sectionTokens) {
+    async translateWord(token, sectionTokens) {      
       this.phraseSelected = ''
       this.wordTapped = token
       this.sectionTokens = sectionTokens
@@ -327,14 +328,16 @@ export default {
       const wordTranslatedAlready = this.studyItems.filter(
         (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase()
       )
+
       if (wordTranslatedAlready.length > 0) {
+        console.log('study items', this.studyItems)
         this.wordAlreadyTranslated = wordTranslatedAlready.pop()
-        this.wordPhraseTranslations = []
-        this.wordPhraseTranslations.push(this.wordAlreadyTranslated.translation)
+        console.log('this.wordAlreadyTranslated', this.wordAlreadyTranslated)
+        this.wordPhraseTranslations = [this.wordAlreadyTranslated.translation]
         return
       }
 
-      this.wordAlreadyTranslated = ''
+      this.wordAlreadyTranslated = {}
 
       //chmar api que vai retornar traducão da palavra
       this.wordPhraseTranslations = ['Linguagem', 'Lingua', 'Idioma']
@@ -399,7 +402,7 @@ export default {
       //chamar api de traducao.
       this.wordPhraseTranslations.push('Another Translation')
       this.wordPhraseTranslations.push('Mais uma Translation')
-      this.wordAlreadyTranslated = ''
+      //this.wordAlreadyTranslated = ''
     },
 
     setSelectionRangeStart($event) {

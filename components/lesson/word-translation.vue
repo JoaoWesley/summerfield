@@ -41,7 +41,7 @@ export default {
       required: true,
     },
     wordAlreadyTranslated: {
-      type: [String, Object],
+      type: [Object],
       required: true,
     },
   },
@@ -55,15 +55,15 @@ export default {
         this.sectionTokens
       )
 
-      if (this.wordAlreadyTranslated) {
+      if (this.wordAlreadyTranslated && this.wordAlreadyTranslated.translation) {
         this.updateTranslation(study)
+      } else {
+        await axios.post(`${process.env.API_URL}/study`, study)
+        this.$eventBus.$emit('wordSavedForStudyEvent', {
+          wordPhrase: this.wordTapped.text,
+          wordPhraseTranslation: this.wordPhraseTranslation,
+        })
       }
-
-      await axios.post(`${process.env.API_URL}/study`, study)
-      this.$eventBus.$emit('wordSavedForStudyEvent', {
-        wordPhrase: this.wordTapped.text,
-        wordPhraseTranslation: this.wordPhraseTranslation,
-      })
 
       if (
         this.wordTapped.status === wordStatusType.LEARNING ||
@@ -81,13 +81,17 @@ export default {
       await axios.post(`${process.env.API_URL}/word`, {
         words: [this.wordTapped],
       })
+      this.$eventBus.$emit('wordStatusUpdated', {
+        word: this.wordTapped.text,
+        newStatus: wordStatusType.LEARNING,
+      })
     },
 
     async updateTranslation(study) {
       await axios.put(`${process.env.API_URL}/study`, study)
       this.$eventBus.$emit('wordSavedForStudyEvent', {
         wordPhrase: this.wordTapped.text,
-        translation: this.wordPhraseTranslation,
+        wordPhraseTranslation: this.wordPhraseTranslation,
       })
     },
 
@@ -95,6 +99,8 @@ export default {
       if (!this.wordTapped || !this.wordTapped.text) {
         return
       }
+
+      console.log('chamou put')
 
       this.wordTapped.status = wordStatusType.LEARNING
       await axios.put(`${process.env.API_URL}/word`, {
