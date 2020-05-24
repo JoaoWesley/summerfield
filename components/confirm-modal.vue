@@ -16,11 +16,11 @@
       </v-card-text>
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
-        <v-btn color="primary darken-1" text @click.native="agree">
-          Confirmar
-        </v-btn>
         <v-btn color="grey" text @click.native="cancel">
           Cancelar
+        </v-btn>
+        <v-btn color="primary darken-1" text @click.native="agree">
+          Confirmar
         </v-btn>
       </v-card-actions>
     </v-card>

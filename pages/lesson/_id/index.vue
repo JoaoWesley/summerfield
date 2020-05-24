@@ -103,10 +103,10 @@
           6 - Palavras em amarelo são palavras sendo estudadas.<br /><br />
         </v-alert>
 
-        <div style="height: 60%;">
+        <div style="height: 60%;" v-if="wordTapped.text || phraseSelected">
           <v-row style="height: 10%; margin-bottom: 20px;">
             <v-col cols="2">
-              <v-btn v-if="wordTapped.text || phraseSelected" icon>
+              <v-btn icon>
                 <v-icon>mdi-play-circle</v-icon>
               </v-btn>
             </v-col>
@@ -130,7 +130,7 @@
           </div>
 
           <v-row class="text-center">
-            <v-col v-if="wordAlreadyTranslated" cols="12">
+            <v-col v-if="wordAlreadyTranslated && wordPhraseTranslations.length == 1" cols="12">
               <v-btn rounded color="primary" dark @click="showOtherTranslations">
                 Mostrar outras traduções
               </v-btn>
@@ -139,8 +139,8 @@
         </div>
 
         <br />
-        <div style="height: 40%;">
-          <v-row v-if="wordTapped.text || phraseSelected" class="text-center">
+        <div style="height: 40%;" v-if="wordTapped.text || phraseSelected">
+          <v-row class="text-center">
             <v-col cols="12">
               <v-chip
                 class="ma-2 text-center"
@@ -155,7 +155,7 @@
             </v-col>
           </v-row>
           <br />
-          <div v-if="wordTapped.text || phraseSelected" class="text-center">
+          <div class="text-center">
             <v-btn rounded color="primary" dark @click="modalDialogCreateTranslation = true">
               Criar tradução
             </v-btn>
@@ -271,9 +271,14 @@ export default {
 
   methods: {
     redirectToLessons() {
-      location.href = location.href.replace(/lesson\/.*/g, 'lesson')
+      location.href=`${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsToKnown(end, $forward) {
+    async updateNewWordsToKnown(end, $forward) {      
+      //se tá clicando na seta para voltar não faz nada
+      if($forward === 0) {
+        return;
+      }
+
       if (
         this.wordsKnownCount === 0 &&
         $forward === 1 &&
@@ -284,9 +289,11 @@ export default {
         ))
       ) {
         const prevButton = document.querySelector('.v-window__prev button')
-        prevButton.click()
+        prevButton.click()        
         return
       }
+
+      console.log('voltou mesmo assim')
 
       //Delay to show finalizar buttom
       if ($forward && this.lesson.sections.length - 1 === this.window) {
@@ -306,16 +313,16 @@ export default {
         section = this.lesson.sections[this.window]
       }
 
-      const wordsToChangedInSection = section.tokens.filter((token) => {
+      const wordsChangedInSection = section.tokens.filter((token) => {
         if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
           token.status = wordStatusType.KNOWN
           return token
         }
       })
 
-      if (wordsToChangedInSection.length > 0) {
+      if (wordsChangedInSection.length > 0) {
         await axios.post(`${process.env.API_URL}/word`, {
-          words: wordsToChangedInSection,
+          words: wordsChangedInSection,
         })
       }
     },
