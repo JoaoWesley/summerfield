@@ -100,8 +100,7 @@ export default {
             )
 
             if(approvedOpenLesson) {
-              location.href=`${process.env.BASE_URL}/lesson/${result.data._id}`
-              //console.log('Confirmado', 'Abrir lição', result.data._id)
+              location.href=`${process.env.BASE_URL}/lesson/${result.data._id}/topic`              
             }                      
         }        
     },

@@ -1,23 +1,24 @@
 <template>
-  <v-container fluid class="grey lighten-5">
+  <v-container fluid class="grey lighten-5">    
+
     <v-row class="mb-6" no-gutters>
       <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
-          <v-col v-for="lesson in lessons" :key="lesson._id" sm="3" md="3" lg="3">
+          <v-col v-for="topic in topics" :key="topic.title" sm="3" md="3" lg="3">
             <v-card
               class="pa-2"
               outlined
               tile
               style="margin-right: 4px; margin-bottom: 4px;"
               elevation="3"
-              @click="openLesson(lesson)"
+              @click="openTopic(topic)"              
               shaped
               height="350"
-              @contextmenu="show($event, lesson)"
+              @contextmenu="show($event, topic)"
             >
-              <v-img height="200" width="200" :src="lesson.img" />
-              <v-card-title> {{ lesson.title }} </v-card-title>
-              <v-card-text> {{ getLessonText(lesson) }} </v-card-text>
+              <v-img height="200" width="200" :src="topic.img" />
+              <v-card-title> {{ topic.title }} </v-card-title>
+              <v-card-text> {{ getTopicText(topic) }} </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -42,13 +43,12 @@
 import axios from 'axios'
 
 export default {
-  async asyncData({ req }) {
-    if (process.server) {
-      const lessons = (
-        await axios.get(`${process.env.API_URL}/lesson/`, {
-          headers: req.headers,
-        })
+  async asyncData({ params }) {
+    if (process.server) {            
+      const topics = (
+        await axios.get(`${process.env.API_URL}/lesson/${params.id}/lesson-topics/`)
       ).data
+      
       const imgs = []
       imgs.push(
         'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
@@ -61,16 +61,17 @@ export default {
       )
       imgs.push('https://images.freeimages.com/images/large-previews/8d3/learn-1241297.jpg')
 
-      lessons.forEach((element) => {
+      topics.forEach((element) => {
         element.img = imgs[Math.floor(Math.random() * 4)]
       })
       return {
-        lessons,
+        topics,
         imgs,
       }
     }
   },
   data: () => ({
+    currentLesson: {},
     rounded: true,
     lessonClicked: null,
     showMenu: false,
@@ -82,20 +83,17 @@ export default {
     ],
   }),
   created() {
-    if (process.client) {
-      this.$eventBus.$on('lessonSaved', (lesson) => {
-        lesson.img = this.imgs[Math.floor(Math.random() * 4)]
-        this.lessons.push(lesson)
-      })
-    }
+    // if (process.client) {
+    //   this.$eventBus.$on('lessonSaved', (lesson) => {
+    //     lesson.img = this.imgs[Math.floor(Math.random() * 4)]
+    //     this.lessons.push(lesson)
+    //   })
+    // }
   },
   methods: {
-    openLesson(lesson) {         
-      if(lesson.hasTopics) {
-        location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic`        
-        return;
-      }
-      location.href = `/lesson/${lesson._id}`
+    openTopic(topic) {
+      location.href += `/${topic.index}`
+      //:href="'/topic/' + topic.index"
     },
 
     show(e, lesson) {
@@ -109,19 +107,20 @@ export default {
       })
     },
     async menuOptionSelected(menuItem) {
-      if (menuItem.id === 'edit') {
-        this.$eventBus.$emit('editLesson', this.lessonClicked)
-      }
+      // if (menuItem.id === 'edit') {
+      //   this.$eventBus.$emit('editLesson', this.lessonClicked)
+      // }
 
-      if (menuItem.id === 'delete') {
-        await axios.delete(`${process.env.API_URL}/lesson/${this.lessonClicked._id}`)
-        const index = this.lessons.indexOf(this.lessonClicked)
-        this.lessons.splice(index, 1)
-      }
+      // if (menuItem.id === 'delete') {
+      //   await axios.delete(`${process.env.API_URL}/lesson/${this.lessonClicked._id}`)
+      //   const index = this.lessons.indexOf(this.lessonClicked)
+      //   this.lessons.splice(index, 1)
+      // }
     },
 
-    getLessonText(lesson) {
-      return lesson.text.length < 30 ? lesson.text : lesson.text.substr(0, 27) + '...'
+    getTopicText(topic) {      
+      return 'asas'
+      //return topic.text.length < 30 ? topic.text : topic.text.substr(0, 27) + '...'
     },
   },
 }
