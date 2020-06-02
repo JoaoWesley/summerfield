@@ -10,9 +10,9 @@
               tile
               style="margin-right: 4px; margin-bottom: 4px;"
               elevation="3"
-              @click="openLesson(lesson)"
               shaped
               height="350"
+              @click="openLesson(lesson)"
               @contextmenu="show($event, lesson)"
             >
               <v-img height="200" width="200" :src="lesson.img" />
@@ -90,10 +90,10 @@ export default {
     }
   },
   methods: {
-    openLesson(lesson) {         
-      if(lesson.hasTopics) {
-        location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic`        
-        return;
+    openLesson(lesson) {
+      if (lesson.hasTopics) {
+        location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic`
+        return
       }
       location.href = `/lesson/${lesson._id}`
     },

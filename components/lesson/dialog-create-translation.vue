@@ -54,31 +54,12 @@
 <script>
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
     modalDialogCreateTranslation: {
       type: Boolean,
-      required: true,
-    },
-    wordTapped: {
-      type: Object,
-      required: true,
-    },
-    studyItems: {
-      type: Array,
-      required: true,
-    },
-    phraseSelected: {
-      type: String,
-      required: true,
-    },
-    sectionTokens: {
-      type: Array,
-      required: true,
-    },
-    wordAlreadyTranslated: {
-      type: [String, Object],
       required: true,
     },
   },
@@ -89,6 +70,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      wordTapped: 'lesson/getWordTapped',
+      phraseSelected: 'lesson/getPhraseSelected',
+      sectionTokens: 'lesson/getSectionTokens',
+      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+      studyItems: 'lesson/getStudyItems',
+    }),
     wordPhrase: function () {
       if (this.wordTapped && this.wordTapped.text) {
         return this.wordTapped.text

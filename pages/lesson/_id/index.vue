@@ -103,7 +103,7 @@
           6 - Palavras em amarelo são palavras sendo estudadas.<br /><br />
         </v-alert>
 
-        <div style="height: 60%;" v-if="wordTapped.text || phraseSelected">
+        <div v-if="wordTapped.text || phraseSelected" style="height: 60%;">
           <v-row style="height: 10%; margin-bottom: 20px;">
             <v-col cols="2">
               <v-btn icon>
@@ -122,10 +122,6 @@
               v-for="(wordPhraseTranslation, index) in wordPhraseTranslations"
               :key="wordPhraseTranslation + index"
               :word-phrase-translation="wordPhraseTranslation"
-              :word-tapped="wordTapped"
-              :section-tokens="sectionTokens"
-              :phrase-selected="phraseSelected"
-              :word-already-translated="wordAlreadyTranslated"
             />
           </div>
 
@@ -139,7 +135,7 @@
         </div>
 
         <br />
-        <div style="height: 40%;" v-if="wordTapped.text || phraseSelected">
+        <div v-if="wordTapped.text || phraseSelected" style="height: 40%;">
           <v-row class="text-center">
             <v-col cols="12">
               <v-chip
@@ -188,6 +184,7 @@ import WordTranslation from '@/components/lesson/word-translation'
 import SnackbarWordSavedStudy from '@/components/lesson/snackbar-word-saved-study'
 import DialogCreatetranslation from '@/components/lesson/dialog-create-translation'
 import ConfirmModal from '@/components/confirm-modal'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -197,45 +194,38 @@ export default {
     ConfirmModal,
   },
 
-  async asyncData({ params }) {
+  async asyncData({ params, store }) {
     if (process.server) {
-      const lesson = (await axios.get(`${process.env.API_URL}/lesson/${params.id}`)).data
-      let sections = []
-
-      const getSections = (sections, tokens) => {
-        if (tokens.length === 0) return
-        sections.push({ tokens: tokens.splice(0, 100) })
-        return getSections(sections, tokens)
-      }
-
-      getSections(sections, lesson.tokens)
-
-      lesson.sections = sections
-
-      const studyItems = (await axios.get(`${process.env.API_URL}/study/`)).data.items
-
-      const statusReport = (await axios.get(`${process.env.API_URL}/word/status-report`)).data
-      const wordsKnownCount = statusReport.known.count
-      return {
-        lesson,
-        studyItems,
-        wordsKnownCount,
-      }
+      await store.dispatch('lesson/fetchLesson', params.id)
+      await store.dispatch('lesson/fetchStudyItems')
+      await store.dispatch('fetchStatusReport')
+      return {}
     }
   },
   data: () => ({
-    window: 0,
-    wordPhraseTranslations: [],
-    sectionTokens: [],
-    wordTapped: {},
-    phraseSelected: '',
     modalDialogCreateTranslation: false,
+
+    window: 0,
     mouseIsDown: false,
-    wordAlreadyTranslated: {},
     selectionRangeStart: null,
     currentHoveredElement: null,
     showFinnishButtom: false,
   }),
+  computed: {
+    ...mapGetters({
+      lesson: 'lesson/getLesson',
+      studyItems: 'lesson/getStudyItems',
+      sectionTokens: 'lesson/getSectionTokens',
+      wordTapped: 'lesson/getWordTapped',
+      wordPhraseTranslations: 'lesson/getWordPhraseTranslations',
+      phraseSelected: 'lesson/getPhraseSelected',
+      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+    }),
+    wordsKnownCount() {
+      return this.$store.getters['getStatusReport'].known.count
+    },
+  },
+
   watch: {
     mouseIsDown: async function () {
       if (!this.mouseIsDown && window.getSelection().toString()) {
@@ -251,32 +241,28 @@ export default {
   created() {
     if (process.client) {
       this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
-        this.studyItems.push({
+        this.$store.dispatch('lesson/addStudyItem', {
           wordPhrase: message.wordPhrase,
           translation: message.wordPhraseTranslation,
         })
-        this.wordPhraseTranslations = [message.wordPhraseTranslation]
+        this.$store.dispatch('lesson/setWordPhraseTranslations', [message.wordPhraseTranslation])
       })
 
       //update all same words on section with the same status
       this.$eventBus.$on('wordStatusUpdated', (message) => {
-        this.sectionTokens.forEach((token) => {
-          if (token.text.toLowerCase() === message.word.toLowerCase()) {
-            token.status = message.newStatus
-          }
-        })
+        this.$store.dispatch('lesson/updateWordStatusInSection', message)
       })
     }
   },
 
   methods: {
     redirectToLessons() {
-      location.href=`${process.env.BASE_URL}/lesson`
+      location.href = `${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsToKnown(end, $forward) {      
+    async updateNewWordsToKnown(end, $forward) {
       //se tá clicando na seta para voltar não faz nada
-      if($forward === 0) {
-        return;
+      if ($forward === 0) {
+        return
       }
 
       if (
@@ -289,11 +275,9 @@ export default {
         ))
       ) {
         const prevButton = document.querySelector('.v-window__prev button')
-        prevButton.click()        
+        prevButton.click()
         return
       }
-
-      console.log('voltou mesmo assim')
 
       //Delay to show finalizar buttom
       if ($forward && this.lesson.sections.length - 1 === this.window) {
@@ -327,50 +311,55 @@ export default {
       }
     },
 
-    async translateWord(token, sectionTokens) {      
-      this.phraseSelected = ''
-      this.wordTapped = token
-      this.sectionTokens = sectionTokens
+    async translateWord(token, sectionTokens) {
+      this.$store.dispatch('lesson/setPhraseSelected', '')
+      this.$store.dispatch('lesson/setWordTapped', token)
+      this.$store.dispatch('lesson/setSectionTokens', sectionTokens)
 
       const wordTranslatedAlready = this.studyItems.filter(
         (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase()
       )
 
       if (wordTranslatedAlready.length > 0) {
-        console.log('study items', this.studyItems)
-        this.wordAlreadyTranslated = wordTranslatedAlready.pop()
-        console.log('this.wordAlreadyTranslated', this.wordAlreadyTranslated)
-        this.wordPhraseTranslations = [this.wordAlreadyTranslated.translation]
+        this.$store.dispatch('lesson/setWordAlreadyTranslated', wordTranslatedAlready.pop())
+        this.$store.dispatch('lesson/setWordPhraseTranslations', [
+          this.wordAlreadyTranslated.translation,
+        ])
         return
       }
 
-      this.wordAlreadyTranslated = {}
+      this.$store.dispatch('lesson/setWordAlreadyTranslated', {})
 
       //chmar api que vai retornar traducão da palavra
-      this.wordPhraseTranslations = ['Linguagem', 'Lingua', 'Idioma']
+      this.$store.dispatch('lesson/setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
     },
 
     async translatePhrase(phrase) {
-      this.wordTapped = {}
-      this.phraseSelected = phrase
+      this.$store.dispatch('lesson/setWordTapped', {})
+      this.$store.dispatch('lesson/setPhraseSelected', phrase)
 
       const phraseTranslatedAlready = this.studyItems.filter(
         (item) => item.wordPhrase.toLowerCase() === phrase.toLowerCase()
       )
 
       if (phraseTranslatedAlready.length > 0) {
-        this.wordPhraseTranslations = []
-        this.wordPhraseTranslations.push(phraseTranslatedAlready.pop().translation)
+        this.$store.dispatch('lesson/setWordPhraseTranslations', [])
+        this.$store.dispatch('lesson/setWordPhraseTranslations', [
+          phraseTranslatedAlready.pop().translation,
+        ])
         return
       }
-      //chamar api que vai retornar traducão da palavra
-      this.wordPhraseTranslations = ['A traducão da frase']
+      //chamar api que vai retornar traducão da frase
+      this.$store.dispatch('lesson/setWordPhraseTranslations', ['A traducão da frase'])
     },
 
     async updateWordStatusToKnown() {
       // se é status é NEW não existe palara no armazenada ainda
       if (this.wordTapped.status === wordStatusType.NEW) {
-        this.wordTapped.status = wordStatusType.KNOWN
+        this.$store.dispatch('lesson/setWordTapped', {
+          text: this.wordTapped.text,
+          status: wordStatusType.KNOWN,
+        })
         await axios.post(`${process.env.API_URL}/word`, {
           words: [this.wordTapped],
         })
@@ -380,7 +369,10 @@ export default {
         })
         return
       }
-      this.wordTapped.status = wordStatusType.KNOWN
+      this.$store.dispatch('lesson/setWordTapped', {
+        text: this.wordTapped.text,
+        status: wordStatusType.KNOWN,
+      })
 
       await axios.put(`${process.env.API_URL}/word`, {
         word: this.wordTapped,
@@ -407,9 +399,11 @@ export default {
 
     showOtherTranslations() {
       //chamar api de traducao.
-      this.wordPhraseTranslations.push('Another Translation')
-      this.wordPhraseTranslations.push('Mais uma Translation')
-      //this.wordAlreadyTranslated = ''
+      this.$store.dispatch('lesson/setWordPhraseTranslations', [
+        ...this.wordPhraseTranslations,
+        'Another Translation',
+        'Mais uma Translation',
+      ])
     },
 
     setSelectionRangeStart($event) {

@@ -21,6 +21,7 @@
 <script>
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -28,22 +29,15 @@ export default {
       type: String,
       required: true,
     },
-    wordTapped: {
-      type: Object,
-      required: true,
-    },
-    phraseSelected: {
-      type: String,
-      required: true,
-    },
-    sectionTokens: {
-      type: Array,
-      required: true,
-    },
-    wordAlreadyTranslated: {
-      type: [Object],
-      required: true,
-    },
+  },
+  computed: {
+    ...mapGetters({
+      wordTapped: 'lesson/getWordTapped',
+      wordPhraseTranslations: 'lesson/getWordPhraseTranslations',
+      phraseSelected: 'lesson/getPhraseSelected',
+      sectionTokens: 'lesson/getSectionTokens',
+      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+    }),
   },
 
   methods: {
@@ -77,7 +71,10 @@ export default {
     },
 
     async saveWord() {
-      this.wordTapped.status = wordStatusType.LEARNING
+      this.$store.dispatch('lesson/setWordTapped', {
+        text: this.wordTapped.text,
+        status: wordStatusType.LEARNING,
+      })
       await axios.post(`${process.env.API_URL}/word`, {
         words: [this.wordTapped],
       })
@@ -100,12 +97,15 @@ export default {
         return
       }
 
-      console.log('chamou put')
+      this.$store.dispatch('lesson/setWordTapped', {
+        text: this.wordTapped.text,
+        status: wordStatusType.LEARNING,
+      })
 
-      this.wordTapped.status = wordStatusType.LEARNING
       await axios.put(`${process.env.API_URL}/word`, {
         word: this.wordTapped,
       })
+
       this.$eventBus.$emit('wordStatusUpdated', {
         word: this.wordTapped.text,
         newStatus: wordStatusType.LEARNING,

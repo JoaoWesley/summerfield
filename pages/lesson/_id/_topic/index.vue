@@ -1,6 +1,5 @@
 <template>
-  <v-container fluid class="grey lighten-5">    
-
+  <v-container fluid class="grey lighten-5">
     <v-row class="mb-6" no-gutters>
       <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
@@ -11,9 +10,9 @@
               tile
               style="margin-right: 4px; margin-bottom: 4px;"
               elevation="3"
-              @click="openTopic(topic)"              
               shaped
               height="350"
+              @click="openTopic(topic)"
               @contextmenu="show($event, topic)"
             >
               <v-img height="200" width="200" :src="topic.img" />
@@ -44,11 +43,10 @@ import axios from 'axios'
 
 export default {
   async asyncData({ params }) {
-    if (process.server) {            
-      const topics = (
-        await axios.get(`${process.env.API_URL}/lesson/${params.id}/lesson-topics/`)
-      ).data
-      
+    if (process.server) {
+      const topics = (await axios.get(`${process.env.API_URL}/lesson/${params.id}/lesson-topics/`))
+        .data
+
       const imgs = []
       imgs.push(
         'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
@@ -110,7 +108,6 @@ export default {
       // if (menuItem.id === 'edit') {
       //   this.$eventBus.$emit('editLesson', this.lessonClicked)
       // }
-
       // if (menuItem.id === 'delete') {
       //   await axios.delete(`${process.env.API_URL}/lesson/${this.lessonClicked._id}`)
       //   const index = this.lessons.indexOf(this.lessonClicked)
@@ -118,7 +115,7 @@ export default {
       // }
     },
 
-    getTopicText(topic) {      
+    getTopicText(topic) {
       return 'asas'
       //return topic.text.length < 30 ? topic.text : topic.text.substr(0, 27) + '...'
     },

@@ -103,7 +103,7 @@
           6 - Palavras em amarelo são palavras sendo estudadas.<br /><br />
         </v-alert>
 
-        <div style="height: 60%;" v-if="wordTapped.text || phraseSelected">
+        <div v-if="wordTapped.text || phraseSelected" style="height: 60%;">
           <v-row style="height: 10%; margin-bottom: 20px;">
             <v-col cols="2">
               <v-btn icon>
@@ -139,7 +139,7 @@
         </div>
 
         <br />
-        <div style="height: 40%;" v-if="wordTapped.text || phraseSelected">
+        <div v-if="wordTapped.text || phraseSelected" style="height: 40%;">
           <v-row class="text-center">
             <v-col cols="12">
               <v-chip
@@ -198,9 +198,13 @@ export default {
   },
 
   async asyncData({ params }) {
-    if (process.server) {      
-      const lesson = (await axios.get(`${process.env.API_URL}/lesson/${params.id}/lesson-topics?&topicIndex=${params.topicId}`)).data.topics
-      let sections = []      
+    if (process.server) {
+      const lesson = (
+        await axios.get(
+          `${process.env.API_URL}/lesson/${params.id}/lesson-topics?&topicIndex=${params.topicId}`
+        )
+      ).data.topics
+      let sections = []
 
       const getSections = (sections, tokens) => {
         if (tokens.length === 0) return
@@ -271,12 +275,12 @@ export default {
 
   methods: {
     redirectToLessons() {
-      location.href=`${process.env.BASE_URL}/lesson`
+      location.href = `${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsToKnown(end, $forward) {      
+    async updateNewWordsToKnown(end, $forward) {
       //se tá clicando na seta para voltar não faz nada
-      if($forward === 0) {
-        return;
+      if ($forward === 0) {
+        return
       }
 
       if (
@@ -289,7 +293,7 @@ export default {
         ))
       ) {
         const prevButton = document.querySelector('.v-window__prev button')
-        prevButton.click()        
+        prevButton.click()
         return
       }
 
@@ -325,7 +329,7 @@ export default {
       }
     },
 
-    async translateWord(token, sectionTokens) {      
+    async translateWord(token, sectionTokens) {
       this.phraseSelected = ''
       this.wordTapped = token
       this.sectionTokens = sectionTokens
@@ -334,8 +338,8 @@ export default {
         (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase()
       )
 
-      if (wordTranslatedAlready.length > 0) {        
-        this.wordAlreadyTranslated = wordTranslatedAlready.pop()        
+      if (wordTranslatedAlready.length > 0) {
+        this.wordAlreadyTranslated = wordTranslatedAlready.pop()
         this.wordPhraseTranslations = [this.wordAlreadyTranslated.translation]
         return
       }

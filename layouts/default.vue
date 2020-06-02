@@ -138,7 +138,10 @@
       </v-card>
     </v-dialog>
 
-    <DialogImportEbook :show-dialog-import-ebook="showDialogImportEbook" @closeModal="showDialogImportEbook = false"/>    
+    <DialogImportEbook
+      :show-dialog-import-ebook="showDialogImportEbook"
+      @closeModal="showDialogImportEbook = false"
+    />
   </v-app>
 </template>
 
@@ -148,7 +151,7 @@ import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
 
 export default {
   components: {
-    DialogImportEbook,    
+    DialogImportEbook,
   },
 
   data: () => ({
@@ -159,7 +162,7 @@ export default {
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
-      { icon: 'fas fa-file upload', text: 'Importar ebook', id:'importEbook' },
+      { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
       { icon: 'mdi-history', text: 'Frequently contacted' },
       { icon: 'mdi-content-copy', text: 'Duplicates' },
       {
@@ -206,15 +209,14 @@ export default {
 
   methods: {
     handleMenuItems(item) {
-      switch(item.id) {
+      switch (item.id) {
         case 'lesson':
-          location.href=`${process.env.BASE_URL}/lesson/`
-          break;
-        case 'importEbook': 
-          this.showDialogImportEbook = true;          
-          break;
-
-      }    
+          location.href = `${process.env.BASE_URL}/lesson/`
+          break
+        case 'importEbook':
+          this.showDialogImportEbook = true
+          break
+      }
     },
     async saveLesson() {
       if (!this.lesson.title || !this.lesson.text) {
