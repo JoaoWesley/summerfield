@@ -30,23 +30,7 @@ export default {
       await store.dispatch('lesson/fetchStudyItems')
       await store.dispatch('fetchStatusReport')
     }
-  },
-  created() {
-    if (process.client) {
-      this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
-        this.$store.dispatch('lesson/addStudyItem', {
-          wordPhrase: message.wordPhrase,
-          translation: message.wordPhraseTranslation,
-        })
-        this.$store.dispatch('lesson/setWordPhraseTranslations', [message.wordPhraseTranslation])
-      })
-
-      //update all same words on section with the same status
-      this.$eventBus.$on('wordStatusUpdated', (message) => {
-        this.$store.dispatch('lesson/updateWordStatusInSection', message)
-      })
-    }
-  },
+  },  
 }
 </script>
 

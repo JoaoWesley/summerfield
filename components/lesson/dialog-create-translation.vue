@@ -56,18 +56,13 @@ import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters } from 'vuex'
 
-export default {
-  data: function () {
-    return {
-      wordPhraseTranslation: null,
-    }
-  },
+export default {  
   computed: {
     ...mapGetters({
       wordTapped: 'lesson/getWordTapped',
       phraseSelected: 'lesson/getPhraseSelected',
       sectionTokens: 'lesson/getSectionTokens',
-      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+      wordHasTranslation: 'lesson/getWordHasTranslation',
       studyItems: 'lesson/getStudyItems',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
     }),
@@ -78,18 +73,16 @@ export default {
 
       return this.phraseSelected
     },
-  },
-  watch: {
-    wordTapped: function () {
-      this.wordPhraseTranslation = null
-      const wordAlreadyTranslated = this.studyItems.filter(
-        (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
-      )
-      if (wordAlreadyTranslated.length > 0) {
-        this.wordPhraseTranslation = wordAlreadyTranslated.pop().translation
-      }
-    },
-
+     wordPhraseTranslation: {
+       get() {
+         return this.wordHasTranslation.translation
+       },
+       set(value) {         
+        this.$store.dispatch('lesson/setWordHasTranslation', { translation: value })
+       },
+     }
+  },  
+  watch: {   
     phraseSelected: function () {
       const phraseAlreadyTranslated = this.studyItems.filter(
         (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
@@ -98,15 +91,7 @@ export default {
         this.wordPhraseTranslation = phraseAlreadyTranslated.pop().translation
       }
     },
-  },
-
-  created() {
-    if (process.client) {
-      this.$eventBus.$on('wordSavedForStudyEvent', (message) => {
-        this.wordPhraseTranslation = message.wordPhraseTranslation
-      })
-    }
-  },
+  },  
 
   methods: {
     async closeModal() {
@@ -119,18 +104,20 @@ export default {
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
-      )
+      )      
 
-      if (this.wordAlreadyTranslated) {
+      if (this.wordHasTranslation) {
         this.updateTranslation(study)
         return
       }
 
       await axios.post(`${process.env.API_URL}/study`, study)
-      this.$eventBus.$emit('wordSavedForStudyEvent', {
+      this.$eventBus.$emit('showSavedForStudySnackbarEvent')      
+      this.$store.dispatch('lesson/addStudyItem', {
         wordPhrase: this.wordPhrase,
-        wordPhraseTranslation: this.wordPhraseTranslation,
+        translation: this.wordPhraseTranslation,
       })
+      this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
 
       if (this.wordTapped.status != wordStatusType.LEARNING) {
         await this.updateWordStatus()
@@ -140,11 +127,12 @@ export default {
     },
 
     async updateTranslation(study) {
-      await axios.put(`${process.env.API_URL}/study`, study)
-      this.$eventBus.$emit('wordSavedForStudyEvent', {
+      await axios.put(`${process.env.API_URL}/study`, study)      
+      this.$store.dispatch('lesson/addStudyItem', {
         wordPhrase: this.wordTapped.text,
-        wordPhraseTranslation: this.wordPhraseTranslation,
+        translation: this.wordPhraseTranslation,
       })
+      this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
     },
 
     async updateWordStatus() {

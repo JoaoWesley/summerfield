@@ -38,7 +38,7 @@
         </div>
 
         <v-row class="text-center">
-          <v-col v-if="wordAlreadyTranslated && wordPhraseTranslations.length == 1" cols="12">
+          <v-col v-if="wordHasTranslation && wordPhraseTranslations.length == 1" cols="12">
             <v-btn rounded color="primary" dark @click="showOtherTranslations">
               Mostrar outras traduções
             </v-btn>
@@ -93,7 +93,7 @@ export default {
       wordTapped: 'lesson/getWordTapped',
       wordPhraseTranslations: 'lesson/getWordPhraseTranslations',
       phraseSelected: 'lesson/getPhraseSelected',
-      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+      wordHasTranslation: 'lesson/getWordHasTranslation',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
     }),
   },
@@ -108,10 +108,8 @@ export default {
         await axios.post(`${process.env.API_URL}/word`, {
           words: [this.wordTapped],
         })
-        this.$eventBus.$emit('wordStatusUpdated', {
-          word: this.wordTapped.text,
-          newStatus: wordStatusType.KNOWN,
-        })
+        
+        this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)
         return
       }
       this.$store.dispatch('lesson/setWordTapped', {
@@ -122,10 +120,7 @@ export default {
       await axios.put(`${process.env.API_URL}/word`, {
         word: this.wordTapped,
       })
-      this.$eventBus.$emit('wordStatusUpdated', {
-        word: this.wordTapped.text,
-        newStatus: wordStatusType.KNOWN,
-      })
+      this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)
     },
 
     showOtherTranslations() {

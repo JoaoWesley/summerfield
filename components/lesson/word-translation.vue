@@ -36,7 +36,7 @@ export default {
       wordPhraseTranslations: 'lesson/getWordPhraseTranslations',
       phraseSelected: 'lesson/getPhraseSelected',
       sectionTokens: 'lesson/getSectionTokens',
-      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+      wordHasTranslation: 'lesson/getWordHasTranslation',
     }),
   },
 
@@ -47,16 +47,18 @@ export default {
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
-      )
+      )      
 
-      if (this.wordAlreadyTranslated && this.wordAlreadyTranslated.translation) {
+      if (this.wordHasTranslation && this.wordHasTranslation.translation) {
         this.updateTranslation(study)
       } else {
-        await axios.post(`${process.env.API_URL}/study`, study)
-        this.$eventBus.$emit('wordSavedForStudyEvent', {
+        await axios.post(`${process.env.API_URL}/study`, study)        
+        this.$eventBus.$emit('showSavedForStudySnackbarEvent')      
+        this.$store.dispatch('lesson/addStudyItem', {
           wordPhrase: this.wordTapped.text,
-          wordPhraseTranslation: this.wordPhraseTranslation,
+          translation: this.wordPhraseTranslation,
         })
+        this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
       }
 
       if (
@@ -78,18 +80,16 @@ export default {
       await axios.post(`${process.env.API_URL}/word`, {
         words: [this.wordTapped],
       })
-      this.$eventBus.$emit('wordStatusUpdated', {
-        word: this.wordTapped.text,
-        newStatus: wordStatusType.LEARNING,
-      })
+      this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)      
     },
 
     async updateTranslation(study) {
-      await axios.put(`${process.env.API_URL}/study`, study)
-      this.$eventBus.$emit('wordSavedForStudyEvent', {
+      await axios.put(`${process.env.API_URL}/study`, study)      
+      this.$store.dispatch('lesson/addStudyItem', {
         wordPhrase: this.wordTapped.text,
-        wordPhraseTranslation: this.wordPhraseTranslation,
+        translation: this.wordPhraseTranslation,
       })
+      this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
     },
 
     async updateWordStatus() {
@@ -106,10 +106,7 @@ export default {
         word: this.wordTapped,
       })
 
-      this.$eventBus.$emit('wordStatusUpdated', {
-        word: this.wordTapped.text,
-        newStatus: wordStatusType.LEARNING,
-      })
+      this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)      
     },
   },
 }

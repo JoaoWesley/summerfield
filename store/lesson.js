@@ -8,7 +8,7 @@ export const state = () => ({
   wordPhraseTranslations: [],
   phraseSelected: '',
   modalDialogCreateTranslation: false,
-  wordAlreadyTranslated: {},
+  wordHasTranslation: {},
   window: 0,
 })
 
@@ -50,8 +50,8 @@ export const actions = {
   setPhraseSelected({ commit }, phraseSelected) {
     commit('setPhraseSelected', phraseSelected)
   },
-  setWordAlreadyTranslated({ commit }, wordAlreadyTranslated) {
-    commit('setWordAlreadyTranslated', wordAlreadyTranslated)
+  setWordHasTranslation({ commit }, wordHasTranslation) {
+    commit('setWordHasTranslation', wordHasTranslation)
   },
   setWindow({ commit }, window) {
     commit('setWindow', window)
@@ -71,10 +71,10 @@ export const mutations = {
   setSectionTokens(state, sectionTokens) {
     state.sectionTokens = sectionTokens
   },
-  updateWordStatusInSection(state, message) {
+  updateWordStatusInSection(state, word) {
     state.sectionTokens.forEach((token) => {
-      if (token.text.toLowerCase() === message.word.toLowerCase()) {
-        token.status = message.newStatus
+      if (token.text.toLowerCase() === word.text.toLowerCase()) {
+        token.status = word.status
       }
     })
   },
@@ -90,8 +90,8 @@ export const mutations = {
   setPhraseSelected(state, phraseSelected) {
     state.phraseSelected = phraseSelected
   },
-  setWordAlreadyTranslated(state, wordAlreadyTranslated) {
-    state.wordAlreadyTranslated = wordAlreadyTranslated
+  setWordHasTranslation(state, wordHasTranslation) {
+    state.wordHasTranslation = wordHasTranslation
   },
   setWindow(state, window) {
     state.window = window
@@ -120,8 +120,8 @@ export const getters = {
   getPhraseSelected(state) {
     return state.phraseSelected
   },
-  getWordAlreadyTranslated(state) {
-    return state.wordAlreadyTranslated
+  getWordHasTranslation(state) {
+    return state.wordHasTranslation
   },
   getWindow(state) {
     return state.window

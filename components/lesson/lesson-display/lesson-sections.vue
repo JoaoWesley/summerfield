@@ -104,7 +104,7 @@ export default {
       lesson: 'lesson/getLesson',
       studyItems: 'lesson/getStudyItems',
       sectionTokens: 'lesson/getSectionTokens',
-      wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
+      wordHasTranslation: 'lesson/getWordHasTranslation',
     }),
     wordsKnownCount() {
       return this.$store.getters['getStatusReport'].known.count
@@ -197,14 +197,16 @@ export default {
       )
 
       if (wordTranslatedAlready.length > 0) {
-        this.$store.dispatch('lesson/setWordAlreadyTranslated', wordTranslatedAlready.pop())
+        this.$store.dispatch('lesson/setWordHasTranslation', 
+          { translation: wordTranslatedAlready.pop().translation }
+        )
         this.$store.dispatch('lesson/setWordPhraseTranslations', [
-          this.wordAlreadyTranslated.translation,
+          this.wordHasTranslation.translation,
         ])
         return
       }
 
-      this.$store.dispatch('lesson/setWordAlreadyTranslated', {})
+      this.$store.dispatch('lesson/setWordHasTranslation', {translation: ''})
 
       //chmar api que vai retornar traducão da palavra
       this.$store.dispatch('lesson/setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
@@ -244,8 +246,7 @@ export default {
         (item) => item.wordPhrase.toLowerCase() === phrase.toLowerCase()
       )
 
-      if (phraseTranslatedAlready.length > 0) {
-        this.$store.dispatch('lesson/setWordPhraseTranslations', [])
+      if (phraseTranslatedAlready.length > 0) {        
         this.$store.dispatch('lesson/setWordPhraseTranslations', [
           phraseTranslatedAlready.pop().translation,
         ])

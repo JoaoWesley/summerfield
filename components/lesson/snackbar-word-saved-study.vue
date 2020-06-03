@@ -16,7 +16,7 @@ export default {
   }),
   created() {
     if (process.client) {
-      this.$eventBus.$on('wordSavedForStudyEvent', () => {
+      this.$eventBus.$on('showSavedForStudySnackbarEvent', () => {
         this.snackbar = true
       })
     }
