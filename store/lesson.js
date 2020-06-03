@@ -7,8 +7,9 @@ export const state = () => ({
   wordTapped: {},
   wordPhraseTranslations: [],
   phraseSelected: '',
-  // modalDialogCreateTranslation: false,
+  modalDialogCreateTranslation: false,
   wordAlreadyTranslated: {},
+  window: 0,
 })
 
 export const actions = {
@@ -52,6 +53,12 @@ export const actions = {
   setWordAlreadyTranslated({ commit }, wordAlreadyTranslated) {
     commit('setWordAlreadyTranslated', wordAlreadyTranslated)
   },
+  setWindow({ commit }, window) {
+    commit('setWindow', window)
+  },
+  setModalDialogCreateTranslation({ commit }, modalDialogCreateTranslation) {
+    commit('setModalDialogCreateTranslation', modalDialogCreateTranslation)
+  },
 }
 
 export const mutations = {
@@ -73,7 +80,6 @@ export const mutations = {
   },
   addStudyItem(state, studyItem) {
     state.studyItems.push(studyItem)
-    //state.sectionTokens = sectionTokens;
   },
   setWordTapped(state, wordTapped) {
     state.wordTapped = wordTapped
@@ -86,6 +92,12 @@ export const mutations = {
   },
   setWordAlreadyTranslated(state, wordAlreadyTranslated) {
     state.wordAlreadyTranslated = wordAlreadyTranslated
+  },
+  setWindow(state, window) {
+    state.window = window
+  },
+  setModalDialogCreateTranslation(state, modalDialogCreateTranslation) {
+    state.modalDialogCreateTranslation = modalDialogCreateTranslation
   },
 }
 
@@ -110,5 +122,11 @@ export const getters = {
   },
   getWordAlreadyTranslated(state) {
     return state.wordAlreadyTranslated
+  },
+  getWindow(state) {
+    return state.window
+  },
+  getModalDialogCreateTranslation(state) {
+    return state.modalDialogCreateTranslation
   },
 }

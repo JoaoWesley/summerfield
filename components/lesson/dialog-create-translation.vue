@@ -57,13 +57,6 @@ import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters } from 'vuex'
 
 export default {
-  props: {
-    modalDialogCreateTranslation: {
-      type: Boolean,
-      required: true,
-    },
-  },
-
   data: function () {
     return {
       wordPhraseTranslation: null,
@@ -76,6 +69,7 @@ export default {
       sectionTokens: 'lesson/getSectionTokens',
       wordAlreadyTranslated: 'lesson/getWordAlreadyTranslated',
       studyItems: 'lesson/getStudyItems',
+      modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
     }),
     wordPhrase: function () {
       if (this.wordTapped && this.wordTapped.text) {
@@ -116,7 +110,7 @@ export default {
 
   methods: {
     async closeModal() {
-      this.$emit('closeCreateTranslationModal')
+      this.$store.dispatch('lesson/setModalDialogCreateTranslation', false)
     },
 
     async saveWordToStudy() {
