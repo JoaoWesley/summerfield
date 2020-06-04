@@ -56,7 +56,7 @@
               text-color="white"
               :input-value="true"
               filter
-              @click="updateWordStatusToKnown"
+              @click="updateWordTappedStatusToKnown"
             >
               Já sei essa palavra
             </v-chip>
@@ -98,29 +98,20 @@ export default {
     }),
   },
   methods: {
-    async updateWordStatusToKnown() {
-      // se é status é NEW não existe palara no armazenada ainda
+    async updateWordTappedStatusToKnown() {
+      // se status é NEW não existe palara armazenada ainda então manda POST
       if (this.wordTapped.status === wordStatusType.NEW) {
-        this.$store.dispatch('lesson/setWordTapped', {
-          text: this.wordTapped.text,
-          status: wordStatusType.KNOWN,
-        })
         await axios.post(`${process.env.API_URL}/word`, {
           words: [this.wordTapped],
         })
-        
-        this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)
-        return
+      } else {
+        // Palvra já existe atualiza mandando PUT
+        await axios.put(`${process.env.API_URL}/word`, {
+          word: {text: this.wordTapped.text, status: wordStatusType.KNOWN}
+        })
       }
-      this.$store.dispatch('lesson/setWordTapped', {
-        text: this.wordTapped.text,
-        status: wordStatusType.KNOWN,
-      })
-
-      await axios.put(`${process.env.API_URL}/word`, {
-        word: this.wordTapped,
-      })
-      this.$store.dispatch('lesson/updateWordStatusInSection', this.wordTapped)
+      
+      this.$store.dispatch('lesson/updateWordStatusInSection', {text: this.wordTapped.text, status: wordStatusType.KNOWN})
     },
 
     showOtherTranslations() {
