@@ -40,7 +40,7 @@
         <v-btn
           text
           @click="
-            saveWordToStudy()
+            saveWordPhraseToStudy()
             closeModal()
           "
         >
@@ -57,6 +57,9 @@ import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters } from 'vuex'
 
 export default {  
+  data: () => ({
+    wordPhraseTranslationProxy: null
+  }), 
   computed: {
     ...mapGetters({
       wordTapped: 'lesson/getWordTapped',
@@ -73,14 +76,14 @@ export default {
 
       return this.phraseSelected
     },
-     wordPhraseTranslation: {
-       get() {
-         return this.wordHasTranslation.translation
-       },
-       set(value) {         
-        this.$store.dispatch('lesson/setWordHasTranslation', { translation: value })
-       },
-     }
+    wordPhraseTranslation: {
+      get() {
+        return (this.wordPhraseTranslationProxy === null) ? this.wordHasTranslation.translation :this.wordPhraseTranslationProxy
+      },
+      set(value) {
+        this.wordPhraseTranslationProxy = value
+      },
+    }
   },  
   watch: {   
     phraseSelected: function () {
@@ -96,61 +99,28 @@ export default {
   methods: {
     async closeModal() {
       this.$store.dispatch('lesson/setModalDialogCreateTranslation', false)
+      this.wordPhraseTranslation = null      
     },
 
-    async saveWordToStudy() {
+    async saveWordPhraseToStudy() {          
       const study = this.$studyService.buildStudyObject(
         this.phraseSelected,
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
-      )      
-
-      if (this.wordHasTranslation) {
-        this.updateTranslation(study)
+      )         
+      if (this.wordHasTranslation.translation) {         
+        await this.$store.dispatch('lesson/updateStudyItemTranslation', study)
         return
       }
 
-      await axios.post(`${process.env.API_URL}/study`, study)
-      this.$eventBus.$emit('showSavedForStudySnackbarEvent')      
-      this.$store.dispatch('lesson/addStudyItem', {
-        wordPhrase: this.wordPhrase,
-        translation: this.wordPhraseTranslation,
-      })
-      this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
+      await this.$store.dispatch('lesson/createStudyItem', study)      
 
-      if (this.wordTapped.status != wordStatusType.LEARNING) {
-        await this.updateWordStatus()
-      }
-
+      if (this.wordTapped.status != wordStatusType.LEARNING) {        
+        await this.$store.dispatch('lesson/updateWordTappedStatusToLearning')
+      }      
       this.closeModal()
-    },
-
-    async updateTranslation(study) {
-      await axios.put(`${process.env.API_URL}/study`, study)      
-      this.$store.dispatch('lesson/addStudyItem', {
-        wordPhrase: this.wordTapped.text,
-        translation: this.wordPhraseTranslation,
-      })
-      this.$store.dispatch('lesson/setWordPhraseTranslations', [this.wordPhraseTranslation])
-    },
-
-    async updateWordStatus() {
-      if (!this.wordTapped || !this.wordTapped.text) {
-        return
-      }
-
-      this.wordTapped.status = wordStatusType.LEARNING
-      const wordObject = {
-        words: [
-          {
-            text: this.wordTapped.text,
-            status: wordStatusType.LEARNING,
-          },
-        ],
-      }
-      await axios.post(`${process.env.API_URL}/word`, wordObject)
-    },
+    },   
   },
 }
 </script>

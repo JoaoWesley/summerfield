@@ -189,7 +189,7 @@ export default {
 
     async translateWord(token, sectionTokens) {
       this.$store.dispatch('lesson/setPhraseSelected', '')
-      this.$store.dispatch('lesson/setWordTapped', token)
+      this.$store.dispatch('lesson/setWordTapped', token)    
       this.$store.dispatch('lesson/setSectionTokens', sectionTokens)
 
       const wordTranslatedAlready = this.studyItems.filter(

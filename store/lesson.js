@@ -1,4 +1,5 @@
 import axios from 'axios'
+import wordStatusType from '@/commons/wordStatusType'
 
 export const state = () => ({
   lesson: {},
@@ -59,6 +60,35 @@ export const actions = {
   setModalDialogCreateTranslation({ commit }, modalDialogCreateTranslation) {
     commit('setModalDialogCreateTranslation', modalDialogCreateTranslation)
   },
+  // 
+  async updateStudyItemTranslation( { dispatch }, study) {
+    await axios.put(`${process.env.API_URL}/study`, study)
+    dispatch('addStudyItem', study)     
+    dispatch('setWordPhraseTranslations', [study.translation])    
+    dispatch('updateWordTappedStatusToLearning')
+  },
+  async createStudyItem({ dispatch }, study) {        
+    await axios.post(`${process.env.API_URL}/study`, study)
+    this.$eventBus.$emit('showSavedForStudySnackbarEvent')    
+    dispatch('addStudyItem', study)
+    dispatch('setWordPhraseTranslations', [study.translation])
+    dispatch('updateWordTappedStatusToLearning')
+  },
+  async updateWordTappedStatusToLearning({ dispatch, state }) {    
+    //If word tapped is new create it 
+    if(state.wordTapped.status === wordStatusType.NEW) {      
+      dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING })
+      await axios.post(`${process.env.API_URL}/word`, {
+        words: [state.wordTapped],
+      })
+      return;
+    }    
+    //If word tapped exists update it status
+    dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING }) 
+    await axios.put(`${process.env.API_URL}/word`, {
+      word:state.wordTapped,
+    })
+  }
 }
 
 export const mutations = {
@@ -78,11 +108,12 @@ export const mutations = {
       }
     })
   },
+  //Esse código só funciona porque adiciona no final do array aí quando filtra do outro lado pega a ultima tradução adicionada    
   addStudyItem(state, studyItem) {
     state.studyItems.push(studyItem)
   },
   setWordTapped(state, wordTapped) {
-    state.wordTapped = wordTapped
+    state.wordTapped = wordTapped    
   },
   setWordPhraseTranslations(state, wordPhraseTranslation) {
     state.wordPhraseTranslations = wordPhraseTranslation
