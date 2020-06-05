@@ -65,7 +65,7 @@ export default {
       wordTapped: 'lesson/getWordTapped',
       phraseSelected: 'lesson/getPhraseSelected',
       sectionTokens: 'lesson/getSectionTokens',
-      wordHasTranslation: 'lesson/getWordHasTranslation',
+      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       studyItems: 'lesson/getStudyItems',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
     }),
@@ -78,7 +78,7 @@ export default {
     },
     wordPhraseTranslation: {
       get() {
-        return (this.wordPhraseTranslationProxy === null) ? this.wordHasTranslation.translation :this.wordPhraseTranslationProxy
+        return (this.wordPhraseTranslationProxy === null) ? this.wordPhraseHasTranslation.translation :this.wordPhraseTranslationProxy
       },
       set(value) {
         this.wordPhraseTranslationProxy = value
@@ -102,25 +102,21 @@ export default {
       this.wordPhraseTranslation = null      
     },
 
-    async saveWordPhraseToStudy() {          
+    async saveWordPhraseToStudy() {
       const study = this.$studyService.buildStudyObject(
         this.phraseSelected,
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
       )         
-      if (this.wordHasTranslation.translation) {         
+      if (this.wordPhraseHasTranslation.translation) {
         await this.$store.dispatch('lesson/updateStudyItemTranslation', study)
         return
       }
 
-      await this.$store.dispatch('lesson/createStudyItem', study)      
-
-      if (this.wordTapped.status != wordStatusType.LEARNING) {        
-        await this.$store.dispatch('lesson/updateWordTappedStatusToLearning')
-      }      
+      await this.$store.dispatch('lesson/createStudyItem', study)
       this.closeModal()
-    },   
-  },
+    }
+  }
 }
 </script>

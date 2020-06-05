@@ -9,7 +9,7 @@ export const state = () => ({
   wordPhraseTranslations: [],
   phraseSelected: '',
   modalDialogCreateTranslation: false,
-  wordHasTranslation: {},
+  wordPhraseHasTranslation: {},
   window: 0,
 })
 
@@ -51,8 +51,8 @@ export const actions = {
   setPhraseSelected({ commit }, phraseSelected) {
     commit('setPhraseSelected', phraseSelected)
   },
-  setWordHasTranslation({ commit }, wordHasTranslation) {
-    commit('setWordHasTranslation', wordHasTranslation)
+  setWordPhraseHasTranslation({ commit }, wordPhraseHasTranslation) {
+    commit('setWordPhraseHasTranslation', wordPhraseHasTranslation)
   },
   setWindow({ commit }, window) {
     commit('setWindow', window)
@@ -66,13 +66,15 @@ export const actions = {
     dispatch('addStudyItem', study)     
     dispatch('setWordPhraseTranslations', [study.translation])    
     dispatch('updateWordTappedStatusToLearning')
+    dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
-  async createStudyItem({ dispatch }, study) {        
+  async createStudyItem({ dispatch, state }, study) {        
     await axios.post(`${process.env.API_URL}/study`, study)
     this.$eventBus.$emit('showSavedForStudySnackbarEvent')    
     dispatch('addStudyItem', study)
     dispatch('setWordPhraseTranslations', [study.translation])
     dispatch('updateWordTappedStatusToLearning')
+    dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
   async updateWordTappedStatusToLearning({ dispatch, state }) {    
     //If word tapped is new create it 
@@ -88,6 +90,39 @@ export const actions = {
     await axios.put(`${process.env.API_URL}/word`, {
       word:state.wordTapped,
     })
+  },
+  async translateWordTapped({ dispatch, state }) {
+    const wordTranslatedAlready = state.studyItems.filter(
+      (item) => item.wordPhrase.toLowerCase() === state.wordTapped.text.toLowerCase()
+    )
+
+    if (wordTranslatedAlready.length > 0) {
+      dispatch('setWordPhraseHasTranslation', 
+        { translation: wordTranslatedAlready.pop().translation }
+      )
+      dispatch('setWordPhraseTranslations', [
+        state.wordPhraseHasTranslation.translation,
+      ])
+      return
+    }
+
+    dispatch('setWordPhraseHasTranslation', {translation: ''})
+    //chmar api que vai retornar traducão da palavra
+    dispatch('setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
+  },
+  async translatePhraseSelected( {dispatch, state}) {
+    const phraseTranslatedAlready = state.studyItems.filter(
+      (item) => item.wordPhrase.toLowerCase() === state.phraseSelected.toLowerCase()
+    )
+
+    if (phraseTranslatedAlready.length > 0) {        
+      dispatch('setWordPhraseTranslations', [
+        phraseTranslatedAlready.pop().translation,
+      ])
+      return
+    }
+    //chamar api que vai retornar traducão da frase
+    dispatch('setWordPhraseTranslations', ['A traducão da frase'])
   }
 }
 
@@ -102,11 +137,14 @@ export const mutations = {
     state.sectionTokens = sectionTokens
   },
   updateWordStatusInSection(state, word) {
-    state.sectionTokens.forEach((token) => {
-      if (token.text.toLowerCase() === word.text.toLowerCase()) {
-        token.status = word.status
-      }
-    })
+    //Atualiza status somente de palavras
+    if(word.text) {
+      state.sectionTokens.forEach((token) => {
+        if (token.text.toLowerCase() === word.text.toLowerCase()) {
+          token.status = word.status
+        }
+      })      
+    }
   },
   //Esse código só funciona porque adiciona no final do array aí quando filtra do outro lado pega a ultima tradução adicionada    
   addStudyItem(state, studyItem) {
@@ -121,8 +159,8 @@ export const mutations = {
   setPhraseSelected(state, phraseSelected) {
     state.phraseSelected = phraseSelected
   },
-  setWordHasTranslation(state, wordHasTranslation) {
-    state.wordHasTranslation = wordHasTranslation
+  setWordPhraseHasTranslation(state, wordPhraseHasTranslation) {
+    state.wordPhraseHasTranslation = wordPhraseHasTranslation
   },
   setWindow(state, window) {
     state.window = window
@@ -151,8 +189,8 @@ export const getters = {
   getPhraseSelected(state) {
     return state.phraseSelected
   },
-  getWordHasTranslation(state) {
-    return state.wordHasTranslation
+  getWordPhraseHasTranslation(state) {
+    return state.wordPhraseHasTranslation
   },
   getWindow(state) {
     return state.window

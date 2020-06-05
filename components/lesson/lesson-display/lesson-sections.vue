@@ -104,7 +104,7 @@ export default {
       lesson: 'lesson/getLesson',
       studyItems: 'lesson/getStudyItems',
       sectionTokens: 'lesson/getSectionTokens',
-      wordHasTranslation: 'lesson/getWordHasTranslation',
+      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
     }),
     wordsKnownCount() {
       return this.$store.getters['getStatusReport'].known.count
@@ -187,29 +187,17 @@ export default {
       }
     },
 
-    async translateWord(token, sectionTokens) {
+    async translateWord(token, sectionTokens) {      
       this.$store.dispatch('lesson/setPhraseSelected', '')
       this.$store.dispatch('lesson/setWordTapped', token)    
       this.$store.dispatch('lesson/setSectionTokens', sectionTokens)
+      await this.$store.dispatch('lesson/translateWordTapped')     
+    },
 
-      const wordTranslatedAlready = this.studyItems.filter(
-        (item) => item.wordPhrase.toLowerCase() === token.text.toLowerCase()
-      )
-
-      if (wordTranslatedAlready.length > 0) {
-        this.$store.dispatch('lesson/setWordHasTranslation', 
-          { translation: wordTranslatedAlready.pop().translation }
-        )
-        this.$store.dispatch('lesson/setWordPhraseTranslations', [
-          this.wordHasTranslation.translation,
-        ])
-        return
-      }
-
-      this.$store.dispatch('lesson/setWordHasTranslation', {translation: ''})
-
-      //chmar api que vai retornar traducão da palavra
-      this.$store.dispatch('lesson/setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
+    async translatePhrase(phrase) {
+      this.$store.dispatch('lesson/setWordTapped', {})
+      this.$store.dispatch('lesson/setPhraseSelected', phrase)
+      await this.$store.dispatch('lesson/translatePhraseSelected')     
     },
 
     setSelectionRangeStart($event) {
@@ -237,24 +225,7 @@ export default {
     },
     setMouseState(state) {
       this.mouseIsDown = state
-    },
-    async translatePhrase(phrase) {
-      this.$store.dispatch('lesson/setWordTapped', {})
-      this.$store.dispatch('lesson/setPhraseSelected', phrase)
-
-      const phraseTranslatedAlready = this.studyItems.filter(
-        (item) => item.wordPhrase.toLowerCase() === phrase.toLowerCase()
-      )
-
-      if (phraseTranslatedAlready.length > 0) {        
-        this.$store.dispatch('lesson/setWordPhraseTranslations', [
-          phraseTranslatedAlready.pop().translation,
-        ])
-        return
-      }
-      //chamar api que vai retornar traducão da frase
-      this.$store.dispatch('lesson/setWordPhraseTranslations', ['A traducão da frase'])
-    },
+    },    
 
     async trimPhrase(phrase) {
       const trimmedPhrase = (

@@ -38,7 +38,7 @@
         </div>
 
         <v-row class="text-center">
-          <v-col v-if="wordHasTranslation && wordPhraseTranslations.length == 1" cols="12">
+          <v-col v-if="wordPhraseHasTranslation && wordPhraseTranslations.length == 1" cols="12">
             <v-btn rounded color="primary" dark @click="showOtherTranslations">
               Mostrar outras traduções
             </v-btn>
@@ -93,7 +93,7 @@ export default {
       wordTapped: 'lesson/getWordTapped',
       wordPhraseTranslations: 'lesson/getWordPhraseTranslations',
       phraseSelected: 'lesson/getPhraseSelected',
-      wordHasTranslation: 'lesson/getWordHasTranslation',
+      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
     }),
   },
