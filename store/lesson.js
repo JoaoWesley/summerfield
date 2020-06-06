@@ -120,7 +120,7 @@ export const actions = {
     //chamar api que vai retornar traducão da frase
     dispatch('setWordPhraseTranslations', ['A traducão da frase'])
   },
-  async updateWordTappedStatusToKnown( {dispatch, state} ) {
+  async updateWordTappedStatusToKnown({ dispatch, state }) {
     if (state.wordTapped.status === wordStatusType.NEW) {     
       await apiService.postWords([{text: state.wordTapped.text, status: wordStatusType.KNOWN}])
     } else {    
@@ -128,6 +128,14 @@ export const actions = {
     }
 
     dispatch('updateWordStatusInSection', {text: state.wordTapped.text, status: wordStatusType.KNOWN})
+  },
+  async showOtherTranslations({ dispatch, state }){
+    //chamar api para buscar outras traduções.
+    dispatch('setWordPhraseTranslations', [
+      ...state.wordPhraseTranslations,
+      'Another Translation',
+      'Mais uma Translation',
+    ])
   }
 }
 

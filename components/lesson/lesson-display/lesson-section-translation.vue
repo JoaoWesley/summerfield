@@ -99,17 +99,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      updateWordTappedStatusToKnown:'lesson/updateWordTappedStatusToKnown'
-    }),
-
-    showOtherTranslations() {
-      //chamar api de traducao.
-      this.$store.dispatch('lesson/setWordPhraseTranslations', [
-        ...this.wordPhraseTranslations,
-        'Another Translation',
-        'Mais uma Translation',
-      ])
-    },
+      updateWordTappedStatusToKnown:'lesson/updateWordTappedStatusToKnown',
+      showOtherTranslations: 'lesson/showOtherTranslations'
+    }),    
   },
 }
 </script>
