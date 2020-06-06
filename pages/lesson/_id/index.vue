@@ -4,7 +4,6 @@
     <LessonSectionTranslation />
     <SnackbarWordSavedStudy />
     <DialogCreateTranslation />
-    <ConfirmModal ref="confirm" />
   </v-card>
 </template>
 

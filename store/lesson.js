@@ -141,13 +141,15 @@ export const mutations = {
   setSectionTokens(state, sectionTokens) {
     state.sectionTokens = sectionTokens
   },
-  updateWordStatusInSection(state, word) {
+  updateWordStatusInSection(state, word) {    
     //Atualiza status somente de palavras
     if(word.text) {
-      state.sectionTokens.forEach((token) => {
-        if (token.text.toLowerCase() === word.text.toLowerCase()) {
-          token.status = word.status
-        }
+      state.lesson.sections.forEach( (section) => {
+        section.tokens.forEach((token) => {
+          if (token.text.toLowerCase() === word.text.toLowerCase()) {
+            token.status = word.status
+          }
+        })      
       })      
     }
   },

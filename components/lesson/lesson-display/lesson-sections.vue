@@ -83,6 +83,7 @@
         </v-row>
       </v-window-item>
     </v-window>
+    <ConfirmModal ref="confirm" />
   </v-card>
 </template>
 
@@ -91,8 +92,12 @@ import { mapGetters } from 'vuex'
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
+import ConfirmModal from '@/components/confirm-modal'
 
 export default {
+  components: {
+    ConfirmModal
+  },
   data: () => ({
     showFinnishButtom: false,
     selectionRangeStart: null,
@@ -135,7 +140,7 @@ export default {
     redirectToLessons() {
       location.href = `${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsToKnown(end, $forward) {
+    async updateNewWordsToKnown(end, $forward) {      
       //se tá clicando na seta para voltar não faz nada
       if ($forward === 0) {
         return
@@ -172,13 +177,20 @@ export default {
       } else {
         section = this.lesson.sections[this.window]
       }
-
-      const wordsChangedInSection = section.tokens.filter((token) => {
+      
+      
+      let wordsChangedInSection = section.tokens.map((token) => {
         if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
-          token.status = wordStatusType.KNOWN
-          return token
-        }
+          //Posso setar esse section Tokens e altero de lá mesmo.
+          //Create a new word to not alter the sate
+          //Se eu passar isso para o state eu nem vou precisar preocupar com isso mais.
+          const tokenChanged = {text:token.text, status: wordStatusType.KNOWN}          
+          return tokenChanged
+        }        
       })
+      //Get Valid words
+      wordsChangedInSection = wordsChangedInSection.filter( (word) => word)
+      console.log('wordsChangedInSection', wordsChangedInSection)
 
       if (wordsChangedInSection.length > 0) {        
         await apiService.postWords(wordsChangedInSection)
