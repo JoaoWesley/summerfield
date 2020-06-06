@@ -109,14 +109,14 @@ export default {
       lesson: 'lesson/getLesson',
       studyItems: 'lesson/getStudyItems',
       sectionTokens: 'lesson/getSectionTokens',
-      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
+      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',      
     }),
     wordsKnownCount() {
       return this.$store.getters['getStatusReport'].known.count
     },
     window: {
-      set(value) {
-        this.$store.dispatch('lesson/setWindow', value)
+      set(value) {        
+        this.setWindow(value)
       },
       get() {
         return this.$store.getters['lesson/getWindow']
@@ -138,7 +138,13 @@ export default {
 
   methods: {
     ...mapActions({
-      changeAllNewWordsInSectionToKnown: 'lesson/changeAllNewWordsInSectionToKnown'
+      changeAllNewWordsInSectionToKnown: 'lesson/changeAllNewWordsInSectionToKnown',
+      setWindow: 'lesson/setWindow',
+      setPhraseSelected: 'lesson/setPhraseSelected',
+      setWordTapped: 'lesson/setWordTapped',
+      setSectionTokens: 'lesson/setSectionTokens',
+      translateWordTapped: 'lesson/translateWordTapped',
+      translatePhraseSelected : 'lesson/translatePhraseSelected'
     }),
     redirectToLessons() {
       location.href = `${process.env.BASE_URL}/lesson`
@@ -186,16 +192,16 @@ export default {
     },
 
     async translateWord(token, sectionTokens) {      
-      this.$store.dispatch('lesson/setPhraseSelected', '')
-      this.$store.dispatch('lesson/setWordTapped', token)    
-      this.$store.dispatch('lesson/setSectionTokens', sectionTokens)
-      await this.$store.dispatch('lesson/translateWordTapped')     
+      this.setPhraseSelected('')
+      this.setWordTapped(token)    
+      this.setSectionTokens(sectionTokens)
+      await this.translateWordTapped()     
     },
 
     async translatePhrase(phrase) {
-      this.$store.dispatch('lesson/setWordTapped', {})
-      this.$store.dispatch('lesson/setPhraseSelected', phrase)
-      await this.$store.dispatch('lesson/translatePhraseSelected')     
+      this.setWordTapped({})
+      this.setPhraseSelected(phrase)
+      await this.translatePhraseSelected()
     },
 
     setSelectionRangeStart($event) {
