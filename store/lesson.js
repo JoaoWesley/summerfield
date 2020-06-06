@@ -1,5 +1,5 @@
-import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
+import * as apiService from '@/services/apiService'
 
 export const state = () => ({
   lesson: {},
@@ -14,8 +14,8 @@ export const state = () => ({
 })
 
 export const actions = {
-  async fetchLesson({ commit }, lessonId) {
-    const lesson = (await axios.get(`${process.env.API_URL}/lesson/${lessonId}`)).data
+  async fetchLesson({ commit }, lessonId) {    
+    const lesson = await apiService.getLessonById(lessonId)
     let sections = []
 
     const getSections = (sections, tokens) => {
@@ -28,8 +28,8 @@ export const actions = {
     lesson.sections = sections
     commit('setLesson', lesson)
   },
-  async fetchStudyItems({ commit }) {
-    const studyItems = (await axios.get(`${process.env.API_URL}/study/`)).data.items
+  async fetchStudyItems({ commit }) {    
+    const studyItems = await apiService.getStudyItems()
     commit('setStudyItems', studyItems)
   },
   setSectionTokens({ commit }, sectionTokens) {
@@ -61,15 +61,15 @@ export const actions = {
     commit('setModalDialogCreateTranslation', modalDialogCreateTranslation)
   },
   // 
-  async updateStudyItemTranslation( { dispatch }, study) {
-    await axios.put(`${process.env.API_URL}/study`, study)
+  async updateStudyItemTranslation( { dispatch }, study) {    
+    await apiService.updateStudyItem(study)
     dispatch('addStudyItem', study)     
     dispatch('setWordPhraseTranslations', [study.translation])    
     dispatch('updateWordTappedStatusToLearning')
     dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
-  async createStudyItem({ dispatch, state }, study) {        
-    await axios.post(`${process.env.API_URL}/study`, study)
+  async createStudyItem({ dispatch }, study) {
+    await apiService.createStudyItem(study)
     this.$eventBus.$emit('showSavedForStudySnackbarEvent')    
     dispatch('addStudyItem', study)
     dispatch('setWordPhraseTranslations', [study.translation])
@@ -79,17 +79,13 @@ export const actions = {
   async updateWordTappedStatusToLearning({ dispatch, state }) {    
     //If word tapped is new create it 
     if(state.wordTapped.status === wordStatusType.NEW) {      
-      dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING })
-      await axios.post(`${process.env.API_URL}/word`, {
-        words: [state.wordTapped],
-      })
+      dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING })     
+      await apiService.postWords([state.wordTapped])
       return;
     }    
     //If word tapped exists update it status
     dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING }) 
-    await axios.put(`${process.env.API_URL}/word`, {
-      word:state.wordTapped,
-    })
+    await apiService.updateWord(state.wordTapped)    
   },
   async translateWordTapped({ dispatch, state }) {
     const wordTranslatedAlready = state.studyItems.filter(
@@ -107,7 +103,7 @@ export const actions = {
     }
 
     dispatch('setWordPhraseHasTranslation', {translation: ''})
-    //chmar api que vai retornar traducão da palavra
+    //chamar api que vai retornar traducão da palavra
     dispatch('setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
   },
   async translatePhraseSelected( {dispatch, state}) {
@@ -125,15 +121,10 @@ export const actions = {
     dispatch('setWordPhraseTranslations', ['A traducão da frase'])
   },
   async updateWordTappedStatusToKnown( {dispatch, state} ) {
-    if (state.wordTapped.status === wordStatusType.NEW) {
-      await axios.post(`${process.env.API_URL}/word`, {
-        words: [{text: state.wordTapped.text, status: wordStatusType.KNOWN}],
-      })
-    } else {
-      // Palvra já existe atualiza mandando PUT
-      await axios.put(`${process.env.API_URL}/word`, {
-        word: {text: state.wordTapped.text, status: wordStatusType.KNOWN}
-      })
+    if (state.wordTapped.status === wordStatusType.NEW) {     
+      await apiService.postWords([{text: state.wordTapped.text, status: wordStatusType.KNOWN}])
+    } else {    
+      await apiService.updateWord({text: state.wordTapped.text, status: wordStatusType.KNOWN})
     }
 
     dispatch('updateWordStatusInSection', {text: state.wordTapped.text, status: wordStatusType.KNOWN})
