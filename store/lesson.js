@@ -152,7 +152,12 @@ export const actions = {
       'Another Translation',
       'Mais uma Translation',
     ])
+  },
+  async changeAllNewWordsInSectionToKnown({ commit }, sectionTokens) {
+    commit('setSectionTokens', sectionTokens)
+    commit('changeAllNewWordsInSectionToKnown')
   }
+
 }
 
 export const mutations = {
@@ -199,6 +204,18 @@ export const mutations = {
   setModalDialogCreateTranslation(state, modalDialogCreateTranslation) {
     state.modalDialogCreateTranslation = modalDialogCreateTranslation
   },
+  async changeAllNewWordsInSectionToKnown(state) {
+    let wordsChangedInSection = state.sectionTokens.filter((token) => {
+      if (token.type === 'WORD' && token.status === wordStatusType.NEW) {        
+        token.status = wordStatusType.KNOWN
+        return token 
+      }        
+    })    
+
+    if (wordsChangedInSection.length > 0) {        
+      await apiService.postWords(wordsChangedInSection)
+    }
+  }
 }
 
 export const getters = {

@@ -7,7 +7,7 @@
       :show-arrows="true"
       :reverse="false"
       style="height: 100%;"
-      @change="updateNewWordsToKnown(false, $event)"
+      @change="updateNewWordsInSectionToKnown(false, $event)"
     >
       <v-window-item
         v-for="(section, index1) in lesson.sections"
@@ -69,7 +69,7 @@
                       :input-value="true"
                       label
                       @click="
-                        updateNewWordsToKnown(true)
+                        updateNewWordsInSectionToKnown(true, true)
                         redirectToLessons()
                       "
                     >
@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
@@ -133,23 +133,25 @@ export default {
         }
         this.selectionRangeStart = null
       }
-    },
+    },    
   },
 
   methods: {
+    ...mapActions({
+      changeAllNewWordsInSectionToKnown: 'lesson/changeAllNewWordsInSectionToKnown'
+    }),
     redirectToLessons() {
       location.href = `${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsToKnown(end, $forward) {      
-      //se tá clicando na seta para voltar não faz nada
-      if ($forward === 0) {
+    async updateNewWordsInSectionToKnown(endOfSection, $movingForward) {      
+      if (!$movingForward) {
         return
       }
-
+      
       if (
-        this.wordsKnownCount === 0 &&
-        $forward === 1 &&
-        !(await this.$refs.confirm.open(
+        this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
+        $movingForward &&      // tá movendo para frente na seção
+        !(await this.$refs.confirm.open( // se não confirmar mudança volta para section anterior
           'Confirmar',
           'Ao mudar de seção todas as palavras em azul serão consideradas palavras conhecidas.',
           { color: 'red' }
@@ -160,40 +162,27 @@ export default {
         return
       }
 
-      //Delay to show finalizar buttom
-      if ($forward && this.lesson.sections.length - 1 === this.window) {
-        setTimeout(() => {
-          this.showFinnishButtom = true
-        }, 200)
-      } else {
-        this.showFinnishButtom = false
-      }
-
-      let section
-      if (!end) {
-        section = this.lesson.sections[this.window - 1]
-          ? this.lesson.sections[this.window - 1]
-          : this.lesson.sections[this.window]
-      } else {
-        section = this.lesson.sections[this.window]
-      }
       
-      
-      let wordsChangedInSection = section.tokens.map((token) => {
-        if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
-          //Posso setar esse section Tokens e altero de lá mesmo.
-          //Create a new word to not alter the sate
-          //Se eu passar isso para o state eu nem vou precisar preocupar com isso mais.
-          const tokenChanged = {text:token.text, status: wordStatusType.KNOWN}          
-          return tokenChanged
-        }        
-      })
-      //Get Valid words
-      wordsChangedInSection = wordsChangedInSection.filter( (word) => word)      
-
-      if (wordsChangedInSection.length > 0) {        
-        await apiService.postWords(wordsChangedInSection)
+      const showFinishIfEndOfSection = () => {
+        if ($movingForward && this.lesson.sections.length - 1 === this.window) {          
+          setTimeout(() => {
+            this.showFinnishButtom = true
+          }, 200)
+        } else {
+          this.showFinnishButtom = false
+        }
       }
+      showFinishIfEndOfSection()           
+      
+      const getCurrentSection = () => {                
+        if (!endOfSection) {        
+          return this.lesson.sections[this.window - 1]          
+        } else {        
+          return this.lesson.sections[this.window]
+        }
+      }
+      const section = getCurrentSection()      
+      await this.changeAllNewWordsInSectionToKnown(section.tokens)      
     },
 
     async translateWord(token, sectionTokens) {      
