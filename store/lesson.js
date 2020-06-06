@@ -14,7 +14,7 @@ export const state = () => ({
 })
 
 export const actions = {
-  async fetchLesson({ commit }, lessonId) {    
+  async fetchLesson({ commit }, lessonId) {
     const lesson = await apiService.getLessonById(lessonId)
     let sections = []
 
@@ -28,6 +28,22 @@ export const actions = {
     lesson.sections = sections
     commit('setLesson', lesson)
   },
+
+  async fetchLessonTopic({ commit }, {lessonId, topicId}) {
+    const lesson = await apiService.getLessonTopicByid({lessonId, topicId})
+    let sections = []
+
+    const getSections = (sections, tokens) => {
+      if (tokens.length === 0) return
+      sections.push({ tokens: tokens.splice(0, 100) })
+      return getSections(sections, tokens)
+    }
+
+    getSections(sections, lesson.tokens)
+    lesson.sections = sections
+    commit('setLesson', lesson)
+  },
+
   async fetchStudyItems({ commit }) {    
     const studyItems = await apiService.getStudyItems()
     commit('setStudyItems', studyItems)
