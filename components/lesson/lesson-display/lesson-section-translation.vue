@@ -99,19 +99,7 @@ export default {
   },
   methods: {
     async updateWordTappedStatusToKnown() {
-      // se status é NEW não existe palara armazenada ainda então manda POST
-      if (this.wordTapped.status === wordStatusType.NEW) {
-        await axios.post(`${process.env.API_URL}/word`, {
-          words: [this.wordTapped],
-        })
-      } else {
-        // Palvra já existe atualiza mandando PUT
-        await axios.put(`${process.env.API_URL}/word`, {
-          word: {text: this.wordTapped.text, status: wordStatusType.KNOWN}
-        })
-      }
-      
-      this.$store.dispatch('lesson/updateWordStatusInSection', {text: this.wordTapped.text, status: wordStatusType.KNOWN})
+      this.$store.dispatch('lesson/updateWordTappedStatusToKnown')      
     },
 
     showOtherTranslations() {

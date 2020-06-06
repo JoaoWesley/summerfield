@@ -123,6 +123,20 @@ export const actions = {
     }
     //chamar api que vai retornar traducão da frase
     dispatch('setWordPhraseTranslations', ['A traducão da frase'])
+  },
+  async updateWordTappedStatusToKnown( {dispatch, state} ) {
+    if (state.wordTapped.status === wordStatusType.NEW) {
+      await axios.post(`${process.env.API_URL}/word`, {
+        words: [{text: state.wordTapped.text, status: wordStatusType.KNOWN}],
+      })
+    } else {
+      // Palvra já existe atualiza mandando PUT
+      await axios.put(`${process.env.API_URL}/word`, {
+        word: {text: state.wordTapped.text, status: wordStatusType.KNOWN}
+      })
+    }
+
+    dispatch('updateWordStatusInSection', {text: state.wordTapped.text, status: wordStatusType.KNOWN})
   }
 }
 

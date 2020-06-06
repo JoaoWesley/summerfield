@@ -96,8 +96,7 @@ export default {
     showFinnishButtom: false,
     selectionRangeStart: null,
     currentHoveredElement: null,
-    mouseIsDown: false,
-    //window: 0
+    mouseIsDown: false,    
   }),
   computed: {
     ...mapGetters({
