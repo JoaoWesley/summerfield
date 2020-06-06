@@ -90,6 +90,7 @@
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
+import * as apiService from '@/services/apiService'
 
 export default {
   data: () => ({
@@ -226,13 +227,8 @@ export default {
       this.mouseIsDown = state
     },    
 
-    async trimPhrase(phrase) {
-      const trimmedPhrase = (
-        await axios.post(`${process.env.API_URL}/study/trim-phrase`, {
-          phrase: phrase,
-        })
-      ).data.phrase
-
+    async trimPhrase(phrase) {      
+      const trimmedPhrase = await apiService.trimPhrase(phrase)      
       return trimmedPhrase
     },
   },
