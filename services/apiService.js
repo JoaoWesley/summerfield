@@ -15,11 +15,11 @@ export const getStudyItems = async () => {
     const studyItems = (await axios.get(`${process.env.API_URL}/study/`)).data.items
     return studyItems;
 }
-export const updateStudyItem = async (study) => {
-    await axios.put(`${process.env.API_URL}/study`, study)
+export const updateStudyItem = (study) => {
+    return axios.put(`${process.env.API_URL}/study`, study)
 }
-export const createStudyItem = async (study) => {
-    await axios.post(`${process.env.API_URL}/study`, study)
+export const createStudyItem = (study) => {
+    return axios.post(`${process.env.API_URL}/study`, study)
 }
 export const trimPhrase = async (phrase) => {
     return (await axios.get(`${process.env.API_URL}/study/trim-phrase/${phrase}`)).data.phrase
@@ -28,13 +28,13 @@ export const trimPhrase = async (phrase) => {
 /**
  * Word endpoints
  */
-export const postWords = async (words) => {
-    await axios.post(`${process.env.API_URL}/word`, {
+export const postWords = (words) => {
+    return axios.post(`${process.env.API_URL}/word`, {
         words,
     })
 }
-export const updateWord = async (word) => {
-    await axios.put(`${process.env.API_URL}/word`, {
+export const updateWord = (word) => {
+    return axios.put(`${process.env.API_URL}/word`, {
         word,
     })
 }
