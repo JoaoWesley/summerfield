@@ -54,7 +54,7 @@
 <script>
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as studyService from '@/services/studyService'
 
 export default {  
@@ -98,8 +98,13 @@ export default {
   },  
 
   methods: {
+    ...mapActions({
+      setModalDialogCreateTranslation: 'lesson/setModalDialogCreateTranslation',
+      updateStudyItemTranslation: 'lesson/updateStudyItemTranslation',
+      createStudyItem: 'lesson/createStudyItem'
+    }),
     async closeModal() {
-      this.$store.dispatch('lesson/setModalDialogCreateTranslation', false)
+      this.setModalDialogCreateTranslation(false)
       this.wordPhraseTranslation = null      
     },
 
@@ -111,11 +116,11 @@ export default {
         this.sectionTokens
       )         
       if (this.wordPhraseHasTranslation.translation) {
-        await this.$store.dispatch('lesson/updateStudyItemTranslation', study)
+        await this.updateStudyItemTranslation(study)
         return
       }
-
-      await this.$store.dispatch('lesson/createStudyItem', study)
+      
+      await this.createStudyItem(study)
       this.closeModal()
     }
   }

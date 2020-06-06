@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import WordTranslation from '@/components/lesson/word-translation'
 import wordStatusType from '@/commons/wordStatusType'
 import axios from 'axios'
@@ -95,12 +95,12 @@ export default {
       phraseSelected: 'lesson/getPhraseSelected',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
-    }),
+    })    
   },
   methods: {
-    async updateWordTappedStatusToKnown() {
-      this.$store.dispatch('lesson/updateWordTappedStatusToKnown')      
-    },
+    ...mapActions({
+      updateWordTappedStatusToKnown:'lesson/updateWordTappedStatusToKnown'
+    }),
 
     showOtherTranslations() {
       //chamar api de traducao.

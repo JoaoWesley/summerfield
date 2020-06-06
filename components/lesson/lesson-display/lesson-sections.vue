@@ -189,8 +189,7 @@ export default {
         }        
       })
       //Get Valid words
-      wordsChangedInSection = wordsChangedInSection.filter( (word) => word)
-      console.log('wordsChangedInSection', wordsChangedInSection)
+      wordsChangedInSection = wordsChangedInSection.filter( (word) => word)      
 
       if (wordsChangedInSection.length > 0) {        
         await apiService.postWords(wordsChangedInSection)
