@@ -171,7 +171,7 @@ export default {
       }
 
       
-      const showFinishIfEndOfSection = () => {
+      const showFinishButtomIfEndOfSection = () => {
         if ($movingForward && this.lesson.sections.length - 1 === this.window) {          
           setTimeout(() => {
             this.showFinnishButtom = true
@@ -180,7 +180,7 @@ export default {
           this.showFinnishButtom = false
         }
       }
-      showFinishIfEndOfSection()           
+      showFinishButtomIfEndOfSection()           
       
       const getCurrentSection = () => {                
         if (!endOfSection) {        
