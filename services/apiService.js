@@ -22,7 +22,7 @@ export const createStudyItem = async (study) => {
     await axios.post(`${process.env.API_URL}/study`, study)
 }
 export const trimPhrase = async (phrase) => {
-    return (await axios.post(`${process.env.API_URL}/study/trim-phrase`, {phrase: phrase,})).data.phrase    
+    return (await axios.get(`${process.env.API_URL}/study/trim-phrase/${phrase}`)).data.phrase
 }
 
 /**
