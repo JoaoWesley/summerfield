@@ -32,9 +32,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~plugins/eventBus.client' },
-    { src: '~plugins/services/wordService.client.js' },
-    { src: '~plugins/services/studyService.client.js' },
+    { src: '~plugins/eventBus.client' },    
   ],
   /*
    ** Nuxt.js dev-modules

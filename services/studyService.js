@@ -1,4 +1,4 @@
-import * as wordService from './wordService.client'
+import * as wordService from './wordService'
 
 export const buildStudyObject = (
   phraseSelected,
@@ -18,9 +18,4 @@ export const buildStudyObject = (
     translation: wordPhraseTranslation,
     wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
   }
-}
-
-// eslint-disable-next-line
-export default ({ app }, inject) => {
-  inject('studyService', { buildStudyObject })
 }

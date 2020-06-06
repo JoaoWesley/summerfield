@@ -22,6 +22,7 @@
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters } from 'vuex'
+import * as studyService from '@/services/studyService'
 
 export default {
   props: {
@@ -42,7 +43,7 @@ export default {
 
   methods: {
     async saveWordToStudy() {
-      const study = this.$studyService.buildStudyObject(
+      const study = studyService.buildStudyObject(
         this.phraseSelected,
         this.wordPhraseTranslation,
         this.wordTapped,

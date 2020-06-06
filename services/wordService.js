@@ -36,7 +36,3 @@ export const getWordContextFromSection = (word, sectionTokens) => {
 
   return wordContext
 }
-// eslint-disable-next-line
-export default ({ app }, inject) => {  
-  inject('wordService', { saveWordToStudy, getWordContextFromSection })
-}
