@@ -40,15 +40,12 @@
 
 <script>
 import axios from 'axios'
+import * as apiService from '@/services/apiService'
 
 export default {
   async asyncData({ req }) {
-    if (process.server) {
-      const lessons = (
-        await axios.get(`${process.env.API_URL}/lesson/`, {
-          headers: req.headers,
-        })
-      ).data
+    if (process.server) {      
+      const lessons = await apiService.getLessons()
       const imgs = []
       imgs.push(
         'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
@@ -113,8 +110,8 @@ export default {
         this.$eventBus.$emit('editLesson', this.lessonClicked)
       }
 
-      if (menuItem.id === 'delete') {
-        await axios.delete(`${process.env.API_URL}/lesson/${this.lessonClicked._id}`)
+      if (menuItem.id === 'delete') {        
+        await apiService.deleteLessonById(this.lessonClicked._id)
         const index = this.lessons.indexOf(this.lessonClicked)
         this.lessons.splice(index, 1)
       }

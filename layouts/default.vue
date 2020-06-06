@@ -148,6 +148,7 @@
 <script>
 import axios from 'axios'
 import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
+import * as apiService from '@/services/apiService'
 
 export default {
   components: {
@@ -202,9 +203,9 @@ export default {
     }
   },
 
-  async beforeCreate() {
-    const response = (await axios.get(`${process.env.API_URL}/word/status-report`)).data
-    this.wordsKnownCount = response.known.count
+  async beforeCreate() {    
+    const statusReport = await apiService.getWordsStatusReport()
+    this.wordsKnownCount = statusReport.known.count
   },
 
   methods: {
@@ -223,17 +224,14 @@ export default {
         return
       }
 
-      if (this.lesson._id) {
-        this.updateLesson()
+      if (this.lesson._id) {      
+        await apiService.updateLesson(this.lesson)
         return
-      }
-      const lessonCreated = (await axios.post(`${process.env.API_URL}/lesson`, this.lesson)).data
+      }      
+      const lessonCreated = await apiService.postLesson(this.lesson)
       this.$eventBus.$emit('lessonSaved', lessonCreated)
       this.lesson = {}
-    },
-    async updateLesson() {
-      await axios.put(`${process.env.API_URL}/lesson/`, this.lesson)
-    },
+    },    
   },
 }
 </script>

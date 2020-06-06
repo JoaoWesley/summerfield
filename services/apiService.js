@@ -3,9 +3,22 @@ import axios from 'axios'
 /**
  * Lesson endpoints
  */
+export const getLessons = async () => {
+    const lessons = (await axios.get(`${process.env.API_URL}/lesson/`)).data
+    return lessons
+}
 export const getLessonById = async (lessonId) => {
     const lesson = (await axios.get(`${process.env.API_URL}/lesson/${lessonId}`)).data
     return lesson;
+}
+export const postLesson = async (lesson) => {
+    return (await axios.post(`${process.env.API_URL}/lesson`, lesson)).data
+}
+export const updateLesson = (lesson) => {
+    return axios.put(`${process.env.API_URL}/lesson/`, lesson)
+}
+export const deleteLessonById = (lessonId) => {
+    return axios.delete(`${process.env.API_URL}/lesson/${lessonId}`)
 }
 
 /**
@@ -37,4 +50,7 @@ export const updateWord = (word) => {
     return axios.put(`${process.env.API_URL}/word`, {
         word,
     })
+}
+export const getWordsStatusReport = async () => {
+    return (await axios.get(`${process.env.API_URL}/word/status-report`)).data
 }

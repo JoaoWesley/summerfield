@@ -1,9 +1,3 @@
-import axios from 'axios'
-
-export const saveWordToStudy = async (wordPhrase, translation) => {
-  await axios.post(`${process.env.API_URL}/study`, { wordPhrase, translation })
-}
-
 export const getWordContextFromSection = (word, sectionTokens) => {
   const startIndex = word.index - 5 >= 0 ? word.index - 5 : 0
   const endIndex =

@@ -1,12 +1,12 @@
-import axios from 'axios'
+import * as apiService from '../services/apiService'
 
 export const state = () => ({
   statusReport: {},
 })
 
 export const actions = {
-  async fetchStatusReport({ commit }) {
-    const statusReport = (await axios.get(`${process.env.API_URL}/word/status-report`)).data
+  async fetchStatusReport({ commit }) {    
+    const statusReport = await apiService.getWordsStatusReport()
     commit('setStatusReport', statusReport)
   },
 }

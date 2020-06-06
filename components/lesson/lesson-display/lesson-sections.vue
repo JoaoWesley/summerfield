@@ -180,10 +180,8 @@ export default {
         }
       })
 
-      if (wordsChangedInSection.length > 0) {
-        await axios.post(`${process.env.API_URL}/word`, {
-          words: wordsChangedInSection,
-        })
+      if (wordsChangedInSection.length > 0) {        
+        await apiService.postWords(wordsChangedInSection)
       }
     },
 
