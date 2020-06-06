@@ -109,17 +109,19 @@ export default {
       lesson: 'lesson/getLesson',
       studyItems: 'lesson/getStudyItems',
       sectionTokens: 'lesson/getSectionTokens',
-      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',      
+      wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
+      getWindow: 'lesson/getWindow',
+      getStatusReport: 'getStatusReport'
     }),
     wordsKnownCount() {
-      return this.$store.getters['getStatusReport'].known.count
+      return this.getStatusReport.known.count
     },
     window: {
       set(value) {        
         this.setWindow(value)
       },
       get() {
-        return this.$store.getters['lesson/getWindow']
+        return this.getWindow
       },
     },
   },
@@ -153,7 +155,7 @@ export default {
       if (!$movingForward) {
         return
       }
-      
+
       if (
         this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
         $movingForward &&      // tá movendo para frente na seção
