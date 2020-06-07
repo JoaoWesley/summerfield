@@ -87,56 +87,10 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-btn bottom color="pink" dark fab fixed right @click="dialog = !dialog">
+    <v-btn bottom color="pink" dark fab fixed right @click="setDialogCreateLesson(!dialogCreateLesson)">
       <v-icon>mdi-plus</v-icon>
-    </v-btn>
-    <v-dialog v-model="dialog" width="800px">
-      <v-card>
-        <v-card-title class="headline grey lighten-2">
-          Criar lição
-        </v-card-title>
-        <v-container>
-          <v-row class="mx-2">
-            <v-col class="align-center justify-space-between" cols="12">
-              <v-row align="center" class="mr-0">
-                <v-text-field v-model="lesson.title" placeholder="Título" />
-              </v-row>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-col cols="12" md="12">
-              <v-textarea
-                v-model="lesson.text"
-                solo
-                name="input-7-4"
-                label="Insira o texto aqui."
-                auto-grow
-                outlined
-                rounded
-                class="normal-text-area"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text color="primary" @click="dialog = false">
-            Fechar
-          </v-btn>
-          <v-btn
-            text
-            @click="
-              dialog = false
-              saveLesson()
-            "
-          >
-            Salvar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    </v-btn>    
+    <DialogCreateLesson />
 
     <DialogImportEbook
       :show-dialog-import-ebook="showDialogImportEbook"
@@ -148,18 +102,20 @@
 <script>
 import axios from 'axios'
 import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
+import DialogCreateLesson from '@/components/lesson/dialog-create-lesson'
 import * as apiService from '@/services/apiService'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     DialogImportEbook,
+    DialogCreateLesson
   },
 
   data: () => ({
     showDialogImportEbook: false,
     lesson: {},
-    wordsKnownCount: 0,
-    dialog: false,
+    wordsKnownCount: 0,    
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
@@ -192,23 +148,23 @@ export default {
       { icon: 'mdi-cellphone-link', text: 'App downloads' },
       { icon: 'mdi-keyboard', text: 'Go to the old version' },
     ],
-  }),
-
-  created() {
-    if (process.client) {
-      this.$eventBus.$on('editLesson', (lesson) => {
-        this.lesson = lesson
-        this.dialog = true
-      })
-    }
-  },
+  }),  
 
   async beforeCreate() {    
     const statusReport = await apiService.getWordsStatusReport()
     this.wordsKnownCount = statusReport.known.count
   },
 
+  computed: {
+    ...mapGetters({
+       dialogCreateLesson: 'getDialogCreateLesson'
+    })
+  },
+
   methods: {
+    ...mapActions({
+      setDialogCreateLesson: 'setDialogCreateLesson'
+    }),
     handleMenuItems(item) {
       switch (item.id) {
         case 'lesson':
@@ -218,20 +174,7 @@ export default {
           this.showDialogImportEbook = true
           break
       }
-    },
-    async saveLesson() {
-      if (!this.lesson.title || !this.lesson.text) {
-        return
-      }
-
-      if (this.lesson._id) {      
-        await apiService.updateLesson(this.lesson)
-        return
-      }      
-      const lessonCreated = await apiService.postLesson(this.lesson)
-      this.$eventBus.$emit('lessonSaved', lessonCreated)
-      this.lesson = {}
-    },    
+    }   
   },
 }
 </script>

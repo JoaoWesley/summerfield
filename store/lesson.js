@@ -73,8 +73,8 @@ export const actions = {
   setWindow({ commit }, window) {
     commit('setWindow', window)
   },
-  setModalDialogCreateTranslation({ commit }, modalDialogCreateTranslation) {
-    commit('setModalDialogCreateTranslation', modalDialogCreateTranslation)
+  setModalDialogCreateTranslation({ commit }, newState) {
+    commit('setModalDialogCreateTranslation', newState)
   },
   // 
   async updateStudyItemTranslation( { dispatch }, study) {    
@@ -201,8 +201,8 @@ export const mutations = {
   setWindow(state, window) {
     state.window = window
   },
-  setModalDialogCreateTranslation(state, modalDialogCreateTranslation) {
-    state.modalDialogCreateTranslation = modalDialogCreateTranslation
+  setModalDialogCreateTranslation(state, newState) {
+    state.modalDialogCreateTranslation = newState
   },
   async changeAllNewWordsInSectionToKnown(state) {
     let wordsChangedInSection = state.sectionTokens.filter((token) => {
