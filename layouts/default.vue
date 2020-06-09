@@ -113,8 +113,7 @@ export default {
   },
 
   data: () => ({
-    showDialogImportEbook: false,
-    lesson: {},
+    showDialogImportEbook: false,    
     wordsKnownCount: 0,    
     drawer: null,
     items: [

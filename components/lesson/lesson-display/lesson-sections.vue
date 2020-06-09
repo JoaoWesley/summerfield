@@ -34,25 +34,29 @@
                     <span
                       :key="token.text + index"
                       class="title font-weight-light"
-                      style="color: black;"
+                      style="color: black; "
                       :class="{
                         'new-word': token.status === 'NEW' && token.type === 'WORD',
                         'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
-                        token:
+                        'token-spacing':
                           section.tokens[index - 1] &&
                           section.tokens[index - 1].status === 'KNOWN' &&
                           token.type === 'PUNCTUATION',
                       }"
                       @mouseover="setSelectionRangeStart($event)"
                       @click="translateWord(token, section.tokens)"
-                    >
-                      {{ token.text }}
+                      v-html="token.text"
+                      v-if="index !== 0 || token.text !== '<br/><br/>'"
+
+                    >                    
+                      <!-- {{ token.text }} -->
                     </span>
 
                     <slot
                       v-if="
-                        section.tokens[index + 1] &&
-                          section.tokens[index + 1].type !== 'PUNCTUATION'
+                        section.tokens[index + 1] &&                        
+                        !notSpacebalePunctuations.includes(section.tokens[index].text) &&
+                        section.tokens[index + 1].type !== 'PUNCTUATION'                        
                       "
                     >
                       &nbsp;
@@ -102,7 +106,8 @@ export default {
     showFinnishButtom: false,
     selectionRangeStart: null,
     currentHoveredElement: null,
-    mouseIsDown: false,    
+    mouseIsDown: false,
+    notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"]
   }),
   computed: {
     ...mapGetters({
@@ -244,7 +249,7 @@ export default {
 .space-right {
   margin-right: 4px !important;
 }
-.token {
+.token-spacing {
   margin-left: -4px;
 }
 .new-word {

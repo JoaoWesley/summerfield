@@ -17,7 +17,6 @@ export const actions = {
   async fetchLesson({ commit }, lessonId) {
     const lesson = await apiService.getLessonById(lessonId)
     let sections = []
-
     const getSections = (sections, tokens) => {
       if (tokens.length === 0) return
       sections.push({ tokens: tokens.splice(0, 100) })

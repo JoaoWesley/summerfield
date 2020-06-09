@@ -29,7 +29,7 @@ export default {
       await store.dispatch('lesson/fetchStudyItems')
       await store.dispatch('fetchStatusReport')
     }
-  },  
+  },
 }
 </script>
 
