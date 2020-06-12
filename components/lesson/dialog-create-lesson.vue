@@ -64,13 +64,7 @@ export default {
             })
         }
     },
-    computed: {
-        // text: function() {
-        //   if(this.lesson.text) {
-        //     return this.lesson.text.replace(/<br\/><br\/>/g, '/n/n')
-        //   }
-        //   return null
-        // },
+    computed: {        
 
         ...mapGetters({
             dialogCreateLesson: 'getDialogCreateLesson'
@@ -82,18 +76,16 @@ export default {
         }),
 
         async saveLesson() {
-            // if (!this.lesson.title || !this.lesson.text) {
-            //     return
-            // }
+            if (!this.lesson.title || !this.lesson.text) {
+                return
+            }
 
             if (this.lesson._id) {      
               await apiService.updateLesson(this.lesson)
                 return
             }            
 
-            if(this.lesson.lessonId) {//Se tem lessonId é porque é tópico
-            
-              console.log('entrou aqui para chamar')
+            if(this.lesson.lessonId) {//Se tem lessonId é porque é tópico                         
               const { lessonId } = this.lesson
               delete this.lesson.lessonId              
               await apiService.updateLessonTopic(lessonId, this.lesson)
