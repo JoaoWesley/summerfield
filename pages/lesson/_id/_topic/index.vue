@@ -3,7 +3,7 @@
     <v-row class="mb-6" no-gutters>
       <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
-          <v-col v-for="topic in topics" :key="topic.title" sm="3" md="3" lg="3">
+          <v-col v-for="topic in topics" :key="topic.index" sm="3" md="3" lg="3">
             <v-card
               class="pa-2"
               outlined
@@ -65,11 +65,12 @@ export default {
       return {
         topics,
         imgs,
+        lessonId: params.id
       }
     }
   },
   data: () => ({
-    currentLesson: {},
+    //currentLesson: {},
     rounded: true,
     lessonClicked: null,
     showMenu: false,
@@ -79,22 +80,14 @@ export default {
       { title: 'Editar', id: 'edit' },
       { title: 'Deletar', id: 'delete' },
     ],
-  }),
-  created() {
-    // if (process.client) {
-    //   this.$eventBus.$on('lessonSaved', (lesson) => {
-    //     lesson.img = this.imgs[Math.floor(Math.random() * 4)]
-    //     this.lessons.push(lesson)
-    //   })
-    // }
-  },
+  }),  
   methods: {
     openTopic(topic) {
-      location.href += `/${topic.index}`
-      //:href="'/topic/' + topic.index"
+      location.href += `/${topic.index}`      
     },
 
-    show(e, lesson) {
+    show(e, lesson) {      
+      lesson.lessonId = this.lessonId
       this.lessonClicked = lesson
       e.preventDefault()
       this.showMenu = false
@@ -104,20 +97,19 @@ export default {
         this.showMenu = true
       })
     },
-    async menuOptionSelected(menuItem) {
-      // if (menuItem.id === 'edit') {
-      //   this.$eventBus.$emit('editLesson', this.lessonClicked)
-      // }
-      // if (menuItem.id === 'delete') {
-      //   await axios.delete(`${process.env.API_URL}/lesson/${this.lessonClicked._id}`)
-      //   const index = this.lessons.indexOf(this.lessonClicked)
-      //   this.lessons.splice(index, 1)
-      // }
+    async menuOptionSelected(menuItem) {      
+      if (menuItem.id === 'edit') {
+        this.$eventBus.$emit('editLesson', this.lessonClicked)
+      }
+      if (menuItem.id === 'delete') {        
+        await axios.delete(`${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`)
+        const index = this.topics.indexOf(this.lessonClicked)
+        this.topics.splice(index, 1)
+      }
     },
 
-    getTopicText(topic) {
-      return 'asas'
-      //return topic.text.length < 30 ? topic.text : topic.text.substr(0, 27) + '...'
+    getTopicText(topic) {      
+      return topic.text.length < 30 ? topic.text : topic.text.substr(0, 27) + '...'
     },
   },
 }

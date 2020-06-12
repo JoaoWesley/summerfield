@@ -17,7 +17,7 @@
             >
               <v-img height="200" width="200" :src="lesson.img" />
               <v-card-title> {{ lesson.title }} </v-card-title>
-              <v-card-text> {{ getLessonText(lesson) }} </v-card-text>
+              <v-card-text> {{ lesson.fragment }} </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -115,11 +115,7 @@ export default {
         const index = this.lessons.indexOf(this.lessonClicked)
         this.lessons.splice(index, 1)
       }
-    },
-
-    getLessonText(lesson) {
-      return lesson.text.length < 30 ? lesson.text : lesson.text.substr(0, 27) + '...'
-    },
+    },  
   },
 }
 </script>

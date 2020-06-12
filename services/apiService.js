@@ -11,11 +11,6 @@ export const getLessonById = async (lessonId) => {
     const lesson = (await axios.get(`${process.env.API_URL}/lesson/${lessonId}`)).data
     return lesson;
 }
-export const getLessonTopicByid = async ({ lessonId, topicId }) => {
-    const lesson = (await axios.get(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics?&topicId=${topicId}`)
-      ).data.topics
-    return lesson
-}
 export const postLesson = async (lesson) => {
     return (await axios.post(`${process.env.API_URL}/lesson`, lesson)).data
 }
@@ -25,6 +20,20 @@ export const updateLesson = (lesson) => {
 export const deleteLessonById = (lessonId) => {
     return axios.delete(`${process.env.API_URL}/lesson/${lessonId}`)
 }
+
+/**
+ * Lesson topic
+ */
+export const getLessonTopicByid = async ({ lessonId, topicId }) => {
+    const lesson = (await axios.get(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics?&topicId=${topicId}`)
+      ).data.topics
+    return lesson
+}
+export const updateLessonTopic = (lessonId, lessonTopic) => {
+    return axios.put(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics`, lessonTopic)
+}
+
+
 
 /**
  * Study endpoints
