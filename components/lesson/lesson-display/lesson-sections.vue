@@ -32,9 +32,10 @@
                 <p>
                   <slot v-for="(token, index) in section.tokens">
                     <span
+                      v-if="index !== 0 || token.text !== '<br/><br/>'"
                       :key="token.text + index"
                       class="title font-weight-light"
-                      style="color: black; "
+                      style="color: black;"
                       :class="{
                         'new-word': token.status === 'NEW' && token.type === 'WORD',
                         'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
@@ -45,18 +46,16 @@
                       }"
                       @mouseover="setSelectionRangeStart($event)"
                       @click="translateWord(token, section.tokens)"
-                      v-html="token.text"
-                      v-if="index !== 0 || token.text !== '<br/><br/>'"
-
-                    >                    
+                      v-html="sanitizeTokenText(token)"
+                    >
                       <!-- {{ token.text }} -->
                     </span>
 
                     <slot
                       v-if="
-                        section.tokens[index + 1] &&                        
+                        section.tokens[index + 1] &&
                         !notSpacebalePunctuations.includes(section.tokens[index].text) &&
-                        section.tokens[index + 1].type !== 'PUNCTUATION'                        
+                        section.tokens[index + 1].type !== 'PUNCTUATION'
                       "
                     >
                       &nbsp;
@@ -93,24 +92,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import axios from 'axios'
-import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
 
 export default {
   components: {
-    ConfirmModal
-  },
-  mounted() {    
-    if(this.lesson._id && localStorage.getItem('lessonsSectionsState')) {
-      const sectionState =  sectionsStorageService.getLessonSectionsState(this.lesson)
-      this.setWindow(sectionState.window)
-    } else if(this.lesson.index !== undefined && localStorage.getItem('topicsSectionsState')) {
-      const sectionState =  sectionsStorageService.getTopicSectionsState(this.lesson)
-      this.setWindow(sectionState.window)
-    }
+    ConfirmModal,
   },
 
   data: () => ({
@@ -118,7 +106,7 @@ export default {
     selectionRangeStart: null,
     currentHoveredElement: null,
     mouseIsDown: false,
-    notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"]
+    notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"],
   }),
   computed: {
     ...mapGetters({
@@ -127,7 +115,7 @@ export default {
       sectionTokens: 'lesson/getSectionTokens',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       getWindow: 'lesson/getWindow',
-      getStatusReport: 'getStatusReport'
+      getStatusReport: 'getStatusReport',
     }),
     wordsKnownCount() {
       return this.getStatusReport.known.count
@@ -151,7 +139,17 @@ export default {
         }
         this.selectionRangeStart = null
       }
-    },    
+    },
+  },
+
+  mounted() {
+    if (this.lesson._id && localStorage.getItem('lessonsSectionsState')) {
+      const sectionState = sectionsStorageService.getLessonSectionsState(this.lesson)
+      this.setWindow(sectionState.window)
+    } else if (this.lesson.index !== undefined && localStorage.getItem('topicsSectionsState')) {
+      const sectionState = sectionsStorageService.getTopicSectionsState(this.lesson)
+      this.setWindow(sectionState.window)
+    }
   },
 
   methods: {
@@ -162,20 +160,21 @@ export default {
       setWordTapped: 'lesson/setWordTapped',
       setSectionTokens: 'lesson/setSectionTokens',
       translateWordTapped: 'lesson/translateWordTapped',
-      translatePhraseSelected : 'lesson/translatePhraseSelected'
+      translatePhraseSelected: 'lesson/translatePhraseSelected',
     }),
     redirectToLessons() {
       location.href = `${process.env.BASE_URL}/lesson`
     },
-    async updateNewWordsInSectionToKnown(endOfSection, $movingForward) {      
+    async updateNewWordsInSectionToKnown(endOfSection, $movingForward) {
       if (!$movingForward) {
         return
       }
 
       if (
         this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
-        $movingForward &&      // tá movendo para frente na seção
-        !(await this.$refs.confirm.open( // se não confirmar mudança volta para section anterior
+        $movingForward && // tá movendo para frente na seção
+        !(await this.$refs.confirm.open(
+          // se não confirmar mudança volta para section anterior
           'Confirmar',
           'Ao mudar de seção todas as palavras em azul serão consideradas palavras conhecidas.',
           { color: 'red' }
@@ -186,9 +185,8 @@ export default {
         return
       }
 
-      
       const showFinishButtomIfEndOfSection = () => {
-        if ($movingForward && this.lesson.sections.length - 1 === this.window) {          
+        if ($movingForward && this.lesson.sections.length - 1 === this.window) {
           setTimeout(() => {
             this.showFinnishButtom = true
           }, 200)
@@ -196,24 +194,24 @@ export default {
           this.showFinnishButtom = false
         }
       }
-      showFinishButtomIfEndOfSection()           
-      
-      const getCurrentSection = () => {                
-        if (!endOfSection) {        
-          return this.lesson.sections[this.window - 1]          
-        } else {        
+      showFinishButtomIfEndOfSection()
+
+      const getCurrentSection = () => {
+        if (!endOfSection) {
+          return this.lesson.sections[this.window - 1]
+        } else {
           return this.lesson.sections[this.window]
         }
       }
-      const section = getCurrentSection()      
-      await this.changeAllNewWordsInSectionToKnown(section.tokens)      
+      const section = getCurrentSection()
+      await this.changeAllNewWordsInSectionToKnown(section.tokens)
     },
 
-    async translateWord(token, sectionTokens) {      
+    async translateWord(token, sectionTokens) {
       this.setPhraseSelected('')
-      this.setWordTapped(token)    
+      this.setWordTapped(token)
       this.setSectionTokens(sectionTokens)
-      await this.translateWordTapped()     
+      await this.translateWordTapped()
     },
 
     async translatePhrase(phrase) {
@@ -247,11 +245,15 @@ export default {
     },
     setMouseState(state) {
       this.mouseIsDown = state
-    },    
+    },
 
-    async trimPhrase(phrase) {      
-      const trimmedPhrase = await apiService.trimPhrase(phrase)      
+    async trimPhrase(phrase) {
+      const trimmedPhrase = await apiService.trimPhrase(phrase)
       return trimmedPhrase
+    },
+
+    sanitizeTokenText(token) {
+      return this.$sanitize(token.text)
     },
   },
 }

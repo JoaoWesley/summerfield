@@ -87,9 +87,17 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-btn bottom color="pink" dark fab fixed right @click="setDialogCreateLesson(!dialogCreateLesson)">
+    <v-btn
+      bottom
+      color="pink"
+      dark
+      fab
+      fixed
+      right
+      @click="setDialogCreateLesson(!dialogCreateLesson)"
+    >
       <v-icon>mdi-plus</v-icon>
-    </v-btn>    
+    </v-btn>
     <DialogCreateLesson />
 
     <DialogImportEbook
@@ -100,7 +108,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
 import DialogCreateLesson from '@/components/lesson/dialog-create-lesson'
 import * as apiService from '@/services/apiService'
@@ -109,12 +116,12 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   components: {
     DialogImportEbook,
-    DialogCreateLesson
+    DialogCreateLesson,
   },
 
   data: () => ({
-    showDialogImportEbook: false,    
-    wordsKnownCount: 0,    
+    showDialogImportEbook: false,
+    wordsKnownCount: 0,
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
@@ -147,22 +154,22 @@ export default {
       { icon: 'mdi-cellphone-link', text: 'App downloads' },
       { icon: 'mdi-keyboard', text: 'Go to the old version' },
     ],
-  }),  
+  }),
 
-  async beforeCreate() {    
+  computed: {
+    ...mapGetters({
+      dialogCreateLesson: 'getDialogCreateLesson',
+    }),
+  },
+
+  async beforeCreate() {
     const statusReport = await apiService.getWordsStatusReport()
     this.wordsKnownCount = statusReport.known.count
   },
 
-  computed: {
-    ...mapGetters({
-       dialogCreateLesson: 'getDialogCreateLesson'
-    })
-  },
-
   methods: {
     ...mapActions({
-      setDialogCreateLesson: 'setDialogCreateLesson'
+      setDialogCreateLesson: 'setDialogCreateLesson',
     }),
     handleMenuItems(item) {
       switch (item.id) {
@@ -173,7 +180,7 @@ export default {
           this.showDialogImportEbook = true
           break
       }
-    }   
+    },
   },
 }
 </script>

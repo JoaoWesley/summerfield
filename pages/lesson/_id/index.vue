@@ -12,14 +12,12 @@ import LessonSectionTranslation from '@/components/lesson/lesson-display/lesson-
 import LessonSections from '@/components/lesson/lesson-display/lesson-sections'
 import SnackbarWordSavedStudy from '@/components/lesson/snackbar-word-saved-study'
 import DialogCreateTranslation from '@/components/lesson/dialog-create-translation'
-import ConfirmModal from '@/components/confirm-modal'
 
 export default {
   components: {
     LessonSections,
     SnackbarWordSavedStudy,
     DialogCreateTranslation,
-    ConfirmModal,
     LessonSectionTranslation,
   },
 

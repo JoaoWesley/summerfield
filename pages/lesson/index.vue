@@ -39,12 +39,11 @@
 </template>
 
 <script>
-import axios from 'axios'
 import * as apiService from '@/services/apiService'
 
 export default {
-  async asyncData({ req }) {
-    if (process.server) {      
+  async asyncData() {
+    if (process.server) {
       const lessons = await apiService.getLessons()
       const imgs = []
       imgs.push(
@@ -110,12 +109,12 @@ export default {
         this.$eventBus.$emit('editLesson', this.lessonClicked)
       }
 
-      if (menuItem.id === 'delete') {        
+      if (menuItem.id === 'delete') {
         await apiService.deleteLessonById(this.lessonClicked._id)
         const index = this.lessons.indexOf(this.lessonClicked)
         this.lessons.splice(index, 1)
       }
-    },  
+    },
   },
 }
 </script>

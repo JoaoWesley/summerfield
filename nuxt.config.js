@@ -31,9 +31,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [
-    { src: '~plugins/eventBus.client' },    
-  ],
+  plugins: [{ src: '~plugins/eventBus.client' }, { src: '~plugins/vue-sanitize' }],
   /*
    ** Nuxt.js dev-modules
    */

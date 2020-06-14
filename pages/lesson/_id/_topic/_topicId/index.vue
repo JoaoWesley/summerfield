@@ -12,24 +12,25 @@ import LessonSectionTranslation from '@/components/lesson/lesson-display/lesson-
 import LessonSections from '@/components/lesson/lesson-display/lesson-sections'
 import SnackbarWordSavedStudy from '@/components/lesson/snackbar-word-saved-study'
 import DialogCreateTranslation from '@/components/lesson/dialog-create-translation'
-import ConfirmModal from '@/components/confirm-modal'
 
 export default {
   components: {
     LessonSections,
     SnackbarWordSavedStudy,
     DialogCreateTranslation,
-    ConfirmModal,
     LessonSectionTranslation,
   },
 
   async asyncData({ params, store }) {
-    if (process.server) {     
-      await store.dispatch('lesson/fetchLessonTopic',{ lessonId: params.id, topicId: params.topicId })
+    if (process.server) {
+      await store.dispatch('lesson/fetchLessonTopic', {
+        lessonId: params.id,
+        topicId: params.topicId,
+      })
       await store.dispatch('lesson/fetchStudyItems')
       await store.dispatch('fetchStatusReport')
     }
-  },  
+  },
 }
 </script>
 

@@ -1,6 +1,5 @@
 const textTokenSpacerType = {
-    BR: '<br/><br/>',    
-  }
-  
+  BR: '<br/><br/>',
+}
+
 export default textTokenSpacerType
-  

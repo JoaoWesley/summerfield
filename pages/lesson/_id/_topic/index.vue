@@ -65,7 +65,7 @@ export default {
       return {
         topics,
         imgs,
-        lessonId: params.id
+        lessonId: params.id,
       }
     }
   },
@@ -80,13 +80,13 @@ export default {
       { title: 'Editar', id: 'edit' },
       { title: 'Deletar', id: 'delete' },
     ],
-  }),  
+  }),
   methods: {
     openTopic(topic) {
-      location.href += `/${topic.index}`      
+      location.href += `/${topic.index}`
     },
 
-    show(e, lesson) {      
+    show(e, lesson) {
       lesson.lessonId = this.lessonId
       this.lessonClicked = lesson
       e.preventDefault()
@@ -97,18 +97,20 @@ export default {
         this.showMenu = true
       })
     },
-    async menuOptionSelected(menuItem) {      
+    async menuOptionSelected(menuItem) {
       if (menuItem.id === 'edit') {
         this.$eventBus.$emit('editLesson', this.lessonClicked)
       }
-      if (menuItem.id === 'delete') {        
-        await axios.delete(`${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`)
+      if (menuItem.id === 'delete') {
+        await axios.delete(
+          `${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`
+        )
         const index = this.topics.indexOf(this.lessonClicked)
         this.topics.splice(index, 1)
       }
     },
 
-    getTopicText(topic) {      
+    getTopicText(topic) {
       return topic.text.length < 30 ? topic.text : topic.text.substr(0, 27) + '...'
     },
   },

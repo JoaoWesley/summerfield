@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters, mapActions } from 'vuex'
 import * as studyService from '@/services/studyService'
 
@@ -44,7 +42,7 @@ export default {
   methods: {
     ...mapActions({
       updateStudyItemTranslation: 'lesson/updateStudyItemTranslation',
-      createStudyItem: 'lesson/createStudyItem'
+      createStudyItem: 'lesson/createStudyItem',
     }),
     async saveWordToStudy() {
       const study = studyService.buildStudyObject(
@@ -52,15 +50,15 @@ export default {
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
-      )         
+      )
       if (this.wordPhraseHasTranslation.translation) {
         await this.updateStudyItemTranslation(study)
         return
       }
-      
+
       await this.createStudyItem(study)
-    }   
-  }
+    },
+  },
 }
 </script>
 

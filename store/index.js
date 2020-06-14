@@ -2,11 +2,11 @@ import * as apiService from '../services/apiService'
 
 export const state = () => ({
   statusReport: {},
-  dialogCreateLesson: false
+  dialogCreateLesson: false,
 })
 
 export const actions = {
-  async fetchStatusReport({ commit }) {    
+  async fetchStatusReport({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
     commit('setStatusReport', statusReport)
   },
@@ -22,7 +22,7 @@ export const mutations = {
   setDialogCreateLesson(state, newState) {
     state.dialogCreateLesson = newState
     console.log('abrindo modal', state.dialogCreateLesson)
-  }
+  },
 }
 
 export const getters = {

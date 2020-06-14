@@ -81,8 +81,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import WordTranslation from '@/components/lesson/word-translation'
-import wordStatusType from '@/commons/wordStatusType'
-import axios from 'axios'
 
 export default {
   components: {
@@ -95,13 +93,13 @@ export default {
       phraseSelected: 'lesson/getPhraseSelected',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
-    })    
+    }),
   },
   methods: {
     ...mapActions({
-      updateWordTappedStatusToKnown:'lesson/updateWordTappedStatusToKnown',
-      showOtherTranslations: 'lesson/showOtherTranslations'
-    }),    
+      updateWordTappedStatusToKnown: 'lesson/updateWordTappedStatusToKnown',
+      showOtherTranslations: 'lesson/showOtherTranslations',
+    }),
   },
 }
 </script>

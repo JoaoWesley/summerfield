@@ -52,15 +52,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-import wordStatusType from '@/commons/wordStatusType'
 import { mapGetters, mapActions } from 'vuex'
 import * as studyService from '@/services/studyService'
 
-export default {  
+export default {
   data: () => ({
-    wordPhraseTranslationProxy: null
-  }), 
+    wordPhraseTranslationProxy: null,
+  }),
   computed: {
     ...mapGetters({
       wordTapped: 'lesson/getWordTapped',
@@ -79,14 +77,16 @@ export default {
     },
     wordPhraseTranslation: {
       get() {
-        return (this.wordPhraseTranslationProxy === null) ? this.wordPhraseHasTranslation.translation :this.wordPhraseTranslationProxy
+        return this.wordPhraseTranslationProxy === null
+          ? this.wordPhraseHasTranslation.translation
+          : this.wordPhraseTranslationProxy
       },
       set(value) {
         this.wordPhraseTranslationProxy = value
       },
-    }
-  },  
-  watch: {   
+    },
+  },
+  watch: {
     phraseSelected: function () {
       const phraseAlreadyTranslated = this.studyItems.filter(
         (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
@@ -95,17 +95,17 @@ export default {
         this.wordPhraseTranslation = phraseAlreadyTranslated.pop().translation
       }
     },
-  },  
+  },
 
   methods: {
     ...mapActions({
       setModalDialogCreateTranslation: 'lesson/setModalDialogCreateTranslation',
       updateStudyItemTranslation: 'lesson/updateStudyItemTranslation',
-      createStudyItem: 'lesson/createStudyItem'
+      createStudyItem: 'lesson/createStudyItem',
     }),
     async closeModal() {
       this.setModalDialogCreateTranslation(false)
-      this.wordPhraseTranslation = null      
+      this.wordPhraseTranslation = null
     },
 
     async saveWordPhraseToStudy() {
@@ -114,15 +114,15 @@ export default {
         this.wordPhraseTranslation,
         this.wordTapped,
         this.sectionTokens
-      )         
+      )
       if (this.wordPhraseHasTranslation.translation) {
         await this.updateStudyItemTranslation(study)
         return
       }
-      
+
       await this.createStudyItem(study)
       this.closeModal()
-    }
-  }
+    },
+  },
 }
 </script>

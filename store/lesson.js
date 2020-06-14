@@ -18,60 +18,60 @@ export const actions = {
   async fetchLesson({ commit }, lessonId) {
     const lesson = await apiService.getLessonById(lessonId)
     let sections = []
-    let sectionMaxLength = 100; //Default size
-    const sectionStart = 0;
-    let sectionEnd = sectionMaxLength;
-    let spacerValue = 7; // Definindo quantos tokens vale cada <br/><br/>
+    let sectionMaxLength = 100 //Default size
+    const sectionStart = 0
+    let sectionEnd = sectionMaxLength
+    let spacerValue = 7 // Definindo quantos tokens vale cada <br/><br/>
 
     const getSections = (sections, tokens) => {
-        if (tokens.length === 0) return
-        let sectionLenghtWithSpacer
-        sectionEnd = sectionMaxLength
-        do {
-          const sectionTokens = tokens.slice(sectionStart, sectionEnd);
-          const numberOfSpacer = sectionTokens.filter( (token) => token.text === '<br/><br/>')
-          let spacersLength = numberOfSpacer.length * spacerValue
-          sectionLenghtWithSpacer =  spacersLength + sectionTokens.length
-          sectionEnd--
-        }while(sectionLenghtWithSpacer > sectionMaxLength)
-                
-        sections.push({ tokens: tokens.splice(sectionStart, sectionEnd) })
-        return getSections(sections, tokens)
-    }    
+      if (tokens.length === 0) return
+      let sectionLenghtWithSpacer
+      sectionEnd = sectionMaxLength
+      do {
+        const sectionTokens = tokens.slice(sectionStart, sectionEnd)
+        const numberOfSpacer = sectionTokens.filter((token) => token.text === '<br/><br/>')
+        let spacersLength = numberOfSpacer.length * spacerValue
+        sectionLenghtWithSpacer = spacersLength + sectionTokens.length
+        sectionEnd--
+      } while (sectionLenghtWithSpacer > sectionMaxLength)
+
+      sections.push({ tokens: tokens.splice(sectionStart, sectionEnd) })
+      return getSections(sections, tokens)
+    }
     getSections(sections, lesson.tokens)
     lesson.sections = sections
     commit('setLesson', lesson)
   },
 
-  async fetchLessonTopic({ commit }, {lessonId, topicId}) {
-    const lesson = await apiService.getLessonTopicByid({lessonId, topicId})
-    let sections = []    
-    let sectionMaxLength = 100; //Default size
-    const sectionStart = 0;
-    let sectionEnd = sectionMaxLength;
-    let spacerValue = 7; // Definindo quantos tokens vale cada <br/><br/>
+  async fetchLessonTopic({ commit }, { lessonId, topicId }) {
+    const lesson = await apiService.getLessonTopicByid({ lessonId, topicId })
+    let sections = []
+    let sectionMaxLength = 100 //Default size
+    const sectionStart = 0
+    let sectionEnd = sectionMaxLength
+    let spacerValue = 7 // Definindo quantos tokens vale cada <br/><br/>
 
     const getSections = (sections, tokens) => {
-        if (tokens.length === 0) return
-        let sectionLenghtWithSpacer
-        sectionEnd = sectionMaxLength
-        do {
-          const sectionTokens = tokens.slice(sectionStart, sectionEnd);
-          const numberOfSpacer = sectionTokens.filter( (token) => token.text === '<br/><br/>')
-          let spacersLength = numberOfSpacer.length * spacerValue
-          sectionLenghtWithSpacer =  spacersLength + sectionTokens.length
-          sectionEnd--
-        }while(sectionLenghtWithSpacer > sectionMaxLength)
-                
-        sections.push({ tokens: tokens.splice(sectionStart, sectionEnd) })
-        return getSections(sections, tokens)
-    }    
+      if (tokens.length === 0) return
+      let sectionLenghtWithSpacer
+      sectionEnd = sectionMaxLength
+      do {
+        const sectionTokens = tokens.slice(sectionStart, sectionEnd)
+        const numberOfSpacer = sectionTokens.filter((token) => token.text === '<br/><br/>')
+        let spacersLength = numberOfSpacer.length * spacerValue
+        sectionLenghtWithSpacer = spacersLength + sectionTokens.length
+        sectionEnd--
+      } while (sectionLenghtWithSpacer > sectionMaxLength)
+
+      sections.push({ tokens: tokens.splice(sectionStart, sectionEnd) })
+      return getSections(sections, tokens)
+    }
     getSections(sections, lesson.tokens)
     lesson.sections = sections
     commit('setLesson', lesson)
   },
 
-  async fetchStudyItems({ commit }) {    
+  async fetchStudyItems({ commit }) {
     const studyItems = await apiService.getStudyItems()
     commit('setStudyItems', studyItems)
   },
@@ -103,32 +103,38 @@ export const actions = {
   setModalDialogCreateTranslation({ commit }, newState) {
     commit('setModalDialogCreateTranslation', newState)
   },
-  // 
-  async updateStudyItemTranslation( { dispatch }, study) {    
+  //
+  async updateStudyItemTranslation({ dispatch }, study) {
     await apiService.updateStudyItem(study)
-    dispatch('addStudyItem', study)     
-    dispatch('setWordPhraseTranslations', [study.translation])    
-    dispatch('updateWordTappedStatusToLearning')
-    dispatch('setWordPhraseHasTranslation', { translation: study.translation })
-  },
-  async createStudyItem({ dispatch }, study) {
-    await apiService.createStudyItem(study)
-    this.$eventBus.$emit('showSavedForStudySnackbarEvent')    
     dispatch('addStudyItem', study)
     dispatch('setWordPhraseTranslations', [study.translation])
     dispatch('updateWordTappedStatusToLearning')
     dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
-  async updateWordTappedStatusToLearning({ dispatch, state }) {    
-    //If word tapped is new create it 
-    if(state.wordTapped.status === wordStatusType.NEW) {      
-      dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING })     
+  async createStudyItem({ dispatch }, study) {
+    await apiService.createStudyItem(study)
+    this.$eventBus.$emit('showSavedForStudySnackbarEvent')
+    dispatch('addStudyItem', study)
+    dispatch('setWordPhraseTranslations', [study.translation])
+    dispatch('updateWordTappedStatusToLearning')
+    dispatch('setWordPhraseHasTranslation', { translation: study.translation })
+  },
+  async updateWordTappedStatusToLearning({ dispatch, state }) {
+    //If word tapped is new create it
+    if (state.wordTapped.status === wordStatusType.NEW) {
+      dispatch('updateWordStatusInSection', {
+        text: state.wordTapped.text,
+        status: wordStatusType.LEARNING,
+      })
       await apiService.postWords([state.wordTapped])
-      return;
-    }    
+      return
+    }
     //If word tapped exists update it status
-    dispatch('updateWordStatusInSection', { text: state.wordTapped.text, status: wordStatusType.LEARNING }) 
-    await apiService.updateWord(state.wordTapped)    
+    dispatch('updateWordStatusInSection', {
+      text: state.wordTapped.text,
+      status: wordStatusType.LEARNING,
+    })
+    await apiService.updateWord(state.wordTapped)
   },
   async translateWordTapped({ dispatch, state }) {
     const wordTranslatedAlready = state.studyItems.filter(
@@ -136,43 +142,42 @@ export const actions = {
     )
 
     if (wordTranslatedAlready.length > 0) {
-      dispatch('setWordPhraseHasTranslation', 
-        { translation: wordTranslatedAlready.pop().translation }
-      )
-      dispatch('setWordPhraseTranslations', [
-        state.wordPhraseHasTranslation.translation,
-      ])
+      dispatch('setWordPhraseHasTranslation', {
+        translation: wordTranslatedAlready.pop().translation,
+      })
+      dispatch('setWordPhraseTranslations', [state.wordPhraseHasTranslation.translation])
       return
     }
 
-    dispatch('setWordPhraseHasTranslation', {translation: ''})
+    dispatch('setWordPhraseHasTranslation', { translation: '' })
     //chamar api que vai retornar traducão da palavra
     dispatch('setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
   },
-  async translatePhraseSelected( {dispatch, state}) {
+  async translatePhraseSelected({ dispatch, state }) {
     const phraseTranslatedAlready = state.studyItems.filter(
       (item) => item.wordPhrase.toLowerCase() === state.phraseSelected.toLowerCase()
     )
 
-    if (phraseTranslatedAlready.length > 0) {        
-      dispatch('setWordPhraseTranslations', [
-        phraseTranslatedAlready.pop().translation,
-      ])
+    if (phraseTranslatedAlready.length > 0) {
+      dispatch('setWordPhraseTranslations', [phraseTranslatedAlready.pop().translation])
       return
     }
     //chamar api que vai retornar traducão da frase
     dispatch('setWordPhraseTranslations', ['A traducão da frase'])
   },
   async updateWordTappedStatusToKnown({ dispatch, state }) {
-    if (state.wordTapped.status === wordStatusType.NEW) {     
-      await apiService.postWords([{text: state.wordTapped.text, status: wordStatusType.KNOWN}])
-    } else {    
-      await apiService.updateWord({text: state.wordTapped.text, status: wordStatusType.KNOWN})
+    if (state.wordTapped.status === wordStatusType.NEW) {
+      await apiService.postWords([{ text: state.wordTapped.text, status: wordStatusType.KNOWN }])
+    } else {
+      await apiService.updateWord({ text: state.wordTapped.text, status: wordStatusType.KNOWN })
     }
 
-    dispatch('updateWordStatusInSection', {text: state.wordTapped.text, status: wordStatusType.KNOWN})
+    dispatch('updateWordStatusInSection', {
+      text: state.wordTapped.text,
+      status: wordStatusType.KNOWN,
+    })
   },
-  async showOtherTranslations({ dispatch, state }){
+  async showOtherTranslations({ dispatch, state }) {
     //chamar api para buscar outras traduções.
     dispatch('setWordPhraseTranslations', [
       ...state.wordPhraseTranslations,
@@ -183,8 +188,7 @@ export const actions = {
   async changeAllNewWordsInSectionToKnown({ commit }, sectionTokens) {
     commit('setSectionTokens', sectionTokens)
     commit('changeAllNewWordsInSectionToKnown')
-  }
-
+  },
 }
 
 export const mutations = {
@@ -197,24 +201,24 @@ export const mutations = {
   setSectionTokens(state, sectionTokens) {
     state.sectionTokens = sectionTokens
   },
-  updateWordStatusInSection(state, word) {    
+  updateWordStatusInSection(state, word) {
     //Atualiza status somente de palavras
-    if(word.text) {
-      state.lesson.sections.forEach( (section) => {
+    if (word.text) {
+      state.lesson.sections.forEach((section) => {
         section.tokens.forEach((token) => {
           if (token.text.toLowerCase() === word.text.toLowerCase()) {
             token.status = word.status
           }
-        })      
-      })      
+        })
+      })
     }
   },
-  //Esse código só funciona porque adiciona no final do array aí quando filtra do outro lado pega a ultima tradução adicionada    
+  //Esse código só funciona porque adiciona no final do array aí quando filtra do outro lado pega a ultima tradução adicionada
   addStudyItem(state, studyItem) {
     state.studyItems.push(studyItem)
   },
   setWordTapped(state, wordTapped) {
-    state.wordTapped = wordTapped    
+    state.wordTapped = wordTapped
   },
   setWordPhraseTranslations(state, wordPhraseTranslation) {
     state.wordPhraseTranslations = wordPhraseTranslation
@@ -234,16 +238,16 @@ export const mutations = {
   },
   async changeAllNewWordsInSectionToKnown(state) {
     let wordsChangedInSection = state.sectionTokens.filter((token) => {
-      if (token.type === 'WORD' && token.status === wordStatusType.NEW) {        
+      if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
         token.status = wordStatusType.KNOWN
-        return token 
-      }        
-    })    
+        return token
+      }
+    })
 
-    if (wordsChangedInSection.length > 0) {        
+    if (wordsChangedInSection.length > 0) {
       await apiService.postWords(wordsChangedInSection)
     }
-  }
+  },
 }
 
 export const getters = {
