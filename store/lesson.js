@@ -1,5 +1,6 @@
 import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
+import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export const state = () => ({
   lesson: {},
@@ -226,6 +227,7 @@ export const mutations = {
   },
   setWindow(state, window) {
     state.window = window
+    sectionsStorageService.storeSectionsState(state.lesson, window)
   },
   setModalDialogCreateTranslation(state, newState) {
     state.modalDialogCreateTranslation = newState

@@ -96,12 +96,23 @@ import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
+import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
 
 export default {
   components: {
     ConfirmModal
   },
+  mounted() {    
+    if(this.lesson._id && localStorage.getItem('lessonsSectionsState')) {
+      const sectionState =  sectionsStorageService.getLessonSectionsState(this.lesson)
+      this.setWindow(sectionState.window)
+    } else if(this.lesson.index !== undefined && localStorage.getItem('topicsSectionsState')) {
+      const sectionState =  sectionsStorageService.getTopicSectionsState(this.lesson)
+      this.setWindow(sectionState.window)
+    }
+  },
+
   data: () => ({
     showFinnishButtom: false,
     selectionRangeStart: null,
@@ -122,7 +133,7 @@ export default {
       return this.getStatusReport.known.count
     },
     window: {
-      set(value) {        
+      set(value) {
         this.setWindow(value)
       },
       get() {
