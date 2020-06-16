@@ -1,6 +1,6 @@
 <template>
   <v-card class="d-flex align-stretch">
-    <LessonSections />
+    <LessonSections :lessonId="lessonId"/>
     <LessonSectionTranslation />
     <SnackbarWordSavedStudy />
     <DialogCreateTranslation />
@@ -29,6 +29,11 @@ export default {
       })
       await store.dispatch('lesson/fetchStudyItems')
       await store.dispatch('fetchStatusReport')
+      await store.dispatch('lesson/fetchLessonTopics', params.id)
+
+      return {
+        lessonId: params.id
+      }
     }
   },
 }

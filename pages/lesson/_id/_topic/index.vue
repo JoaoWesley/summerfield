@@ -3,7 +3,7 @@
     <v-row class="mb-6" no-gutters>
       <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
-          <v-col v-for="topic in topics" :key="topic.index" sm="3" md="3" lg="3">
+          <v-col v-for="topic in lessonTopics" :key="topic.index" sm="3" md="3" lg="3">
             <v-card
               class="pa-2"
               outlined
@@ -44,31 +44,14 @@
 
 <script>
 import axios from 'axios'
+import { mapActions, mapGetters } from 'vuex'
+import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export default {
-  async asyncData({ params }) {
-    if (process.server) {
-      const topics = (await axios.get(`${process.env.API_URL}/lesson/${params.id}/lesson-topics/`))
-        .data
-
-      const imgs = []
-      imgs.push(
-        'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
-      )
-      imgs.push(
-        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-      )
-      imgs.push(
-        'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-      )
-      imgs.push('https://images.freeimages.com/images/large-previews/8d3/learn-1241297.jpg')
-
-      topics.forEach((element) => {
-        element.img = imgs[Math.floor(Math.random() * 4)]
-      })
+  async asyncData({ params, store }) {
+    if (process.server) {      
+      await store.dispatch('lesson/fetchLessonTopics', params.id)
       return {
-        topics,
-        imgs,
         lessonId: params.id,
       }
     }
@@ -86,16 +69,21 @@ export default {
     ],
   }),
 
+  computed: {
+    ...mapGetters({
+      lessonTopics: 'lesson/getLessonTopics'
+    })
+  },
+
   mounted() {
     if (localStorage.getItem('lastUsedTopic')) {
-      this.lastUsedTopic = JSON.parse(localStorage.getItem('lastUsedTopic'))
+      this.lastUsedTopic = sectionsStorageService.getLastUsedTopic()
     }
   },
-  methods: {
+  methods: {  
     openTopic(topic) {
-      const lastUsedTopic = { lessonId: this.lessonId, index: topic.index }
-      localStorage.setItem('lastUsedTopic', JSON.stringify(lastUsedTopic))
       location.href += `/${topic.index}`
+      sectionsStorageService.setLastUsedTopic(this.lessonId, topic.index)
     },
 
     show(e, lesson) {

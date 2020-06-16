@@ -78,6 +78,21 @@
                     >
                       FINALIZAR
                     </v-chip>
+
+                    <v-chip
+                      class="ma-2"
+                      color="indigo"
+                      text-color="white"
+                      :input-value="true"
+                      label
+                      @click="
+                        updateNewWordsInSectionToKnown(true, true)
+                        redirectToNextTopic()
+                      "
+                    >
+                      PRÓXIMO
+                    </v-chip>
+
                   </v-card>
                 </div>
               </v-card-text>
@@ -97,6 +112,13 @@ import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
 
 export default {
+  props: {
+    lessonId: {
+      type: String,
+      required: true
+    }
+  },
+
   components: {
     ConfirmModal,
   },
@@ -111,6 +133,7 @@ export default {
   computed: {
     ...mapGetters({
       lesson: 'lesson/getLesson',
+      lessonTopics: 'lesson/getLessonTopics',
       studyItems: 'lesson/getStudyItems',
       sectionTokens: 'lesson/getSectionTokens',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
@@ -168,8 +191,27 @@ export default {
       fetchStatusReport: 'fetchStatusReport'
     }),
     redirectToLessons() {
+      const isTopic = this.lesson.index !== undefined
+      if (isTopic) {
+        location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic`
+        return
+      }
+      return;
       location.href = `${process.env.BASE_URL}/lesson`
     },
+
+    redirectToNextTopic() {
+      const isTopic = this.lesson.index !== undefined
+      if (isTopic) {
+        const nextTopic = this.lessonTopics.find( (topic) => topic.index > this.lesson.index )
+        if(nextTopic) {
+          location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic/${nextTopic.index}`          
+          sectionsStorageService.setLastUsedTopic(this.lessonId, nextTopic.index)
+        }
+        return
+      }
+    },
+
     async updateNewWordsInSectionToKnown(endOfSection, $movingForward) {
       if (!$movingForward) {
         return

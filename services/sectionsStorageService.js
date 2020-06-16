@@ -36,3 +36,11 @@ export const getTopicSectionsState = ({ index }) => {
     .pop()
   return sectionState
 }
+
+export const setLastUsedTopic = (lessonId, index) => {  
+  localStorage.setItem('lastUsedTopic', JSON.stringify({ lessonId, index }))
+}
+
+export const getLastUsedTopic = () => {
+  return JSON.parse(localStorage.getItem('lastUsedTopic'))
+}

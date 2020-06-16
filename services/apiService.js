@@ -24,6 +24,10 @@ export const deleteLessonById = (lessonId) => {
 /**
  * Lesson topic
  */
+export const getLessonTopics = async (lessonId) => {
+  return (await axios.get(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics/`))
+  .data
+}
 export const getLessonTopicByid = async ({ lessonId, topicId }) => {
   const lesson = (
     await axios.get(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics?&topicId=${topicId}`)
