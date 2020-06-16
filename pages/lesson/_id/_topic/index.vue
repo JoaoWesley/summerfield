@@ -9,6 +9,10 @@
               outlined
               tile
               style="margin-right: 4px; margin-bottom: 4px;"
+              :class="{
+                'highlighted-card':
+                  lessonId === lastUsedTopic.lessonId && topic.index === lastUsedTopic.index,
+              }"
               elevation="3"
               shaped
               height="350"
@@ -70,7 +74,7 @@ export default {
     }
   },
   data: () => ({
-    //currentLesson: {},
+    lastUsedTopic: {},
     rounded: true,
     lessonClicked: null,
     showMenu: false,
@@ -81,8 +85,16 @@ export default {
       { title: 'Deletar', id: 'delete' },
     ],
   }),
+
+  mounted() {
+    if (localStorage.getItem('lastUsedTopic')) {
+      this.lastUsedTopic = JSON.parse(localStorage.getItem('lastUsedTopic'))
+    }
+  },
   methods: {
     openTopic(topic) {
+      const lastUsedTopic = { lessonId: this.lessonId, index: topic.index }
+      localStorage.setItem('lastUsedTopic', JSON.stringify(lastUsedTopic))
       location.href += `/${topic.index}`
     },
 
@@ -116,3 +128,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.highlighted-card {
+  background: rgb(51, 128, 255) !important;
+}
+</style>

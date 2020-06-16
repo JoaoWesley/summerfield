@@ -5,13 +5,17 @@ export const state = () => ({
   dialogCreateLesson: false,
 })
 
-export const actions = {
+export const actions = {  
   async fetchStatusReport({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
     commit('setStatusReport', statusReport)
   },
   setDialogCreateLesson({ commit }, newState) {
     commit('setDialogCreateLesson', newState)
+  },
+
+  nuxtServerInit ({ dispatch }) {        
+    dispatch('fetchStatusReport') 
   },
 }
 
@@ -21,7 +25,6 @@ export const mutations = {
   },
   setDialogCreateLesson(state, newState) {
     state.dialogCreateLesson = newState
-    console.log('abrindo modal', state.dialogCreateLesson)
   },
 }
 

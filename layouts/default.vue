@@ -118,10 +118,9 @@ export default {
     DialogImportEbook,
     DialogCreateLesson,
   },
-
+ 
   data: () => ({
     showDialogImportEbook: false,
-    wordsKnownCount: 0,
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
@@ -159,15 +158,14 @@ export default {
   computed: {
     ...mapGetters({
       dialogCreateLesson: 'getDialogCreateLesson',
+      getStatusReport: 'getStatusReport'
     }),
-  },
+    wordsKnownCount() {      
+      return this.getStatusReport.known.count
+    },
+  },  
 
-  async beforeCreate() {
-    const statusReport = await apiService.getWordsStatusReport()
-    this.wordsKnownCount = statusReport.known.count
-  },
-
-  methods: {
+  methods: {    
     ...mapActions({
       setDialogCreateLesson: 'setDialogCreateLesson',
     }),

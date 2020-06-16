@@ -9,6 +9,7 @@
               outlined
               tile
               style="margin-right: 4px; margin-bottom: 4px;"
+              :class="{ 'highlighted-card': lesson._id === lastUsedLessonId }"
               elevation="3"
               shaped
               height="350"
@@ -67,6 +68,7 @@ export default {
     }
   },
   data: () => ({
+    lastUsedLessonId: null,
     rounded: true,
     lessonClicked: null,
     showMenu: false,
@@ -85,8 +87,12 @@ export default {
       })
     }
   },
+  mounted() {
+    this.lastUsedLessonId = localStorage.getItem('lastUsedLessonId')
+  },
   methods: {
     openLesson(lesson) {
+      localStorage.setItem('lastUsedLessonId', lesson._id)
       if (lesson.hasTopics) {
         location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic`
         return
@@ -118,3 +124,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.highlighted-card {
+  background: rgb(51, 128, 255) !important;
+}
+</style>

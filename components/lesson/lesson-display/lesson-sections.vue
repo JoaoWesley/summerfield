@@ -145,10 +145,14 @@ export default {
   mounted() {
     if (this.lesson._id && localStorage.getItem('lessonsSectionsState')) {
       const sectionState = sectionsStorageService.getLessonSectionsState(this.lesson)
-      this.setWindow(sectionState.window)
+      if (sectionState) {
+        this.setWindow(sectionState.window)
+      }
     } else if (this.lesson.index !== undefined && localStorage.getItem('topicsSectionsState')) {
       const sectionState = sectionsStorageService.getTopicSectionsState(this.lesson)
-      this.setWindow(sectionState.window)
+      if (sectionState) {
+        this.setWindow(sectionState.window)
+      }
     }
   },
 
@@ -161,6 +165,7 @@ export default {
       setSectionTokens: 'lesson/setSectionTokens',
       translateWordTapped: 'lesson/translateWordTapped',
       translatePhraseSelected: 'lesson/translatePhraseSelected',
+      fetchStatusReport: 'fetchStatusReport'
     }),
     redirectToLessons() {
       location.href = `${process.env.BASE_URL}/lesson`
@@ -172,7 +177,7 @@ export default {
 
       if (
         this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
-        $movingForward && // tá movendo para frente na seção
+        $movingForward && // se está movendo para frente na seção
         !(await this.$refs.confirm.open(
           // se não confirmar mudança volta para section anterior
           'Confirmar',
@@ -205,6 +210,7 @@ export default {
       }
       const section = getCurrentSection()
       await this.changeAllNewWordsInSectionToKnown(section.tokens)
+      this.fetchStatusReport()
     },
 
     async translateWord(token, sectionTokens) {
