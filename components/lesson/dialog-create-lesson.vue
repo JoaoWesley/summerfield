@@ -14,9 +14,11 @@
         </v-row>
 
         <v-row>
+          
           <v-col cols="12" md="12">
             <v-textarea
               v-model="lesson.text"
+              v-if="!lesson.hasTopics"
               solo
               name="input-7-4"
               label="Insira o texto aqui."
@@ -84,8 +86,7 @@ export default {
         return
       }
 
-      if (this.lesson.lessonId) {
-        //Se tem lessonId é porque é tópico
+      if (this.lesson.lessonId) { //Se tem a propriedade lessonId é porque é tópico        
         const { lessonId } = this.lesson
         delete this.lesson.lessonId
         await apiService.updateLessonTopic(lessonId, this.lesson)

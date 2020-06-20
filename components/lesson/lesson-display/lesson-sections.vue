@@ -63,7 +63,7 @@
                   </slot>
                 </p>
 
-                <div v-if="lesson.sections.length - 1 === window && showFinnishButtom">
+                <div v-if="lesson.sections.length - 1 === window">
                   <v-card class="d-flex flex-row-reverse" flat tile>
                     <v-chip
                       class="ma-2"
@@ -78,8 +78,8 @@
                     >
                       FINALIZAR
                     </v-chip>
-
                     <v-chip
+                      v-if="!islastTopic"
                       class="ma-2"
                       color="indigo"
                       text-color="white"
@@ -150,6 +150,9 @@ export default {
       get() {
         return this.getWindow
       },
+    },
+    islastTopic() {     
+      return this.lessonTopics[this.lessonTopics.length -1].index === this.lesson.index      
     },
   },
 
@@ -232,17 +235,7 @@ export default {
         return
       }
 
-      const showFinishButtomIfEndOfSection = () => {
-        if ($movingForward && this.lesson.sections.length - 1 === this.window) {
-          setTimeout(() => {
-            this.showFinnishButtom = true
-          }, 200)
-        } else {
-          this.showFinnishButtom = false
-        }
-      }
-      showFinishButtomIfEndOfSection()
-
+    
       const getCurrentSection = () => {
         if (!endOfSection) {
           return this.lesson.sections[this.window - 1]
