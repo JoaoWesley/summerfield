@@ -45,7 +45,7 @@ export const actions = {
   },
 
   async fetchLessonTopics({ commit }, lessonId) {
-    const topics = await apiService.getLessonTopics(lessonId)   
+    const topics = await apiService.getLessonTopics(lessonId)
     const imgs = []
     imgs.push(
       'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'

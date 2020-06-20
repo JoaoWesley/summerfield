@@ -15,7 +15,7 @@ export const storeSectionsState = ({ _id, index }, window) => {
   let sectionState = { index, window }
   let topicSectionsState = JSON.parse(localStorage.getItem('topicsSectionsState'))
   if (topicSectionsState) {
-    topicSectionsState = topicSectionsState.filter((sectionState) => sectionState._id != _id) // Remove old state
+    topicSectionsState = topicSectionsState.filter((sectionState) => sectionState.index != index) // Remove old state
     topicSectionsState.push(sectionState)
   } else {
     topicSectionsState = [sectionState]
@@ -37,7 +37,7 @@ export const getTopicSectionsState = ({ index }) => {
   return sectionState
 }
 
-export const setLastUsedTopic = (lessonId, index) => {  
+export const setLastUsedTopic = (lessonId, index) => {
   localStorage.setItem('lastUsedTopic', JSON.stringify({ lessonId, index }))
 }
 

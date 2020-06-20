@@ -110,7 +110,6 @@
 <script>
 import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
 import DialogCreateLesson from '@/components/lesson/dialog-create-lesson'
-import * as apiService from '@/services/apiService'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -118,7 +117,7 @@ export default {
     DialogImportEbook,
     DialogCreateLesson,
   },
- 
+
   data: () => ({
     showDialogImportEbook: false,
     drawer: null,
@@ -158,14 +157,14 @@ export default {
   computed: {
     ...mapGetters({
       dialogCreateLesson: 'getDialogCreateLesson',
-      getStatusReport: 'getStatusReport'
+      getStatusReport: 'getStatusReport',
     }),
-    wordsKnownCount() {      
+    wordsKnownCount() {
       return this.getStatusReport.known.count
     },
-  },  
+  },
 
-  methods: {    
+  methods: {
     ...mapActions({
       setDialogCreateLesson: 'setDialogCreateLesson',
     }),

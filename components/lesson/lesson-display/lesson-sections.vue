@@ -37,7 +37,7 @@
                       class="title font-weight-light"
                       style="color: black;"
                       :class="{
-                        'word': token.type === 'WORD',
+                        word: token.type === 'WORD',
                         'new-word': token.status === 'NEW' && token.type === 'WORD',
                         'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
                         'token-spacing':
@@ -80,7 +80,7 @@
                       FINALIZAR
                     </v-chip>
                     <v-chip
-                      v-if="!islastTopic"
+                      v-if="!islastTopic && lesson.index"
                       class="ma-2"
                       color="indigo"
                       text-color="white"
@@ -93,7 +93,6 @@
                     >
                       PRÓXIMO
                     </v-chip>
-
                   </v-card>
                 </div>
               </v-card-text>
@@ -113,15 +112,13 @@ import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
 
 export default {
+  components: {
+    ConfirmModal,
+  },
   props: {
     lessonId: {
       type: String,
-      required: true
-    }
-  },
-
-  components: {
-    ConfirmModal,
+    },
   },
 
   data: () => ({
@@ -152,8 +149,11 @@ export default {
         return this.getWindow
       },
     },
-    islastTopic() {     
-      return this.lessonTopics[this.lessonTopics.length -1].index === this.lesson.index      
+    islastTopic() {
+      if (this.lesson.index !== undefined) {
+        return this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index
+      }
+      return null
     },
   },
 
@@ -192,7 +192,7 @@ export default {
       setSectionTokens: 'lesson/setSectionTokens',
       translateWordTapped: 'lesson/translateWordTapped',
       translatePhraseSelected: 'lesson/translatePhraseSelected',
-      fetchStatusReport: 'fetchStatusReport'
+      fetchStatusReport: 'fetchStatusReport',
     }),
     redirectToLessons() {
       const isTopic = this.lesson.index !== undefined
@@ -200,16 +200,15 @@ export default {
         location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic`
         return
       }
-      return;
       location.href = `${process.env.BASE_URL}/lesson`
     },
 
     redirectToNextTopic() {
       const isTopic = this.lesson.index !== undefined
       if (isTopic) {
-        const nextTopic = this.lessonTopics.find( (topic) => topic.index > this.lesson.index )
-        if(nextTopic) {
-          location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic/${nextTopic.index}`          
+        const nextTopic = this.lessonTopics.find((topic) => topic.index > this.lesson.index)
+        if (nextTopic) {
+          location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic/${nextTopic.index}`
           sectionsStorageService.setLastUsedTopic(this.lessonId, nextTopic.index)
         }
         return
@@ -236,7 +235,6 @@ export default {
         return
       }
 
-    
       const getCurrentSection = () => {
         if (!endOfSection) {
           return this.lesson.sections[this.window - 1]
@@ -250,8 +248,8 @@ export default {
     },
 
     async translateWord(token, sectionTokens) {
-      if(token.type !== 'WORD') {
-        return;
+      if (token.type !== 'WORD') {
+        return
       }
       this.setPhraseSelected('')
       this.setWordTapped(token)

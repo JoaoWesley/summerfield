@@ -44,12 +44,12 @@
 
 <script>
 import axios from 'axios'
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export default {
   async asyncData({ params, store }) {
-    if (process.server) {      
+    if (process.server) {
       await store.dispatch('lesson/fetchLessonTopics', params.id)
       return {
         lessonId: params.id,
@@ -71,8 +71,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      lessonTopics: 'lesson/getLessonTopics'
-    })
+      lessonTopics: 'lesson/getLessonTopics',
+    }),
   },
 
   mounted() {
@@ -80,7 +80,7 @@ export default {
       this.lastUsedTopic = sectionsStorageService.getLastUsedTopic()
     }
   },
-  methods: {  
+  methods: {
     openTopic(topic) {
       location.href += `/${topic.index}`
       sectionsStorageService.setLastUsedTopic(this.lessonId, topic.index)

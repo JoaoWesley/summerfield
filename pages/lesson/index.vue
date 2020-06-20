@@ -46,24 +46,8 @@ export default {
   async asyncData() {
     if (process.server) {
       const lessons = await apiService.getLessons()
-      const imgs = []
-      imgs.push(
-        'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
-      )
-      imgs.push(
-        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-      )
-      imgs.push(
-        'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-      )
-      imgs.push('https://images.freeimages.com/images/large-previews/8d3/learn-1241297.jpg')
-
-      lessons.forEach((element) => {
-        element.img = imgs[Math.floor(Math.random() * 4)]
-      })
       return {
         lessons,
-        imgs,
       }
     }
   },
@@ -81,13 +65,29 @@ export default {
   }),
   created() {
     if (process.client) {
-      this.$eventBus.$on('lessonSaved', (lesson) => {
-        lesson.img = this.imgs[Math.floor(Math.random() * 4)]
+      this.$eventBus.$on('lessonSaved', async (lesson) => {
+        lesson.img =
+          'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
         this.lessons.push(lesson)
+        //this.lessons = await apiService.getLessons()
       })
     }
   },
+  // beforeUpdate() {
+  //   console.log('update cycle')
+  //   apiService.getLessons()
+  //   .then( (response) => {
+  //     //console.log(response)
+  //     //this.lessons = response
+  //   })
+  // },
   mounted() {
+    // console.log('montado')
+    // apiService.getLessons()
+    //       .then( (response) => {
+    //         console.log(response)
+    //         this.lessons = response
+    //       })
     this.lastUsedLessonId = localStorage.getItem('lastUsedLessonId')
   },
   methods: {

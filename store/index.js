@@ -5,7 +5,7 @@ export const state = () => ({
   dialogCreateLesson: false,
 })
 
-export const actions = {  
+export const actions = {
   async fetchStatusReport({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
     commit('setStatusReport', statusReport)
@@ -14,8 +14,8 @@ export const actions = {
     commit('setDialogCreateLesson', newState)
   },
 
-  nuxtServerInit ({ dispatch }) {        
-    dispatch('fetchStatusReport') 
+  nuxtServerInit({ dispatch }) {
+    dispatch('fetchStatusReport')
   },
 }
 

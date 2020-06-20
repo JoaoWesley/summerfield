@@ -1,6 +1,6 @@
 <template>
   <v-card class="d-flex align-stretch">
-    <LessonSections :lessonId="lessonId"/>
+    <LessonSections :lesson-id="lessonId" />
     <LessonSectionTranslation />
     <SnackbarWordSavedStudy />
     <DialogCreateTranslation />
@@ -32,7 +32,7 @@ export default {
       await store.dispatch('lesson/fetchLessonTopics', params.id)
 
       return {
-        lessonId: params.id
+        lessonId: params.id,
       }
     }
   },
