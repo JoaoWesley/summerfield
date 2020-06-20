@@ -31,12 +31,12 @@ export default {
 }
 </script>
 
-<!--<style scoped> -->
 <style>
-span {
+.word {
   cursor: pointer;
   border-radius: 5px;
 }
+
 span.title {
   font-size: 1.6em !important;
   line-height: 1.6em;

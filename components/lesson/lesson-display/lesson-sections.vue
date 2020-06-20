@@ -37,6 +37,7 @@
                       class="title font-weight-light"
                       style="color: black;"
                       :class="{
+                        'word': token.type === 'WORD',
                         'new-word': token.status === 'NEW' && token.type === 'WORD',
                         'learning-word': token.status === 'LEARNING' && token.type === 'WORD',
                         'token-spacing':
@@ -249,6 +250,9 @@ export default {
     },
 
     async translateWord(token, sectionTokens) {
+      if(token.type !== 'WORD') {
+        return;
+      }
       this.setPhraseSelected('')
       this.setWordTapped(token)
       this.setSectionTokens(sectionTokens)
