@@ -127,6 +127,7 @@ export default {
     currentHoveredElement: null,
     mouseIsDown: false,
     notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"],
+    lastWindowBeforeChange: 0,
   }),
   computed: {
     ...mapGetters({
@@ -181,6 +182,7 @@ export default {
         this.setWindow(sectionState.window)
       }
     }
+    this.lastWindowBeforeChange = this.window
   },
 
   methods: {
@@ -215,14 +217,14 @@ export default {
       }
     },
 
-    async updateNewWordsInSectionToKnown(endOfSection, $movingForward) {
-      if (!$movingForward) {
+    async updateNewWordsInSectionToKnown(endOfSection, $newWindow) {
+      const movingForward = $newWindow > this.lastWindowBeforeChange
+      if (!movingForward) {
         return
       }
-
       if (
         this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
-        $movingForward && // se está movendo para frente na seção
+        movingForward && // se está movendo para frente na seção
         !(await this.$refs.confirm.open(
           // se não confirmar mudança volta para section anterior
           'Confirmar',
@@ -245,6 +247,7 @@ export default {
       const section = getCurrentSection()
       await this.changeAllNewWordsInSectionToKnown(section.tokens)
       this.fetchStatusReport()
+      this.lastWindowBeforeChange = this.window
     },
 
     async translateWord(token, sectionTokens) {

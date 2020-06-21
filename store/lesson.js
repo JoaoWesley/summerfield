@@ -208,7 +208,15 @@ export const actions = {
   },
   async changeAllNewWordsInSectionToKnown({ commit }, sectionTokens) {
     commit('setSectionTokens', sectionTokens)
+    let wordsChangedInSection = sectionTokens.filter((token) => {
+      if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
+        return token
+      }
+    })
     commit('changeAllNewWordsInSectionToKnown')
+    if (wordsChangedInSection.length > 0) {
+      await apiService.postWords(wordsChangedInSection)
+    }
   },
 }
 
@@ -260,17 +268,13 @@ export const mutations = {
   setModalDialogCreateTranslation(state, newState) {
     state.modalDialogCreateTranslation = newState
   },
-  async changeAllNewWordsInSectionToKnown(state) {
-    let wordsChangedInSection = state.sectionTokens.filter((token) => {
+  changeAllNewWordsInSectionToKnown(state) {
+    state.sectionTokens.map((token) => {
       if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
         token.status = wordStatusType.KNOWN
         return token
       }
     })
-
-    if (wordsChangedInSection.length > 0) {
-      await apiService.postWords(wordsChangedInSection)
-    }
   },
 }
 
