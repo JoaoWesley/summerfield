@@ -70,26 +70,11 @@ export default {
       this.$eventBus.$on('lessonSaved', async (lesson) => {
         lesson.img =
           'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
-        this.lessons.push(lesson)
-        //this.lessons = await apiService.getLessons()
+        this.lessons.push(lesson)        
       })
     }
-  },
-  // beforeUpdate() {
-  //   console.log('update cycle')
-  //   apiService.getLessons()
-  //   .then( (response) => {
-  //     //console.log(response)
-  //     //this.lessons = response
-  //   })
-  // },
+  },  
   mounted() {
-    // console.log('montado')
-    // apiService.getLessons()
-    //       .then( (response) => {
-    //         console.log(response)
-    //         this.lessons = response
-    //       })
     this.lastUsedLessonId = localStorage.getItem('lastUsedLessonId')
   },
   methods: {
