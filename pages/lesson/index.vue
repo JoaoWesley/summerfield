@@ -17,8 +17,8 @@
               @contextmenu="show($event, lesson)"
             >
               <v-img height="200" width="200" :src="lesson.img" />
-              <v-card-title> 
-                {{ lesson.title.length > 30 ? lesson.title.substr(0, 30) + ' ...' : lesson.title}} 
+              <v-card-title>
+                {{ lesson.title.length > 30 ? lesson.title.substr(0, 30) + ' ...' : lesson.title }}
               </v-card-title>
               <v-card-text> {{ lesson.fragment }} ... </v-card-text>
             </v-card>
@@ -70,10 +70,10 @@ export default {
       this.$eventBus.$on('lessonSaved', async (lesson) => {
         lesson.img =
           'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
-        this.lessons.push(lesson)        
+        this.lessons.push(lesson)
       })
     }
-  },  
+  },
   mounted() {
     this.lastUsedLessonId = localStorage.getItem('lastUsedLessonId')
   },
