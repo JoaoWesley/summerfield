@@ -14,8 +14,8 @@ export const actions = {
     commit('setDialogCreateLesson', newState)
   },
 
-  nuxtServerInit({ dispatch }) {
-    dispatch('fetchStatusReport')
+  async nuxtServerInit({ dispatch }) {
+    await dispatch('fetchStatusReport')
   },
 }
 
