@@ -7,7 +7,10 @@
       :show-arrows="true"
       :reverse="false"
       style="height: 100%;"
-      @change="updateNewWordsInSectionToKnown(false, $event)"
+      @change="
+        updateNewWordsInSectionToKnown(false, $event)
+        showEndOfSectionButtons = false
+      "
     >
       <v-window-item
         v-for="(section, index1) in lesson.sections"
@@ -49,7 +52,6 @@
                       @click="translateWord(token, section.tokens)"
                       v-html="sanitizeTokenText(token)"
                     >
-                      <!-- {{ token.text }} -->
                     </span>
 
                     <slot
@@ -64,7 +66,7 @@
                   </slot>
                 </p>
 
-                <div v-if="lesson.sections.length - 1 === window">
+                <div v-if="isLastSection && showEndOfSectionButtons">
                   <v-card class="d-flex flex-row-reverse" flat tile>
                     <v-chip
                       class="ma-2"
@@ -80,7 +82,7 @@
                       FINALIZAR
                     </v-chip>
                     <v-chip
-                      v-if="!islastTopic && lesson.index"
+                      v-if="!islastTopic && lesson.index && showEndOfSectionButtons"
                       class="ma-2"
                       color="indigo"
                       text-color="white"
@@ -128,6 +130,7 @@ export default {
     mouseIsDown: false,
     notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"],
     lastWindowBeforeChange: 0,
+    showEndOfSectionButtons: false,
   }),
   computed: {
     ...mapGetters({
@@ -152,9 +155,19 @@ export default {
     },
     islastTopic() {
       if (this.lesson.index !== undefined) {
-        return this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index
+        if (this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index) {
+          this.showEndOfSectionsButtons()
+          return true
+        }
       }
-      return null
+      return false
+    },
+    isLastSection() {
+      if (this.lesson.sections.length - 1 === this.window) {
+        this.showEndOfSectionsButtons()
+        return true
+      }
+      return false
     },
   },
 
@@ -300,6 +313,12 @@ export default {
 
     sanitizeTokenText(token) {
       return this.$sanitize(token.text)
+    },
+
+    showEndOfSectionsButtons() {
+      setTimeout(() => {
+        this.showEndOfSectionButtons = true
+      }, 160)
     },
   },
 }

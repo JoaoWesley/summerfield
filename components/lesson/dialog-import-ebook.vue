@@ -7,8 +7,8 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="12">
-            Importe seu ebook selecionando o arquivo abaixo, ou qualquer arquivo nos formatos
-            PDF, EPUB e DOCX. E será criado um lição automaticamente com o conteúdo do livro.            
+            Importe seu ebook selecionando o arquivo abaixo, ou qualquer arquivo nos formatos PDF,
+            EPUB e DOCX. E será criado um lição automaticamente com o conteúdo do livro.
 
             <v-file-input v-model="teste" show-size @change="setFile($event)" />
 

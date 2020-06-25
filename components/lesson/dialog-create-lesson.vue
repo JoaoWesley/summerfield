@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import * as apiService from '@/services/apiService'
 
 export default {
@@ -58,9 +58,14 @@ export default {
     lesson: {},
   }),
   computed: {
-    ...mapGetters({
-      dialogCreateLesson: 'getDialogCreateLesson',
-    }),
+    dialogCreateLesson: {
+      get() {
+        return this.$store.getters.getDialogCreateLesson
+      },
+      set(value) {
+        this.setDialogCreateLesson(value)
+      },
+    },
   },
   created() {
     if (process.client) {
