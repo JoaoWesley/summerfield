@@ -82,7 +82,7 @@
                       FINALIZAR
                     </v-chip>
                     <v-chip
-                      v-if="!islastTopic && lesson.index && showEndOfSectionButtons"
+                      v-if="!islastTopic && lesson.index != undefined && showEndOfSectionButtons"
                       class="ma-2"
                       color="indigo"
                       text-color="white"
@@ -154,7 +154,9 @@ export default {
       },
     },
     islastTopic() {
+      console.log('this.lesson.index', this.lesson.index)
       if (this.lesson.index !== undefined) {
+        console.log('xx', this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index)
         if (this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index) {
           this.showEndOfSectionsButtons()
           return true
