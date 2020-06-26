@@ -1,4 +1,4 @@
-export const storeSectionsState = ({ _id, index }, window) => {
+export const storeSectionsState = ({ _id, index }, window, topicLessonId) => {
   if (_id) {
     let sectionState = { _id, window }
     let lessonSectionsState = JSON.parse(localStorage.getItem('lessonsSectionsState'))
@@ -12,7 +12,7 @@ export const storeSectionsState = ({ _id, index }, window) => {
     return
   }
 
-  let sectionState = { index, window }
+  let sectionState = { index, window, topicLessonId }
   let topicSectionsState = JSON.parse(localStorage.getItem('topicsSectionsState'))
   if (topicSectionsState) {
     topicSectionsState = topicSectionsState.filter((sectionState) => sectionState.index != index) // Remove old state
@@ -29,10 +29,13 @@ export const getLessonSectionsState = ({ _id }) => {
   return sectionState
 }
 
-export const getTopicSectionsState = ({ index }) => {
+export const getTopicSectionsState = ({ index }, lessonId) => {
   const topicsSectionsState = JSON.parse(localStorage.getItem('topicsSectionsState'))
+
   const sectionState = topicsSectionsState
-    .filter((sectionState) => sectionState.index === index)
+    .filter(
+      (sectionState) => sectionState.index === index && sectionState.topicLessonId === lessonId
+    )
     .pop()
   return sectionState
 }

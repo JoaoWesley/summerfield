@@ -147,16 +147,14 @@ export default {
     },
     window: {
       set(value) {
-        this.setWindow(value)
+        this.setWindow({ window: value, topicLessonId: this.lessonId })
       },
       get() {
         return this.getWindow
       },
     },
     islastTopic() {
-      console.log('this.lesson.index', this.lesson.index)
       if (this.lesson.index !== undefined) {
-        console.log('xx', this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index)
         if (this.lessonTopics[this.lessonTopics.length - 1].index === this.lesson.index) {
           this.showEndOfSectionsButtons()
           return true
@@ -189,12 +187,12 @@ export default {
     if (this.lesson._id && localStorage.getItem('lessonsSectionsState')) {
       const sectionState = sectionsStorageService.getLessonSectionsState(this.lesson)
       if (sectionState) {
-        this.setWindow(sectionState.window)
+        this.setWindow({ window: sectionState.window })
       }
     } else if (this.lesson.index !== undefined && localStorage.getItem('topicsSectionsState')) {
-      const sectionState = sectionsStorageService.getTopicSectionsState(this.lesson)
+      const sectionState = sectionsStorageService.getTopicSectionsState(this.lesson, this.lessonId)
       if (sectionState) {
-        this.setWindow(sectionState.window)
+        this.setWindow({ window: sectionState.window })
       }
     }
     this.lastWindowBeforeChange = this.window

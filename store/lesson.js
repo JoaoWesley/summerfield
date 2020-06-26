@@ -118,8 +118,8 @@ export const actions = {
   setWordPhraseHasTranslation({ commit }, wordPhraseHasTranslation) {
     commit('setWordPhraseHasTranslation', wordPhraseHasTranslation)
   },
-  setWindow({ commit }, window) {
-    commit('setWindow', window)
+  setWindow({ commit }, { window, topicLessonId }) {
+    commit('setWindow', { window, topicLessonId })
   },
   setModalDialogCreateTranslation({ commit }, newState) {
     commit('setModalDialogCreateTranslation', newState)
@@ -261,9 +261,10 @@ export const mutations = {
   setWordPhraseHasTranslation(state, wordPhraseHasTranslation) {
     state.wordPhraseHasTranslation = wordPhraseHasTranslation
   },
-  setWindow(state, window) {
+  setWindow(state, { window, topicLessonId }) {
+    console.log('window to be setted', window)
     state.window = window
-    sectionsStorageService.storeSectionsState(state.lesson, window)
+    sectionsStorageService.storeSectionsState(state.lesson, window, topicLessonId)
   },
   setModalDialogCreateTranslation(state, newState) {
     state.modalDialogCreateTranslation = newState
