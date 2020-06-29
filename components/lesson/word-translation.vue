@@ -36,6 +36,7 @@ export default {
       phraseSelected: 'lesson/getPhraseSelected',
       sectionTokens: 'lesson/getSectionTokens',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
+      lessonId: 'lesson/getLessonId',
     }),
   },
 
@@ -46,6 +47,7 @@ export default {
     }),
     async saveWordToStudy() {
       const study = studyService.buildStudyObject(
+        this.lessonId,
         this.phraseSelected,
         this.wordPhraseTranslation,
         this.wordTapped,

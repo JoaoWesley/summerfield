@@ -67,6 +67,7 @@ export default {
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       studyItems: 'lesson/getStudyItems',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
+      lessonId: 'lesson/getLessonId',
     }),
     wordPhrase: function () {
       if (this.wordTapped && this.wordTapped.text) {
@@ -110,6 +111,7 @@ export default {
 
     async saveWordPhraseToStudy() {
       const study = studyService.buildStudyObject(
+        this.lessonId,
         this.phraseSelected,
         this.wordPhraseTranslation,
         this.wordTapped,

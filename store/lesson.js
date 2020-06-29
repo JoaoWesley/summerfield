@@ -4,6 +4,7 @@ import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export const state = () => ({
   lesson: {},
+  lessonId: null,
   lessonTopics: [],
   studyItems: [],
   sectionTokens: [],
@@ -218,6 +219,10 @@ export const actions = {
       await apiService.postWords(wordsChangedInSection)
     }
   },
+
+  setLessonId({ commit }, lessonId) {
+    commit('setLessonId', lessonId)
+  },
 }
 
 export const mutations = {
@@ -277,6 +282,9 @@ export const mutations = {
       }
     })
   },
+  setLessonId(state, lessonId) {
+    state.lessonId = lessonId
+  },
 }
 
 export const getters = {
@@ -309,5 +317,8 @@ export const getters = {
   },
   getModalDialogCreateTranslation(state) {
     return state.modalDialogCreateTranslation
+  },
+  getLessonId(state) {
+    return state.lessonId
   },
 }

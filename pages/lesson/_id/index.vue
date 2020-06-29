@@ -26,6 +26,7 @@ export default {
       await store.dispatch('lesson/fetchLesson', params.id)
       await store.dispatch('lesson/fetchStudyItems')
       await store.dispatch('fetchStatusReport')
+      await store.dispatch('lesson/setLessonId', params.id)
     }
   },
 }

@@ -117,12 +117,6 @@ export default {
   components: {
     ConfirmModal,
   },
-  props: {
-    lessonId: {
-      type: String,
-    },
-  },
-
   data: () => ({
     showFinnishButtom: false,
     selectionRangeStart: null,
@@ -141,6 +135,7 @@ export default {
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       getWindow: 'lesson/getWindow',
       getStatusReport: 'getStatusReport',
+      lessonId: 'lesson/getLessonId',
     }),
     wordsKnownCount() {
       return this.getStatusReport.known.count
