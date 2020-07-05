@@ -63,6 +63,7 @@ export default {
     menuItems: [
       { title: 'Editar', id: 'edit' },
       { title: 'Deletar', id: 'delete' },
+      { title: 'Revisar', id: 'review' },
     ],
   }),
   created() {
@@ -106,6 +107,10 @@ export default {
         await apiService.deleteLessonById(this.lessonClicked._id)
         const index = this.lessons.indexOf(this.lessonClicked)
         this.lessons.splice(index, 1)
+      }
+
+      if (menuItem.id === 'review') {
+        location.href = `${process.env.BASE_URL}/review?lessonId=${this.lessonClicked._id}`
       }
     },
   },

@@ -37,7 +37,7 @@ export const deleteLessonById = (lessonId) => {
 }
 
 /**
- * Lesson topic
+ * Lesson topic endpoints
  */
 export const getLessonTopics = async (lessonId) => {
   return (await axios.get(`${process.env.API_URL}/lesson/${lessonId}/lesson-topics/`)).data
@@ -59,14 +59,23 @@ export const getStudyItems = async () => {
   const studyItems = (await axios.get(`${process.env.API_URL}/study/item`)).data.items
   return studyItems
 }
-export const updateStudyItem = (study) => {
-  return axios.put(`${process.env.API_URL}/study/item`, study)
+export const updateStudyItem = (item) => {
+  return axios.put(`${process.env.API_URL}/study/item`, item)
 }
-export const createStudyItem = (study) => {
-  return axios.post(`${process.env.API_URL}/study/item`, study)
+export const createStudyItem = (item) => {
+  return axios.post(`${process.env.API_URL}/study/item`, item)
 }
 export const trimPhrase = async (phrase) => {
   return (await axios.get(`${process.env.API_URL}/study/trim-phrase/${phrase}`)).data.phrase
+}
+export const getStudyItemsToReview = async () => {  
+  return (await axios.get(`${process.env.API_URL}/study/review/`)).data
+}
+export const getStudyItemsToReviewByLessonId = async (lessonId) => {
+  return (await axios.get(`${process.env.API_URL}/study/review/?lessonId=${lessonId}`)).data    
+}
+export const evaluateStudyItem = async(item) => {
+  return (await axios.post(`${process.env.API_URL}/study/evaluate/`, item)).data    
 }
 
 /**
