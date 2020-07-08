@@ -101,8 +101,8 @@ export const actions = {
     commit('setSectionTokens', sectionTokens)
   },
   //Isso deve mudar para atualizar todas as sections
-  updateWordStatusInSection({ commit }, word) {
-    commit('updateWordStatusInSection', word)
+  updateWordStatusInAllSections({ commit }, word) {
+    commit('updateWordStatusInAllSections', word)
   },
   addStudyItem({ commit }, studyItem) {
     commit('addStudyItem', studyItem)
@@ -144,7 +144,7 @@ export const actions = {
   async updateWordTappedStatusToLearning({ dispatch, state }) {
     //If word tapped is new create it
     if (state.wordTapped.status === wordStatusType.NEW) {
-      dispatch('updateWordStatusInSection', {
+      dispatch('updateWordStatusInAllSections', {
         text: state.wordTapped.text,
         status: wordStatusType.LEARNING,
       })
@@ -152,7 +152,7 @@ export const actions = {
       return
     }
     //If word tapped exists update it status
-    dispatch('updateWordStatusInSection', {
+    dispatch('updateWordStatusInAllSections', {
       text: state.wordTapped.text,
       status: wordStatusType.LEARNING,
     })
@@ -211,7 +211,7 @@ export const actions = {
       await apiService.updateWord({ text: state.wordTapped.text, status: wordStatusType.KNOWN })
     }
 
-    dispatch('updateWordStatusInSection', {
+    dispatch('updateWordStatusInAllSections', {
       text: state.wordTapped.text,
       status: wordStatusType.KNOWN,
     })
@@ -230,11 +230,15 @@ export const actions = {
       if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
         return token
       }
-    })
+    })    
     commit('changeAllNewWordsInSectionToKnown')
+    wordsChangedInSection.forEach( (word) => {
+      commit('updateWordStatusInAllSections', word)
+    })
     if (wordsChangedInSection.length > 0) {
       await apiService.postWords(wordsChangedInSection)
     }
+   
   },
 
   setLessonId({ commit }, lessonId) {
@@ -255,7 +259,7 @@ export const mutations = {
   setSectionTokens(state, sectionTokens) {
     state.sectionTokens = sectionTokens
   },
-  updateWordStatusInSection(state, word) {
+  updateWordStatusInAllSections(state, word) {
     //Atualiza status somente de palavras
     if (word.text) {
       state.lesson.sections.forEach((section) => {
