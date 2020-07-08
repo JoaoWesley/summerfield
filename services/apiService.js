@@ -68,14 +68,24 @@ export const createStudyItem = (item) => {
 export const trimPhrase = async (phrase) => {
   return (await axios.get(`${process.env.API_URL}/study/trim-phrase/${phrase}`)).data.phrase
 }
-export const getStudyItemsToReview = async () => {  
+export const getStudyItemsToReview = async () => {
   return (await axios.get(`${process.env.API_URL}/study/review/`)).data
 }
 export const getStudyItemsToReviewByLessonId = async (lessonId) => {
-  return (await axios.get(`${process.env.API_URL}/study/review/?lessonId=${lessonId}`)).data    
+  return (await axios.get(`${process.env.API_URL}/study/review/?lessonId=${lessonId}`)).data
 }
-export const evaluateStudyItem = async(item) => {
-  return (await axios.post(`${process.env.API_URL}/study/evaluate/`, item)).data    
+export const evaluateStudyItem = async (item) => {
+  return (await axios.post(`${process.env.API_URL}/study/evaluate/`, item)).data
+}
+export const getPopularTranslation = async (wordPhrase, lessonId, topicId, sectionId) => {
+  return (
+    await axios.get(
+      `${process.env.API_URL}/study/popular-translation/?wordPhrase=${wordPhrase}&lessonId=${lessonId}&topicId=${topicId}&sectionId=${sectionId}`
+    )
+  ).data
+}
+export const createPopularTranslation = async (translation) => {
+  return (await axios.post(`${process.env.API_URL}/study/popular-translation/`, translation)).data
 }
 
 /**

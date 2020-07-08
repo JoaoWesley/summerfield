@@ -11,14 +11,14 @@ export const buildStudyObject = (
     return {
       lessonId,
       wordPhrase: phraseSelected,
-      translation: wordPhraseTranslation,
+      translation: wordPhraseTranslation.text,
     }
   }
 
   return {
     lessonId,
     wordPhrase: wordTapped.text,
-    translation: wordPhraseTranslation,
+    translation: wordPhraseTranslation.text,
     wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
   }
 }

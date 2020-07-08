@@ -123,8 +123,8 @@ export default {
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
-      { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },      
-      { icon: 'mdi-history', text: 'Revisar palavras',  id: 'reviewStudy'},
+      { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
+      { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
       { icon: 'mdi-content-copy', text: 'Duplicates' },
       {
         icon: 'mdi-chevron-up',

@@ -19,7 +19,7 @@
         <v-row>
           <v-col cols="12" md="12">
             <v-textarea
-              v-model="wordPhraseTranslation"
+              v-model="wordPhraseTranslation.text"
               solo
               name="input-7-4"
               label="Insira sua tradução aqui."
@@ -54,10 +54,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import * as studyService from '@/services/studyService'
+import * as apiService from '@/services/apiService'
 
 export default {
   data: () => ({
-    wordPhraseTranslationProxy: null,
+    wordPhraseTranslationProxy: {},
   }),
   computed: {
     ...mapGetters({
@@ -68,6 +69,8 @@ export default {
       studyItems: 'lesson/getStudyItems',
       modalDialogCreateTranslation: 'lesson/getModalDialogCreateTranslation',
       lessonId: 'lesson/getLessonId',
+      lesson: 'lesson/getLesson',
+      window: 'lesson/getWindow',
     }),
     wordPhrase: function () {
       if (this.wordTapped && this.wordTapped.text) {
@@ -78,12 +81,12 @@ export default {
     },
     wordPhraseTranslation: {
       get() {
-        return this.wordPhraseTranslationProxy === null
-          ? this.wordPhraseHasTranslation.translation
+        return !this.wordPhraseTranslationProxy.text
+          ? { text: this.wordPhraseHasTranslation.translation }
           : this.wordPhraseTranslationProxy
       },
       set(value) {
-        this.wordPhraseTranslationProxy = value
+        this.wordPhraseTranslationProxy.text = value
       },
     },
   },
@@ -93,7 +96,7 @@ export default {
         (item) => this.wordPhrase.toLowerCase() === item.wordPhrase.toLowerCase()
       )
       if (phraseAlreadyTranslated.length > 0) {
-        this.wordPhraseTranslation = phraseAlreadyTranslated.pop().translation
+        this.wordPhraseTranslation.text = phraseAlreadyTranslated.pop().translation
       }
     },
   },
@@ -103,6 +106,7 @@ export default {
       setModalDialogCreateTranslation: 'lesson/setModalDialogCreateTranslation',
       updateStudyItemTranslation: 'lesson/updateStudyItemTranslation',
       createStudyItem: 'lesson/createStudyItem',
+      setWordPhraseHasTranslation: 'lesson/setWordPhraseHasTranslation',
     }),
     async closeModal() {
       this.setModalDialogCreateTranslation(false)
@@ -123,6 +127,15 @@ export default {
       }
 
       await this.createStudyItem(study)
+
+      const translation = {
+        wordPhrase: this.wordTapped.text || this.phraseSelected,
+        translation: this.wordPhraseTranslation.text,
+        context: { lessonId: this.lessonId, topicId: this.lesson.index, sectionId: this.window },
+      }
+      await apiService.createPopularTranslation(translation)
+
+      this.setWordPhraseHasTranslation({})
       this.closeModal()
     },
   },

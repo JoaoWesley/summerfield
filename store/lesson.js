@@ -129,7 +129,7 @@ export const actions = {
   async updateStudyItemTranslation({ dispatch }, study) {
     await apiService.updateStudyItem(study)
     dispatch('addStudyItem', study)
-    dispatch('setWordPhraseTranslations', [study.translation])
+    dispatch('setWordPhraseTranslations', [{ text: study.translation }])
     dispatch('updateWordTappedStatusToLearning')
     dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
@@ -137,7 +137,7 @@ export const actions = {
     await apiService.createStudyItem(study)
     this.$eventBus.$emit('showSavedForStudySnackbarEvent')
     dispatch('addStudyItem', study)
-    dispatch('setWordPhraseTranslations', [study.translation])
+    dispatch('setWordPhraseTranslations', [{ text: study.translation }])
     dispatch('updateWordTappedStatusToLearning')
     dispatch('setWordPhraseHasTranslation', { translation: study.translation })
   },
@@ -167,13 +167,30 @@ export const actions = {
       dispatch('setWordPhraseHasTranslation', {
         translation: wordTranslatedAlready.pop().translation,
       })
-      dispatch('setWordPhraseTranslations', [state.wordPhraseHasTranslation.translation])
+      dispatch('setWordPhraseTranslations', [{ text: state.wordPhraseHasTranslation.translation }])
       return
     }
 
     dispatch('setWordPhraseHasTranslation', { translation: '' })
+
     //chamar api que vai retornar traducão da palavra
-    dispatch('setWordPhraseTranslations', ['Linguagem', 'Lingua', 'Idioma'])
+    const translations = [{ text: 'Linguagem' }, { text: 'Lingua' }, { text: 'Idioma' }]
+
+    const popularTranslation = await apiService.getPopularTranslation(
+      state.wordTapped.text,
+      state.lessonId,
+      state.lesson.index,
+      state.window
+    )
+    if (popularTranslation) {
+      translations[0] = {
+        text: popularTranslation.translation,
+        popularTranslationOcurrences: popularTranslation.occurrences,
+        isPopularTranslation: true,
+      }
+    }
+
+    dispatch('setWordPhraseTranslations', translations)
   },
   async translatePhraseSelected({ dispatch, state }) {
     const phraseTranslatedAlready = state.studyItems.filter(
@@ -181,11 +198,11 @@ export const actions = {
     )
 
     if (phraseTranslatedAlready.length > 0) {
-      dispatch('setWordPhraseTranslations', [phraseTranslatedAlready.pop().translation])
+      dispatch('setWordPhraseTranslations', [{ text: phraseTranslatedAlready.pop().translation }])
       return
     }
     //chamar api que vai retornar traducão da frase
-    dispatch('setWordPhraseTranslations', ['A traducão da frase'])
+    dispatch('setWordPhraseTranslations', [{ text: 'A traducão da frase' }])
   },
   async updateWordTappedStatusToKnown({ dispatch, state }) {
     if (state.wordTapped.status === wordStatusType.NEW) {
@@ -203,8 +220,8 @@ export const actions = {
     //chamar api para buscar outras traduções.
     dispatch('setWordPhraseTranslations', [
       ...state.wordPhraseTranslations,
-      'Another Translation',
-      'Mais uma Translation',
+      { text: 'Another Translation' },
+      { text: 'Mais uma Translation' },
     ])
   },
   async changeAllNewWordsInSectionToKnown({ commit }, sectionTokens) {
@@ -267,7 +284,6 @@ export const mutations = {
     state.wordPhraseHasTranslation = wordPhraseHasTranslation
   },
   setWindow(state, { window, topicLessonId }) {
-    console.log('window to be setted', window)
     state.window = window
     sectionsStorageService.storeSectionsState(state.lesson, window, topicLessonId)
   },

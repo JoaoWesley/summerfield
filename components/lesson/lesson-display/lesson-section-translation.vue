@@ -32,7 +32,7 @@
         <div style="min-height: 50%;">
           <WordTranslation
             v-for="(wordPhraseTranslation, index) in wordPhraseTranslations"
-            :key="wordPhraseTranslation + index"
+            :key="wordPhraseTranslation.text + index"
             :word-phrase-translation="wordPhraseTranslation"
           />
         </div>

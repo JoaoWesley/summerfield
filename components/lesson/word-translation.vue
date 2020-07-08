@@ -10,7 +10,19 @@
         rounded
         success
         solo
-        :value="wordPhraseTranslation"
+        persistent-hint
+        :value="wordPhraseTranslation.text"
+        :hint="
+          wordPhraseTranslation.isPopularTranslation
+            ? `Utilizada ${wordPhraseTranslation.popularTranslationOcurrences} vezes por outros usuários`
+            : ''
+        "
+        :background-color="wordPhraseTranslation.isPopularTranslation ? 'amber' : ''"
+        :title="
+          wordPhraseTranslation.isPopularTranslation
+            ? 'Tradução mais utilizada por outros usuários'
+            : ''
+        "
         @click="saveWordToStudy"
       >
       </v-textarea>
@@ -21,11 +33,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import * as studyService from '@/services/studyService'
+import * as apiService from '@/services/apiService'
 
 export default {
   props: {
     wordPhraseTranslation: {
-      type: String,
+      type: Object,
       required: true,
     },
   },
@@ -37,6 +50,8 @@ export default {
       sectionTokens: 'lesson/getSectionTokens',
       wordPhraseHasTranslation: 'lesson/getWordPhraseHasTranslation',
       lessonId: 'lesson/getLessonId',
+      lesson: 'lesson/getLesson',
+      window: 'lesson/getWindow',
     }),
   },
 
@@ -44,6 +59,7 @@ export default {
     ...mapActions({
       updateStudyItemTranslation: 'lesson/updateStudyItemTranslation',
       createStudyItem: 'lesson/createStudyItem',
+      setWordPhraseHasTranslation: 'lesson/setWordPhraseHasTranslation',
     }),
     async saveWordToStudy() {
       const study = studyService.buildStudyObject(
@@ -53,12 +69,21 @@ export default {
         this.wordTapped,
         this.sectionTokens
       )
+
       if (this.wordPhraseHasTranslation.translation) {
         await this.updateStudyItemTranslation(study)
         return
       }
 
       await this.createStudyItem(study)
+
+      const translation = {
+        wordPhrase: this.wordTapped.text || this.phraseSelected,
+        translation: this.wordPhraseTranslation.text,
+        context: { lessonId: this.lessonId, topicId: this.lesson.index, sectionId: this.window },
+      }
+      apiService.createPopularTranslation(translation)
+      this.setWordPhraseHasTranslation({})
     },
   },
 }
