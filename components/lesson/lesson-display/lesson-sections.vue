@@ -59,7 +59,9 @@
                         !notSpacebalePunctuations.includes(section.tokens[index].text) &&
                         section.tokens[index + 1].type !== 'PUNCTUATION'
                       "
-                    >&nbsp;</slot>
+                    >
+                      &nbsp;
+                    </slot>
                   </slot>
                 </p>
 
@@ -75,7 +77,9 @@
                         updateNewWordsInSectionToKnown(true, true)
                         redirectToLessons()
                       "
-                    >FINALIZAR</v-chip>
+                    >
+                      FINALIZAR
+                    </v-chip>
                     <v-chip
                       v-if="!islastTopic && lesson.index != undefined && showEndOfSectionButtons"
                       class="ma-2"
@@ -87,7 +91,9 @@
                         updateNewWordsInSectionToKnown(true, true)
                         redirectToNextTopic()
                       "
-                    >PRÓXIMO</v-chip>
+                    >
+                      PRÓXIMO
+                    </v-chip>
                   </v-card>
                 </div>
               </v-card-text>

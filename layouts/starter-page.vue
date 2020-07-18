@@ -1,18 +1,15 @@
 <template>
   <v-app id="starter-page">
-    <v-main>
+    <v-content>
       <v-container>
         <nuxt />
       </v-container>
-    </v-main>
+    </v-content>
   </v-app>
 </template>
 
 <script>
-export default {
-    
-}
+export default {}
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

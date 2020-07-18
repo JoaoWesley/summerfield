@@ -1,12 +1,12 @@
 <template>
   <!-- <v-layout column justify-center align-center /> -->
   <v-container class="fill-height" fluid>
-    <LoginRegisterReset v-if="!this.token || this.showLoginForm" />
+    <LoginRegisterReset v-if="!token || showLoginForm" />
     <ResetPassword
-      v-if="this.token  && !this.showLoginForm"
-      :token="this.token"
-      :userId="this.userId"
-      v-on:showLoginForm="showLoginForm=true"
+      v-if="token && !showLoginForm"
+      :token="token"
+      :user-id="userId"
+      @showLoginForm="showLoginForm = true"
     />
   </v-container>
 </template>
@@ -16,22 +16,22 @@ import LoginRegisterReset from '@/components/auth/login-register-reset'
 import ResetPassword from '@/components/auth/reset-password'
 
 export default {
-  middleware ({ app, redirect, route }) {
+  middleware({ app, redirect, route }) {
     if (route.path === '/' && app.$cookiz.get('token')) {
       return redirect('/lesson')
     }
-  },  
-  asyncData({ query }) {
-      return {
-        token: query.token,
-        userId: query.userId,
-        showLoginForm: false
-      }
-  },  
+  },
   components: {
     LoginRegisterReset,
-    ResetPassword
+    ResetPassword,
   },
-  layout: 'starter-page'
+  asyncData({ query }) {
+    return {
+      token: query.token,
+      userId: query.userId,
+      showLoginForm: false,
+    }
+  },
+  layout: 'starter-page',
 }
 </script>

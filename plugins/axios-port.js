@@ -4,7 +4,7 @@ export default ({ app }) => {
   setClient(
     app.$axios.create({
       withCredentials: true,
-      //baseURL: API_SERVER,
+      baseURL: process.env.API_URL,
     })
   )
 }

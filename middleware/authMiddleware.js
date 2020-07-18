@@ -1,4 +1,4 @@
-export default function ({ app, req, res, redirect }) {
+export default function ({ app, redirect }) {
   if (!app.$cookiz.get('token')) {
     return redirect('/')
   }

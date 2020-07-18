@@ -230,15 +230,14 @@ export const actions = {
       if (token.type === 'WORD' && token.status === wordStatusType.NEW) {
         return token
       }
-    })    
+    })
     commit('changeAllNewWordsInSectionToKnown')
-    wordsChangedInSection.forEach( (word) => {
+    wordsChangedInSection.forEach((word) => {
       commit('updateWordStatusInAllSections', word)
     })
     if (wordsChangedInSection.length > 0) {
       await apiService.postWords(wordsChangedInSection)
     }
-   
   },
 
   setLessonId({ commit }, lessonId) {

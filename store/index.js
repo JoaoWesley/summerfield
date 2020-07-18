@@ -1,47 +1,41 @@
 import * as apiService from '../services/apiService'
 
 export const state = () => ({
-  statusReport: {},
+  statusReport: { known: {} },
   dialogCreateLesson: false,
 })
 
 export const actions = {
-  async fetchStatusReport ({ commit }) {
+  async fetchStatusReport({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
+    console.log('retorno do status report', statusReport)
     commit('setStatusReport', statusReport)
   },
-  setDialogCreateLesson ({ commit }, newState) {
+  setDialogCreateLesson({ commit }, newState) {
     commit('setDialogCreateLesson', newState)
   },
 
-  async nuxtClientInit ({ dispatch }, { route }) {
+  async nuxtServerInit({ dispatch }, { route }) {
     if (route.path !== '/') {
       await dispatch('fetchStatusReport')
     }
   },
-
-  async nuxtServerInit ({ dispatch }, { route }) {
-    // console.log('asas', process.server)
-    // if (route.path !== '/') {
-    //   await dispatch('fetchStatusReport')
-    // }
-  },
 }
 
 export const mutations = {
-  setStatusReport (state, statusReport) {
+  setStatusReport(state, statusReport) {
     state.statusReport = statusReport
   },
-  setDialogCreateLesson (state, newState) {
+  setDialogCreateLesson(state, newState) {
     state.dialogCreateLesson = newState
   },
 }
 
 export const getters = {
-  getStatusReport (state) {
+  getStatusReport(state) {
     return state.statusReport
   },
-  getDialogCreateLesson (state) {
+  getDialogCreateLesson(state) {
     return state.dialogCreateLesson
   },
 }

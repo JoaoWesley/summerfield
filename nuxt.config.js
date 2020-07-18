@@ -44,7 +44,6 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
-    'nuxt-client-init-module',
     // Doc: https://axios.nuxtjs.org/usage
     ['cookie-universal-nuxt', { alias: 'cookiz' }],
     '@nuxtjs/axios',
@@ -81,7 +80,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend (config, ctx) {
+    extend(config, ctx) {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }

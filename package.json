@@ -21,7 +21,6 @@
     "axios": "^0.19.2",
     "cookie-universal-nuxt": "^2.1.4",
     "nuxt": "^2.0.0",
-    "nuxt-client-init-module": "^0.1.8",
     "vue-sanitize": "^0.2.0"
   },
   "devDependencies": {
