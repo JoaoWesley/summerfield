@@ -1,13 +1,11 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="default">
     <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
       <v-list dense>
         <template v-for="item in items">
           <v-row v-if="item.heading" :key="item.heading" align="center">
             <v-col cols="6">
-              <v-subheader v-if="item.heading">
-                {{ item.heading }}
-              </v-subheader>
+              <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-col>
             <v-col cols="6" class="text-center">
               <a href="#!" class="body-2 black--text">EDIT</a>
@@ -18,13 +16,11 @@
             :key="item.text"
             v-model="item.model"
             :prepend-icon="item.model ? item.icon : item['icon-alt']"
-            append-icon=""
+            append-icon
           >
             <template v-slot:activator>
               <v-list-item-content>
-                <v-list-item-title>
-                  {{ item.text }}
-                </v-list-item-title>
+                <v-list-item-title>{{ item.text }}</v-list-item-title>
               </v-list-item-content>
             </template>
             <v-list-item v-for="(child, i) in item.children" :key="i" link>
@@ -32,9 +28,7 @@
                 <v-icon>{{ child.icon }}</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>
-                  {{ child.text }}
-                </v-list-item-title>
+                <v-list-item-title>{{ child.text }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
@@ -43,9 +37,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>
-                {{ item.text }}
-              </v-list-item-title>
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -82,11 +74,11 @@
         </v-avatar>
       </v-btn>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-container>
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
     <v-btn
       bottom
       color="pink"
@@ -113,6 +105,7 @@ import DialogCreateLesson from '@/components/lesson/dialog-create-lesson'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
+  middleware: 'authMiddleware',
   components: {
     DialogImportEbook,
     DialogCreateLesson,
@@ -125,6 +118,7 @@ export default {
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
       { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
       { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
+      { icon: 'mdi-logout', text: 'Sair', id: 'logout' },
       { icon: 'mdi-content-copy', text: 'Duplicates' },
       {
         icon: 'mdi-chevron-up',
@@ -178,6 +172,10 @@ export default {
           break
         case 'reviewStudy':
           location.href = `${process.env.BASE_URL}/review/`
+          break
+        case 'logout':
+          this.$cookiz.remove('token')
+          location.reload()
           break
       }
     },

@@ -31,7 +31,11 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: '~plugins/eventBus.client' }, { src: '~plugins/vue-sanitize' }],
+  plugins: [
+    { src: '~plugins/eventBus.client' },
+    { src: '~plugins/vue-sanitize' },
+    { src: '~plugins/axios-port.js' },
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -40,7 +44,9 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
+    'nuxt-client-init-module',
     // Doc: https://axios.nuxtjs.org/usage
+    ['cookie-universal-nuxt', { alias: 'cookiz' }],
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
@@ -75,7 +81,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {
+    extend (config, ctx) {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
       }

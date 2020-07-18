@@ -6,33 +6,42 @@ export const state = () => ({
 })
 
 export const actions = {
-  async fetchStatusReport({ commit }) {
+  async fetchStatusReport ({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
     commit('setStatusReport', statusReport)
   },
-  setDialogCreateLesson({ commit }, newState) {
+  setDialogCreateLesson ({ commit }, newState) {
     commit('setDialogCreateLesson', newState)
   },
 
-  async nuxtServerInit({ dispatch }) {
-    await dispatch('fetchStatusReport')
+  async nuxtClientInit ({ dispatch }, { route }) {
+    if (route.path !== '/') {
+      await dispatch('fetchStatusReport')
+    }
+  },
+
+  async nuxtServerInit ({ dispatch }, { route }) {
+    // console.log('asas', process.server)
+    // if (route.path !== '/') {
+    //   await dispatch('fetchStatusReport')
+    // }
   },
 }
 
 export const mutations = {
-  setStatusReport(state, statusReport) {
+  setStatusReport (state, statusReport) {
     state.statusReport = statusReport
   },
-  setDialogCreateLesson(state, newState) {
+  setDialogCreateLesson (state, newState) {
     state.dialogCreateLesson = newState
   },
 }
 
 export const getters = {
-  getStatusReport(state) {
+  getStatusReport (state) {
     return state.statusReport
   },
-  getDialogCreateLesson(state) {
+  getDialogCreateLesson (state) {
     return state.dialogCreateLesson
   },
 }

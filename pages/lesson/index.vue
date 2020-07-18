@@ -17,10 +17,8 @@
               @contextmenu="show($event, lesson)"
             >
               <v-img height="200" width="200" :src="lesson.img" />
-              <v-card-title>
-                {{ lesson.title.length > 30 ? lesson.title.substr(0, 30) + ' ...' : lesson.title }}
-              </v-card-title>
-              <v-card-text> {{ lesson.fragment }} ... </v-card-text>
+              <v-card-title>{{ lesson.title.length > 30 ? lesson.title.substr(0, 30) + ' ...' : lesson.title }}</v-card-title>
+              <v-card-text>{{ lesson.fragment }} ...</v-card-text>
             </v-card>
           </v-col>
         </v-row>

@@ -30,7 +30,7 @@
                   <v-spacer />
                   <!-- <v-btn icon>
                       <v-icon>mdi-play-circle</v-icon>
-                    </v-btn> -->
+                  </v-btn>-->
                 </v-row>
                 <p>
                   <slot v-for="(token, index) in section.tokens">
@@ -51,8 +51,7 @@
                       @mouseover="setSelectionRangeStart($event)"
                       @click="translateWord(token, section.tokens)"
                       v-html="sanitizeTokenText(token)"
-                    >
-                    </span>
+                    ></span>
 
                     <slot
                       v-if="
@@ -60,9 +59,7 @@
                         !notSpacebalePunctuations.includes(section.tokens[index].text) &&
                         section.tokens[index + 1].type !== 'PUNCTUATION'
                       "
-                    >
-                      &nbsp;
-                    </slot>
+                    >&nbsp;</slot>
                   </slot>
                 </p>
 
@@ -78,9 +75,7 @@
                         updateNewWordsInSectionToKnown(true, true)
                         redirectToLessons()
                       "
-                    >
-                      FINALIZAR
-                    </v-chip>
+                    >FINALIZAR</v-chip>
                     <v-chip
                       v-if="!islastTopic && lesson.index != undefined && showEndOfSectionButtons"
                       class="ma-2"
@@ -92,9 +87,7 @@
                         updateNewWordsInSectionToKnown(true, true)
                         redirectToNextTopic()
                       "
-                    >
-                      PRÓXIMO
-                    </v-chip>
+                    >PRÓXIMO</v-chip>
                   </v-card>
                 </div>
               </v-card-text>
