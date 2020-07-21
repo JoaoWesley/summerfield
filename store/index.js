@@ -1,4 +1,5 @@
 import * as apiService from '../services/apiService'
+import authMiddleware from '../middleware/authMiddleware'
 
 export const state = () => ({
   statusReport: { known: {} },
@@ -8,15 +9,15 @@ export const state = () => ({
 export const actions = {
   async fetchStatusReport({ commit }) {
     const statusReport = await apiService.getWordsStatusReport()
-    console.log('retorno do status report', statusReport)
     commit('setStatusReport', statusReport)
   },
   setDialogCreateLesson({ commit }, newState) {
     commit('setDialogCreateLesson', newState)
   },
 
-  async nuxtServerInit({ dispatch }, { route }) {
-    if (route.path !== '/') {
+  async nuxtServerInit({ dispatch }, context) {
+    if (context.route.path !== '/') {
+      await authMiddleware(context)
       await dispatch('fetchStatusReport')
     }
   },

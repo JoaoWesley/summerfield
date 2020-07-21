@@ -177,7 +177,7 @@ export default {
           break
         case 'logout':
           this.$cookiz.remove('token')
-          location.reload()
+          location.href = `${process.env.BASE_URL}/`
           break
       }
     },

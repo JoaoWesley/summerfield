@@ -192,6 +192,10 @@ export default {
           this.setErrorMessage('E-mail ou senha inválidos')
           return
         }
+        if (error.response.data.code === responseCodeTypes.EMAIL_NOT_FOUND) {
+          this.setErrorMessage('E-mail não encontrado')
+          return
+        }
         this.setErrorMessage('Erro ao logar')
       }
     },
@@ -206,7 +210,7 @@ export default {
         await apiService.register(this.user)
         this.setIsLoading(false)
         this.setSuccessMessage('Cadastrado com sucesso!')
-        this.setLoginState()
+        //this.setLoginState()
         location.href = '/lesson'
       } catch (error) {
         this.setIsLoading(false)
@@ -235,6 +239,11 @@ export default {
         )
       } catch (error) {
         this.setIsLoading(false)
+        if (error.response.data.code === responseCodeTypes.EMAIL_NOT_FOUND) {
+          this.setErrorMessage('E-mail não encontrado')
+          return
+        }
+
         this.setErrorMessage('Erro ao enviar e-mail de alteração de senha')
       }
     },
