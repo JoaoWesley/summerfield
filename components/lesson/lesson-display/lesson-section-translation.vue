@@ -25,14 +25,14 @@
       <div v-if="wordTapped.text || phraseSelected" style="height: 60%;">
         <v-row style="height: 10%; margin-bottom: 20px;">
           <v-col cols="2">
-            <v-btn icon>
+            <v-btn icon @click="playWordPhraseTapped">
               <v-icon>mdi-play-circle</v-icon>
             </v-btn>
           </v-col>
           <v-col cols="10" style="margin-top: 6px;">
-            <span style="word-break: break-all;">{{
-              wordTapped.text ? wordTapped.text : phraseSelected
-            }}</span>
+            <span style="word-break: break-all;">
+              {{ wordTapped.text ? wordTapped.text : phraseSelected }}
+            </span>
           </v-col>
         </v-row>
 
@@ -107,6 +107,12 @@ export default {
       updateWordTappedStatusToKnown: 'lesson/updateWordTappedStatusToKnown',
       showOtherTranslations: 'lesson/showOtherTranslations',
     }),
+
+    playWordPhraseTapped() {
+      let speech = new SpeechSynthesisUtterance(this.wordTapped.text || this.phraseSelected)
+      speech.lang = 'en-US'
+      window.speechSynthesis.speak(speech)
+    },
   },
 }
 </script>
