@@ -1,4 +1,5 @@
 import * as wordService from './wordService'
+import * as apiService from './apiService'
 
 export const buildStudyObject = (
   lessonId,
@@ -21,4 +22,14 @@ export const buildStudyObject = (
     translation: wordPhraseTranslation.text,
     wordContext: wordService.getWordContextFromSection(wordTapped, sectionTokens),
   }
+}
+
+export const getTranslation = async (text) => {
+  let translations = await apiService.getTranslation(text)
+  translations = translations.map((translation) => {
+    return {
+      text: translation.translatedText,
+    }
+  })
+  return translations
 }

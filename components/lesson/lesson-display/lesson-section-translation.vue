@@ -7,12 +7,19 @@
       style="height: 100%;"
     >
       <v-alert v-if="!wordTapped.text && !phraseSelected" type="info" style="height: 100%;">
-        1 - Clique em qualquer palavra para ver a tradução.<br /><br />
-        2 - Clique em uma tradução para salvar a palavra para estudo.<br /><br />
-        3 - Também é possível criar a sua própria tradução. no botão 'Criar tradução'.<br /><br />
-        4 - Palavras em branco são palavras conhecidas.<br /><br />
-        5 - Palavras em azul são palavras novas.<br /><br />
-        6 - Palavras em amarelo são palavras sendo estudadas.<br /><br />
+        1 - Clique em qualquer palavra para ver a tradução.
+        <br />
+        <br />2 - Clique em uma tradução para salvar a palavra para estudo.
+        <br />
+        <br />3 - Também é possível criar a sua própria tradução. no botão 'Criar tradução'.
+        <br />
+        <br />4 - Palavras em branco são palavras conhecidas.
+        <br />
+        <br />5 - Palavras em azul são palavras novas.
+        <br />
+        <br />6 - Palavras em amarelo são palavras sendo estudadas.
+        <br />
+        <br />
       </v-alert>
 
       <div v-if="wordTapped.text || phraseSelected" style="height: 60%;">
@@ -23,9 +30,9 @@
             </v-btn>
           </v-col>
           <v-col cols="10" style="margin-top: 6px;">
-            <span style="word-break: break-all;">
-              {{ wordTapped.text ? wordTapped.text : phraseSelected }}
-            </span>
+            <span style="word-break: break-all;">{{
+              wordTapped.text ? wordTapped.text : phraseSelected
+            }}</span>
           </v-col>
         </v-row>
 

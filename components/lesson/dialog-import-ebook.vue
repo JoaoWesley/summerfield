@@ -89,6 +89,7 @@ export default {
         try {
           const result = await axios.post(`${process.env.API_URL}/lesson/import-lesson`, data, {
             // receive two    parameter endpoint url ,form data
+            withCredentials: true,
           })
 
           const approvedOpenLesson = await this.$refs.confirm.open(

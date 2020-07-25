@@ -20,8 +20,8 @@
               @contextmenu="show($event, topic)"
             >
               <v-img height="200" width="200" :src="topic.img" />
-              <v-card-title> {{ topic.title }} </v-card-title>
-              <v-card-text> {{ getTopicText(topic) }} </v-card-text>
+              <v-card-title>{{ topic.title }}</v-card-title>
+              <v-card-text>{{ getTopicText(topic) }}</v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -103,7 +103,8 @@ export default {
       }
       if (menuItem.id === 'delete') {
         await axios.delete(
-          `${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`
+          `${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`,
+          { withCredentials: true }
         )
         const index = this.topics.indexOf(this.lessonClicked)
         this.topics.splice(index, 1)

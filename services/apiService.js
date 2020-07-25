@@ -89,6 +89,10 @@ export const createPopularTranslation = async (translation) => {
   return (await axios.post(`/study/popular-translation/`, translation)).data
 }
 
+export const getTranslation = async (text) => {
+  return (await axios.get(`/study/translation/?text=${text}`)).data
+}
+
 /**
  * Word endpoints
  */

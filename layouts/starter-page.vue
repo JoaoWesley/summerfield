@@ -24,7 +24,6 @@ export default {
 }
 </script>
 
-
 <style scoped>
 .bg-img {
   background-image: url('~@/assets/index.jpg');

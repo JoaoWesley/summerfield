@@ -1,5 +1,6 @@
 import wordStatusType from '@/commons/wordStatusType'
 import * as apiService from '@/services/apiService'
+import * as studyService from '@/services/studyService'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export const state = () => ({
@@ -174,8 +175,8 @@ export const actions = {
     dispatch('setWordPhraseHasTranslation', { translation: '' })
 
     //chamar api que vai retornar traducão da palavra
-    const translations = [{ text: 'Linguagem' }, { text: 'Lingua' }, { text: 'Idioma' }]
 
+    let translations = []
     const popularTranslation = await apiService.getPopularTranslation(
       state.wordTapped.text,
       state.lessonId,
@@ -183,11 +184,13 @@ export const actions = {
       state.window
     )
     if (popularTranslation) {
-      translations[0] = {
+      translations.push({
         text: popularTranslation.translation,
         popularTranslationOcurrences: popularTranslation.occurrences,
         isPopularTranslation: true,
-      }
+      })
+    } else {
+      translations = await studyService.getTranslation(state.wordTapped.text)
     }
 
     dispatch('setWordPhraseTranslations', translations)
@@ -202,7 +205,8 @@ export const actions = {
       return
     }
     //chamar api que vai retornar traducão da frase
-    dispatch('setWordPhraseTranslations', [{ text: 'A traducão da frase' }])
+    const translations = await studyService.getTranslation(state.phraseSelected)
+    dispatch('setWordPhraseTranslations', [translations.pop()])
   },
   async updateWordTappedStatusToKnown({ dispatch, state }) {
     if (state.wordTapped.status === wordStatusType.NEW) {
