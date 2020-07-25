@@ -30,9 +30,9 @@
             </v-btn>
           </v-col>
           <v-col cols="10" style="margin-top: 6px;">
-            <span style="word-break: break-all;">
-              {{ wordTapped.text ? wordTapped.text : phraseSelected }}
-            </span>
+            <span style="word-break: break-all;">{{
+              wordTapped.text ? wordTapped.text : phraseSelected
+            }}</span>
           </v-col>
         </v-row>
 
@@ -51,8 +51,31 @@
             </v-btn>
           </v-col>
         </v-row>
+
+        <v-row v-if="wordTapped.text" class="text-center">
+          <v-col cols="12">
+            <v-btn rounded color="primary" dark @click="openCambridgeDictionaryPopUp">
+              Cambridge dictionary
+              <v-icon right>
+                mdi-search-web
+              </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+        <v-row v-if="wordTapped.text" class="text-center">
+          <v-col cols="12">
+            <v-btn rounded color="primary" dark @click="openUrbanDictionaryPopUp">
+              Urban dictionary
+              <v-icon right>
+                mdi-search-web
+              </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
 
+      <br />
       <br />
       <div v-if="wordTapped.text || phraseSelected" style="height: 40%;">
         <v-row class="text-center">
@@ -112,6 +135,22 @@ export default {
       let speech = new SpeechSynthesisUtterance(this.wordTapped.text || this.phraseSelected)
       speech.lang = 'en-US'
       window.speechSynthesis.speak(speech)
+    },
+
+    openCambridgeDictionaryPopUp() {
+      window.open(
+        `https://dictionary.cambridge.org/us/dictionary/english/${this.wordTapped.text}`,
+        'myWindow',
+        'width=800,height=600'
+      )
+    },
+
+    openUrbanDictionaryPopUp() {
+      window.open(
+        `https://www.urbandictionary.com/define.php?term=${this.wordTapped.text}`,
+        'myWindow',
+        'width=800,height=600'
+      )
     },
   },
 }
