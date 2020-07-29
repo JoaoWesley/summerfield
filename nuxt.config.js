@@ -34,7 +34,7 @@ export default {
   plugins: [
     { src: '~plugins/eventBus.client' },
     { src: '~plugins/vue-sanitize' },
-    { src: '~plugins/axios-port.js' },
+    { src: '~plugins/axios-port.js' }
   ],
   /*
    ** Nuxt.js dev-modules
@@ -44,7 +44,7 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
-    // Doc: https://axios.nuxtjs.org/usage
+    // Doc: https://axios.nuxtjs.org/usage    
     ['cookie-universal-nuxt', { alias: 'cookiz' }],
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
@@ -80,6 +80,8 @@ export default {
     /*
      ** You can extend webpack config here
      */
+    transpile: ['vuetify-audio'],
+
     extend(config, ctx) {
       if (ctx.isDev) {
         config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'

@@ -20,8 +20,10 @@
     "@nuxtjs/pwa": "^3.0.0-0",
     "axios": "^0.19.2",
     "cookie-universal-nuxt": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
     "nuxt": "^2.0.0",
-    "vue-sanitize": "^0.2.0"
+    "vue-sanitize": "^0.2.0",
+    "vuetify-audio": "^0.3.3"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.0.0",

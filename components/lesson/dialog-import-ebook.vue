@@ -73,48 +73,50 @@ export default {
     setFile(file) {
       this.error = {}
       this.file = null
-      if (!allowedFileTypes.includes(file.type)) {
+      if (file && !allowedFileTypes.includes(file.type)) {
         this.error.message = 'Formato do arquivo não é válido'
         return
-      }
+      }      
       this.file = file
     },
     async sendFile() {
-      if (this.file) {
-        this.dialogImportLoading = true
-        this.isSendingFile = true
-        const data = new FormData()
-        data.append('file', this.file)
+      if (!this.file) {
+        return
+      }
+      this.dialogImportLoading = true
+      this.isSendingFile = true
+      const data = new FormData()
+      data.append('file', this.file)
 
-        try {
-          const result = await axios.post(`${process.env.API_URL}/lesson/import-lesson`, data, {
-            // receive two    parameter endpoint url ,form data
-            withCredentials: true,
-          })
+      try {
+        const result = await axios.post(`${process.env.API_URL}/lesson/import-lesson`, data, {
+          // receive two    parameter endpoint url ,form data
+          withCredentials: true,
+        })
 
-          const approvedOpenLesson = await this.$refs.confirm.open(
-            'Documento importado!',
-            'Deseja abrir lição criada?',
-            { color: 'blue' }
-          )
+        const approvedOpenLesson = await this.$refs.confirm.open(
+          'Documento importado!',
+          'Deseja abrir lição criada?',
+          { color: 'blue' }
+        )
 
-          if (approvedOpenLesson) {
-            location.href = `${process.env.BASE_URL}/lesson/${result.data._id}/topic`
-          }
-        } catch (error) {
-          this.error.message = 'Erro ao fazer o upload do arquivo'
-          if (error.response.data.code === 'LIMIT_FILE_SIZE') {
-            this.error.code = error.response.data.code
-            this.error.message = 'Arquivo execedeu o tamanho máximo de 4MB'
-          }
-          this.dialogImportLoading = false
-          this.isSendingFile = false
-          return
+        if (approvedOpenLesson) {
+          location.href = `${process.env.BASE_URL}/lesson/${result.data._id}/topic`
         }
-
+      } catch (error) {
+        this.error.message = 'Erro ao fazer o upload do arquivo'
+        if (error.response.data.code === 'LIMIT_FILE_SIZE') {
+          this.error.code = error.response.data.code
+          this.error.message = 'Arquivo execedeu o tamanho máximo de 4MB'
+        }
         this.dialogImportLoading = false
         this.isSendingFile = false
+        return
       }
+
+      this.dialogImportLoading = false
+      this.isSendingFile = false
+      
     },
 
     async closeImportingEbookModal() {

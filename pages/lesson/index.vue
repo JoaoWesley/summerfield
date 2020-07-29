@@ -43,6 +43,7 @@
 
 <script>
 import * as apiService from '@/services/apiService'
+import * as googleStorageApiService from '@/services/googleStorageApiService'
 
 export default {
   async asyncData() {
@@ -104,6 +105,9 @@ export default {
       }
 
       if (menuItem.id === 'delete') {
+        if(this.lessonClicked.audioUrl) {
+          googleStorageApiService.deleteObjectOnLessonAudioBucket(this.lessonClicked.audioUrl)
+        }
         await apiService.deleteLessonById(this.lessonClicked._id)
         const index = this.lessons.indexOf(this.lessonClicked)
         this.lessons.splice(index, 1)
