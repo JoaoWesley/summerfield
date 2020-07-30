@@ -6,8 +6,14 @@ export function setClient(Axios) {
 /**
  * Lesson endpoints
  */
-export const getLessons = async () => {
-  const lessons = (await axios.get(`/lesson/`)).data
+export const getLessons = async (query) => {
+  let lessons
+  if (query.shared) {
+    lessons = (await axios.get(`/lesson/?shared=true`)).data
+  } else {
+    lessons = (await axios.get(`/lesson/`)).data
+  }
+
   const imgs = []
   imgs.push(
     'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'

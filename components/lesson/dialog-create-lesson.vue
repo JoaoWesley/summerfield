@@ -37,6 +37,13 @@
           </v-col>
         </v-row>
 
+        <v-checkbox
+          v-model="lesson.shared"
+          label="Compartilhar essa lição com outros usuários"
+          color="primary"          
+          hide-details
+        ></v-checkbox>
+
         <v-alert v-if="error.message" type="error">
           {{ error.message }}
         </v-alert>
@@ -68,12 +75,13 @@ import jwt from 'jsonwebtoken'
 
 export default {
   data: () => ({
-    lesson: {},
+    lesson: {title: null, text: null, shared: false},
     file: null,
     error: {
       message: '',
       code: null,
     },
+    checkboxShareLesson: false,
   }),
   computed: {
     dialogCreateLesson: {

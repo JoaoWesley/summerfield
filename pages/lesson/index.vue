@@ -46,9 +46,9 @@ import * as apiService from '@/services/apiService'
 import * as googleStorageApiService from '@/services/googleStorageApiService'
 
 export default {
-  async asyncData() {
-    if (process.server) {
-      const lessons = await apiService.getLessons()
+  async asyncData({ query }) {
+    if (process.server) {      
+      const lessons = await apiService.getLessons(query)
       return {
         lessons,
       }

@@ -118,6 +118,7 @@ export default {
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
+      { icon: 'mdi-pencil', text: 'Lições compartilhadas', id: 'lessonShared' },
       { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
       { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
       { icon: 'mdi-logout', text: 'Sair', id: 'logout' },
@@ -168,6 +169,9 @@ export default {
       switch (item.id) {
         case 'lesson':
           location.href = `${process.env.BASE_URL}/lesson/`
+          break
+        case 'lessonShared':
+          location.href = `${process.env.BASE_URL}/lesson?shared=true`
           break
         case 'importEbook':
           this.showDialogImportEbook = true
