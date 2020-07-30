@@ -114,21 +114,6 @@ export const updateWord = (word) => {
 }
 export const getWordsStatusReport = async () => {
   return (await axios.get(`/word/status-report`)).data
-  // return {
-  //   learning: {
-  //     count: 0,
-  //     words: [],
-  //   },
-  //   known: {
-  //     count: 365,
-  //     words: [
-  //       {
-  //         text: 'a',
-  //         status: 'KNOWN',
-  //       },
-  //     ],
-  //   },
-  // }
 }
 
 /**
@@ -148,4 +133,12 @@ export const sendResetPasswordEmail = async (user) => {
 
 export const resetPassword = async (user) => {
   return (await axios.put(`/auth/reset-password/`, user)).data
+}
+
+/**
+ * Feedback endpoint
+ */
+
+export const postFeedback = async (feedback) => {
+  return (await axios.post(`/feedback/`, feedback)).data
 }
