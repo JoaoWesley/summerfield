@@ -52,6 +52,7 @@
             label="Compartilhar essa lição com outros usuários"
             color="primary"
             hide-details
+            v-if="!lesson.index"
           ></v-checkbox>
         </v-form>
         <v-alert v-if="error.message" type="error">
