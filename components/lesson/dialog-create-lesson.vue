@@ -5,48 +5,55 @@
         Criar lição
       </v-card-title>
       <v-container>
-        <v-row class="mx-2">
-          <v-col class="align-center justify-space-between" cols="12" md="12">
-            <v-row align="center" class="mr-0">
-              <v-text-field v-model="lesson.title" placeholder="Título" />
-            </v-row>
-          </v-col>
-        </v-row>
+        <v-form ref="form">
+          <v-row class="mx-2">
+            <v-col class="align-center justify-space-between" cols="12" md="12">
+              <v-row align="center" class="mr-0">
+                <v-text-field
+                  v-model="lesson.title"
+                  placeholder="Título"
+                  :rules="requiredFieldRule"
+                />
+              </v-row>
+            </v-col>
+          </v-row>
 
-        <v-row>
-          <v-col cols="12" md="12">
-            <v-textarea
-              v-if="!lesson.hasTopics"
-              v-model="lesson.text"
-              solo
-              name="input-7-4"
-              label="Insira o texto aqui."
-              auto-grow
-              outlined
-              rounded
-              class="normal-text-area"
-            />
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-textarea
+                v-if="!lesson.hasTopics"
+                v-model="lesson.text"
+                solo
+                name="input-7-4"
+                label="Insira o texto aqui."
+                auto-grow
+                outlined
+                rounded
+                class="normal-text-area"
+                :rules="requiredFieldRule"
+              />
+            </v-col>
+          </v-row>
 
-        <v-row>
-          <v-col cols="12" md="12">
-            <v-file-input
-              placeholder="Adicione arquivo de áudio"
-              show-size
-              prepend-icon="mdi-book-music"
-              @change="setFile($event)"
-            />
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col cols="12" md="12">
+              <v-file-input
+                v-if="!lesson.hasTopics"
+                placeholder="Adicione arquivo de áudio"
+                show-size
+                prepend-icon="mdi-book-music"
+                @change="setFile($event)"
+              />
+            </v-col>
+          </v-row>
 
-        <v-checkbox
-          v-model="lesson.shared"
-          label="Compartilhar essa lição com outros usuários"
-          color="primary"
-          hide-details
-        ></v-checkbox>
-
+          <v-checkbox
+            v-model="lesson.shared"
+            label="Compartilhar essa lição com outros usuários"
+            color="primary"
+            hide-details
+          ></v-checkbox>
+        </v-form>
         <v-alert v-if="error.message" type="error">
           {{ error.message }}
         </v-alert>
@@ -57,13 +64,7 @@
         <v-btn text color="primary" @click="setDialogCreateLesson(false)">
           Fechar
         </v-btn>
-        <v-btn
-          text
-          @click="
-            setDialogCreateLesson(false)
-            saveLesson()
-          "
-        >
+        <v-btn text @click="saveLesson()">
           Salvar
         </v-btn>
       </v-card-actions>
@@ -80,6 +81,7 @@ import jwt from 'jsonwebtoken'
 export default {
   data: () => ({
     lesson: { title: null, text: null, shared: false },
+    requiredFieldRule: [(f) => !!f || 'Esté é um campo obrigatório'],
     file: null,
     error: {
       message: '',
@@ -111,8 +113,8 @@ export default {
     }),
 
     async saveLesson() {
-      if (!this.lesson.title || !this.lesson.text) {
-        return
+      if (!this.$refs.form.validate()) {
+        return false
       }
 
       if (this.lesson._id) {
@@ -120,13 +122,19 @@ export default {
           await this.uploadFileToBucket(this.lesson)
         }
         await apiService.updateLesson(this.lesson)
+        this.setDialogCreateLesson(false)
         return
       }
 
-      if (this.lesson.hasTopics) {
+      if (this.lesson.index) {
+        // Se tem index é porque é um tópico
+        if (this.file) {
+          await this.uploadFileToBucket(this.lesson)
+        }
         const { lessonId } = this.lesson
         delete this.lesson.lessonId
         await apiService.updateLessonTopic(lessonId, this.lesson)
+        this.setDialogCreateLesson(false)
         return
       }
 
@@ -136,6 +144,7 @@ export default {
       }
       this.$eventBus.$emit('lessonSaved', lessonCreated)
       this.lesson = {}
+      this.setDialogCreateLesson(false)
     },
     async uploadFileToBucket(lesson) {
       try {
@@ -166,9 +175,9 @@ export default {
       this.file = file
     },
 
-    getFileName(lessonCreated) {
+    getFileName(lesson) {
       const userId = jwt.decode(this.$cookiz.get('token')).id
-      return userId + '/' + lessonCreated._id + '/' + new Date().getTime() + '-' + this.file.name
+      return userId + '/' + (lesson._id || lesson.lessonId) + '/' + new Date().getTime() + '-' + this.file.name
     },
   },
 }

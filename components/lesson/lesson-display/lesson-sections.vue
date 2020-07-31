@@ -1,6 +1,6 @@
 <template>
   <v-card style="width: 68%; margin-right: 2%;" raised shaped outlined>
-    <audio-player>
+    <audio-player v-if="lesson.audioUrl">
       <source :src="lesson.audioUrl" />
     </audio-player>
 
