@@ -118,7 +118,7 @@ export default {
     drawer: null,
     items: [
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
-      { icon: 'mdi-pencil', text: 'Lições compartilhadas', id: 'lessonShared' },      
+      { icon: 'mdi-pencil', text: 'Lições compartilhadas', id: 'lessonShared' },
       { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
       { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
       { icon: 'mdi-message-alert', text: 'Feedback', id: 'feedback' },
@@ -182,7 +182,7 @@ export default {
           break
         case 'feedback':
           location.href = `${process.env.BASE_URL}/feedback/`
-          break          
+          break
         case 'logout':
           this.$cookiz.remove('token')
           location.href = `${process.env.BASE_URL}/`

@@ -21,7 +21,7 @@ export const actions = {
   async fetchLesson({ commit }, lessonId) {
     const lesson = await apiService.getLessonById(lessonId)
     let sections = []
-    let sectionMaxLength = 100 //Default size
+    let sectionMaxLength = 90 //Default size
     const sectionStart = 0
     let sectionEnd = sectionMaxLength
     let spacerValue = 7 // Definindo quantos tokens vale cada <br/><br/>

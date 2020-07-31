@@ -1,6 +1,9 @@
 <template>
-  <v-card style="width: 68%; margin-right: 2%;" raised shaped outlined>  
-    <vuetify-audio :file="lesson.audioUrl" :autoPlay=true flat style="height:80px" v-if="lesson.audioUrl"></vuetify-audio>
+  <v-card style="width: 68%; margin-right: 2%;" raised shaped outlined>
+    <audio-player>
+      <source :src="lesson.audioUrl" />
+    </audio-player>
+
     <v-window
       v-model="window"
       class="elevation-1 $window-controls-top"
@@ -28,7 +31,7 @@
                 <v-row class="mb-4" align="center">
                   <v-avatar color="grey" class="mr-4" />
                   <strong class="title">{{ lesson.title }}</strong>
-                  <v-spacer />                  
+                  <v-spacer />
                 </v-row>
                 <p>
                   <slot v-for="(token, index) in section.tokens">
@@ -109,11 +112,13 @@ import { mapGetters, mapActions } from 'vuex'
 import * as apiService from '@/services/apiService'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
+import { audioPlayer } from 'vue-md-player'
+import 'vue-md-player/dist/vue-md-player.css'
 
 export default {
   components: {
-    ConfirmModal,    
-    VuetifyAudio: () => import('vuetify-audio'),
+    ConfirmModal,
+    audioPlayer,
   },
   data: () => ({
     showFinnishButtom: false,
@@ -122,7 +127,7 @@ export default {
     mouseIsDown: false,
     notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"],
     lastWindowBeforeChange: 0,
-    showEndOfSectionButtons: false,    				
+    showEndOfSectionButtons: false,
   }),
   computed: {
     ...mapGetters({

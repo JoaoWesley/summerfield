@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialogCreateLesson" width="1000px">
     <v-card>
-      <v-card-title class="headline grey lighten-2">Criar lição</v-card-title>
+      <v-card-title class="headline grey lighten-2">
+        Criar lição
+      </v-card-title>
       <v-container>
         <v-row class="mx-2">
           <v-col class="align-center justify-space-between" cols="12" md="12">
@@ -27,12 +29,13 @@
           </v-col>
         </v-row>
 
-         <v-row>
+        <v-row>
           <v-col cols="12" md="12">
-            <v-file-input 
-              placeholder="Adicione arquivo de áudio"        
-              show-size @change="setFile($event)"
+            <v-file-input
+              placeholder="Adicione arquivo de áudio"
+              show-size
               prepend-icon="mdi-book-music"
+              @change="setFile($event)"
             />
           </v-col>
         </v-row>
@@ -40,7 +43,7 @@
         <v-checkbox
           v-model="lesson.shared"
           label="Compartilhar essa lição com outros usuários"
-          color="primary"          
+          color="primary"
           hide-details
         ></v-checkbox>
 
@@ -51,14 +54,18 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn text color="primary" @click="setDialogCreateLesson(false)">Fechar</v-btn>
+        <v-btn text color="primary" @click="setDialogCreateLesson(false)">
+          Fechar
+        </v-btn>
         <v-btn
           text
           @click="
             setDialogCreateLesson(false)
             saveLesson()
           "
-        >Salvar</v-btn>
+        >
+          Salvar
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -68,14 +75,11 @@
 import { mapActions } from 'vuex'
 import * as apiService from '@/services/apiService'
 import * as googleStorageApiService from '@/services/googleStorageApiService'
-import axios from 'axios'
-import allowedFileTypes from '@/commons/allowedFileTypes'
 import jwt from 'jsonwebtoken'
-
 
 export default {
   data: () => ({
-    lesson: {title: null, text: null, shared: false},
+    lesson: { title: null, text: null, shared: false },
     file: null,
     error: {
       message: '',
@@ -112,7 +116,7 @@ export default {
       }
 
       if (this.lesson._id) {
-        if(this.file) {
+        if (this.file) {
           await this.uploadFileToBucket(this.lesson)
         }
         await apiService.updateLesson(this.lesson)
@@ -127,15 +131,18 @@ export default {
       }
 
       let lessonCreated = await apiService.postLesson(this.lesson)
-      if(this.file) {
+      if (this.file) {
         lessonCreated = await this.uploadFileToBucket(lessonCreated) // na verdade não preciso reotrnar pos já altera por referencia
       }
-      this.$eventBus.$emit('lessonSaved', lessonCreated)      
+      this.$eventBus.$emit('lessonSaved', lessonCreated)
       this.lesson = {}
     },
     async uploadFileToBucket(lesson) {
       try {
-        const bucketObject = await googleStorageApiService.postObjectOnLessonAudioBucket(this.getFileName(lesson), this.file)
+        const bucketObject = await googleStorageApiService.postObjectOnLessonAudioBucket(
+          this.getFileName(lesson),
+          this.file
+        )
         lesson.audioUrl = bucketObject.data.mediaLink
         apiService.updateLesson(lesson)
         return lesson
@@ -146,24 +153,23 @@ export default {
 
     setFile(file) {
       this.error = {}
-      this.file = null     
+      this.file = null
       if (file && file.type !== 'audio/mpeg') {
-        this.error.message = 'Formato do arquivo não é válido'        
+        this.error.message = 'Formato do arquivo não é válido'
         return
       }
-      if( (file.size / 1024 / 1024) > 20) { // Se maior que 20 Megas
-        this.error.message = 'Arquivo não pode ser maior que 20 megas'                
+      if (file.size / 1024 / 1024 > 20) {
+        // Se maior que 20 Megas
+        this.error.message = 'Arquivo não pode ser maior que 20 megas'
       }
-      
+
       this.file = file
     },
 
-    getFileName(lessonCreated) {      
+    getFileName(lessonCreated) {
       const userId = jwt.decode(this.$cookiz.get('token')).id
-      return (
-        userId + '/' + lessonCreated._id + '/' + new Date().getTime() + '-' +  this.file.name
-      )
-    },    
+      return userId + '/' + lessonCreated._id + '/' + new Date().getTime() + '-' + this.file.name
+    },
   },
 }
 </script>

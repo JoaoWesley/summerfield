@@ -76,7 +76,7 @@ export default {
       if (file && !allowedFileTypes.includes(file.type)) {
         this.error.message = 'Formato do arquivo não é válido'
         return
-      }      
+      }
       this.file = file
     },
     async sendFile() {
@@ -116,7 +116,6 @@ export default {
 
       this.dialogImportLoading = false
       this.isSendingFile = false
-      
     },
 
     async closeImportingEbookModal() {

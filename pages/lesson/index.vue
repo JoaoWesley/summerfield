@@ -47,7 +47,7 @@ import * as googleStorageApiService from '@/services/googleStorageApiService'
 
 export default {
   async asyncData({ query }) {
-    if (process.server) {      
+    if (process.server) {
       const lessons = await apiService.getLessons(query)
       return {
         lessons,
@@ -105,7 +105,7 @@ export default {
       }
 
       if (menuItem.id === 'delete') {
-        if(this.lessonClicked.audioUrl) {
+        if (this.lessonClicked.audioUrl) {
           googleStorageApiService.deleteObjectOnLessonAudioBucket(this.lessonClicked.audioUrl)
         }
         await apiService.deleteLessonById(this.lessonClicked._id)

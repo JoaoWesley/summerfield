@@ -22,8 +22,8 @@
     "cookie-universal-nuxt": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
     "nuxt": "^2.0.0",
-    "vue-sanitize": "^0.2.0",
-    "vuetify-audio": "^0.3.3"
+    "vue-md-player": "^0.1.4",
+    "vue-sanitize": "^0.2.0"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.0.0",
