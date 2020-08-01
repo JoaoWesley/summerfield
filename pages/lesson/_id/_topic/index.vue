@@ -19,7 +19,7 @@
               @click="openTopic(topic)"
               @contextmenu="show($event, topic)"
             >
-              <v-img height="200" width="200" :src="topic.img" />
+              <v-img height="200" width="200" :src="topic.imageUrl" />
               <v-card-title>{{ topic.title }}</v-card-title>
               <v-card-text>{{ getTopicText(topic) }}</v-card-text>
             </v-card>

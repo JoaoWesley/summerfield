@@ -13,21 +13,6 @@ export const getLessons = async (query) => {
   } else {
     lessons = (await axios.get(`/lesson/`)).data
   }
-
-  const imgs = []
-  imgs.push(
-    'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
-  )
-  imgs.push(
-    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-  )
-  imgs.push(
-    'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'
-  )
-  imgs.push('https://images.freeimages.com/images/large-previews/8d3/learn-1241297.jpg')
-  lessons.forEach((element) => {
-    element.img = imgs[Math.floor(Math.random() * 4)]
-  })
   return lessons
 }
 export const getLessonById = async (lessonId) => {

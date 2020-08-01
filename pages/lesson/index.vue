@@ -16,7 +16,7 @@
               @click="openLesson(lesson)"
               @contextmenu="show($event, lesson)"
             >
-              <v-img height="200" width="200" :src="lesson.img" />
+              <v-img height="200" width="200" :src="lesson.imageUrl" />
               <v-card-title>
                 {{ lesson.title.length > 30 ? lesson.title.substr(0, 30) + ' ...' : lesson.title }}
               </v-card-title>

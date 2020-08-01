@@ -48,11 +48,11 @@
           </v-row>
 
           <v-checkbox
+            v-if="!lesson.index"
             v-model="lesson.shared"
             label="Compartilhar essa lição com outros usuários"
             color="primary"
             hide-details
-            v-if="!lesson.index"
           ></v-checkbox>
         </v-form>
         <v-alert v-if="error.message" type="error">
@@ -114,6 +114,9 @@ export default {
     }),
 
     async saveLesson() {
+      this.lesson.imageUrl =
+        '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
+
       if (!this.$refs.form.validate()) {
         return false
       }
@@ -178,7 +181,15 @@ export default {
 
     getFileName(lesson) {
       const userId = jwt.decode(this.$cookiz.get('token')).id
-      return userId + '/' + (lesson._id || lesson.lessonId) + '/' + new Date().getTime() + '-' + this.file.name
+      return (
+        userId +
+        '/' +
+        (lesson._id || lesson.lessonId) +
+        '/' +
+        new Date().getTime() +
+        '-' +
+        this.file.name
+      )
     },
   },
 }
