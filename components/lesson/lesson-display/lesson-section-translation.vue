@@ -45,7 +45,14 @@
         </div>
 
         <v-row class="text-center">
-          <v-col v-if="wordPhraseHasTranslation && wordPhraseTranslations.length == 1" cols="12">
+          <v-col
+            v-if="
+              wordPhraseHasTranslation &&
+              wordPhraseTranslations.length == 1 &&
+              wordPhraseTranslations[0].isPopularTranslation
+            "
+            cols="12"
+          >
             <v-btn rounded color="primary" dark @click="showOtherTranslations">
               Mostrar outras traduções
             </v-btn>

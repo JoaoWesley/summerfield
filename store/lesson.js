@@ -206,12 +206,8 @@ export const actions = {
     })
   },
   async showOtherTranslations({ dispatch, state }) {
-    //chamar api para buscar outras traduções.
-    dispatch('setWordPhraseTranslations', [
-      ...state.wordPhraseTranslations,
-      { text: 'Another Translation' },
-      { text: 'Mais uma Translation' },
-    ])
+    const translations = await studyService.getTranslation(state.wordTapped.text)
+    dispatch('setWordPhraseTranslations', [...state.wordPhraseTranslations, translations.pop()])
   },
   async changeAllNewWordsInSectionToKnown({ commit }, sectionTokens) {
     commit('setSectionTokens', sectionTokens)

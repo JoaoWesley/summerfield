@@ -29,7 +29,9 @@
             <v-card flat>
               <v-card-text>
                 <v-row class="mb-4" align="center">
-                  <v-avatar color="grey" class="mr-4" />
+                  <v-avatar color="grey" class="mr-4">
+                    <img :src="lesson.imageUrl" alt="John" />
+                  </v-avatar>
                   <strong class="title">{{ lesson.title }}</strong>
                   <v-spacer />
                 </v-row>
