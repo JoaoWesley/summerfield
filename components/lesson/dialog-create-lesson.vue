@@ -116,7 +116,6 @@ export default {
     async saveLesson() {
       this.lesson.imageUrl =
         '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
-
       if (!this.$refs.form.validate()) {
         return false
       }
@@ -126,29 +125,29 @@ export default {
           await this.uploadFileToBucket(this.lesson)
         }
         await apiService.updateLesson(this.lesson)
-        this.setDialogCreateLesson(false)
+        this.onEndingSavingLesson()
         return
       }
 
-      if (this.lesson.index) {
+      if (this.lesson.index !== undefined) {
         // Se tem index é porque é um tópico
         if (this.file) {
           await this.uploadFileToBucket(this.lesson)
         }
         const { lessonId } = this.lesson
-        delete this.lesson.lessonId
         await apiService.updateLessonTopic(lessonId, this.lesson)
-        this.setDialogCreateLesson(false)
+        this.onEndingSavingLesson()
         return
       }
 
-      let lessonCreated = await apiService.postLesson(this.lesson)
+      this.lesson = await apiService.postLesson(this.lesson)
       if (this.file) {
-        lessonCreated = await this.uploadFileToBucket(lessonCreated) // na verdade não preciso reotrnar pos já altera por referencia
+        this.lesson = await this.uploadFileToBucket(this.lesson) // na verdade não preciso reotrnar pos já altera por referencia
       }
-      this.$eventBus.$emit('lessonSaved', lessonCreated)
+      this.$eventBus.$emit('lessonSaved', this.lesson)
+      this.onEndingSavingLesson()
       this.lesson = {}
-      this.setDialogCreateLesson(false)
+      //this.setDialogCreateLesson(false)
     },
     async uploadFileToBucket(lesson) {
       try {
@@ -190,6 +189,17 @@ export default {
         '-' +
         this.file.name
       )
+    },
+
+    onEndingSavingLesson() {
+      this.setDialogCreateLesson(false)
+
+      const isTopic = this.lesson.index !== undefined
+      if (isTopic) {
+        location.href = `${process.env.BASE_URL}/lesson/${this.lesson.lessonId}/topic/${this.lesson.index}`
+        return
+      }
+      location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}`
     },
   },
 }
