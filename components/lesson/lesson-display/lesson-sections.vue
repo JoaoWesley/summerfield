@@ -230,11 +230,13 @@ export default {
       }
     },
 
-    async updateNewWordsInSectionToKnown(endOfSection, $newWindow) {
-      const movingForward = $newWindow > this.lastWindowBeforeChange
-      if (!movingForward) {
+    async updateNewWordsInSectionToKnown(endOfSection) {
+      const movingForward = this.window > this.lastWindowBeforeChange
+      const finishOrNextTopicButtonPressed = this.window === this.lastWindowBeforeChange
+      if (!movingForward && !finishOrNextTopicButtonPressed) {
         return
       }
+
       if (
         this.wordsKnownCount === 0 && //Se é usuário é novo não tem nenhuma palavra salva
         movingForward && // se está movendo para frente na seção
