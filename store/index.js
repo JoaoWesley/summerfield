@@ -15,11 +15,16 @@ export const actions = {
     commit('setDialogCreateLesson', newState)
   },
 
+  setCurrentRoutePath({ commit }, routePath) {
+    commit('setCurrentRoutePath', routePath)
+  },
+
   async nuxtServerInit({ dispatch }, context) {
     if (context.route.path !== '/') {
       await authMiddleware(context)
       await dispatch('fetchStatusReport')
     }
+    dispatch('setCurrentRoutePath', context.route.path)
   },
 }
 
@@ -30,6 +35,9 @@ export const mutations = {
   setDialogCreateLesson(state, newState) {
     state.dialogCreateLesson = newState
   },
+  setCurrentRoutePath(state, routePath) {
+    state.routePath = routePath
+  },
 }
 
 export const getters = {
@@ -38,5 +46,8 @@ export const getters = {
   },
   getDialogCreateLesson(state) {
     return state.dialogCreateLesson
+  },
+  getCurrentRoutePath(state) {
+    return state.routePath
   },
 }

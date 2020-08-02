@@ -3,7 +3,7 @@
     <v-row class="mb-6" no-gutters>
       <v-col cols="11" sm="12" md="12" lg="12">
         <v-row class="mb-6" no-gutters>
-          <v-col v-for="lesson in lessons" :key="lesson._id" sm="3" md="3" lg="3">
+          <v-col v-for="lesson in lessonsFiltered" :key="lesson._id" sm="3" md="3" lg="3">
             <v-card
               class="pa-2"
               outlined
@@ -66,13 +66,26 @@ export default {
       { title: 'Deletar', id: 'delete' },
       { title: 'Revisar', id: 'review' },
     ],
+    query: '',
   }),
+  computed: {
+    lessonsFiltered: function () {
+      if (this.query) {
+        const regexString = new RegExp(this.query, 'i')
+        return this.lessons.filter((lesson) => lesson.title.match(regexString))
+      }
+      return this.lessons
+    },
+  },
   created() {
     if (process.client) {
       this.$eventBus.$on('lessonSaved', async (lesson) => {
-        lesson.img =
-          'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1909&q=80'
+        this.lesson.imageUrl =
+          '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
         this.lessons.push(lesson)
+      })
+      this.$eventBus.$on('searchInLessons', (query) => {
+        this.query = query
       })
     }
   },

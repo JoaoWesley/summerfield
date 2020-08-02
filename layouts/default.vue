@@ -49,15 +49,18 @@
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title style="width: 300px;" class="ml-0 pl-4">
-        <span class="hidden-sm-and-down">Google Contacts</span>
+        <span class="hidden-sm-and-down">English everywhere</span>
       </v-toolbar-title>
       <v-text-field
+        v-if="currentRoutePath === '/lesson/' || currentRoutePath === '/lesson'"
+        v-model="search"
         flat
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
         label="Search"
         class="hidden-sm-and-down"
+        :change="searchInLessons"
       />
       <v-spacer />
       <v-btn icon :title="`Você sabe ${wordsKnownCount} palavras em inglês`">
@@ -150,15 +153,24 @@ export default {
       { icon: 'mdi-cellphone-link', text: 'App downloads' },
       { icon: 'mdi-keyboard', text: 'Go to the old version' },
     ],
+    search: '',
+    awaitingSearch: false,
   }),
 
   computed: {
     ...mapGetters({
       dialogCreateLesson: 'getDialogCreateLesson',
       getStatusReport: 'getStatusReport',
+      currentRoutePath: 'getCurrentRoutePath',
     }),
     wordsKnownCount() {
       return this.getStatusReport.known.count
+    },
+  },
+
+  watch: {
+    search: function () {
+      this.searchInLessons()
     },
   },
 
@@ -188,6 +200,16 @@ export default {
           location.href = `${process.env.BASE_URL}/`
           break
       }
+    },
+
+    searchInLessons() {
+      if (!this.awaitingSearch) {
+        setTimeout(() => {
+          this.$eventBus.$emit('searchInLessons', this.search)
+          this.awaitingSearch = false
+        }, 1000) // 1 sec delay
+      }
+      this.awaitingSearch = true
     },
   },
 }
