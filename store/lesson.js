@@ -228,6 +228,9 @@ export const actions = {
   setLessonId({ commit }, lessonId) {
     commit('setLessonId', lessonId)
   },
+  setLessonTopics({ commit }, lessonTopics) {
+    commit('setLessonTopics', lessonTopics)
+  },
 }
 
 export const mutations = {

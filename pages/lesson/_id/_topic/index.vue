@@ -44,7 +44,7 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export default {
@@ -81,6 +81,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      setLessonTopics: 'lesson/setLessonTopics',
+    }),
     openTopic(topic) {
       location.href += `/${topic.index}`
       sectionsStorageService.setLastUsedTopic(this.lessonId, topic.index)
@@ -106,8 +109,11 @@ export default {
           `${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`,
           { withCredentials: true }
         )
-        const index = this.topics.indexOf(this.lessonClicked)
-        this.topics.splice(index, 1)
+        const index = this.lessonTopics.indexOf(this.lessonClicked)
+
+        const lessonTopics = [...this.lessonTopics] // Avoiding change store directly
+        lessonTopics.splice(index, 1)
+        this.setLessonTopics(lessonTopics)
       }
     },
 
