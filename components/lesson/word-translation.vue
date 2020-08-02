@@ -83,7 +83,6 @@ export default {
         context: { lessonId: this.lessonId, topicId: this.lesson.index, sectionId: this.window },
       }
       apiService.createPopularTranslation(translation)
-      this.setWordPhraseHasTranslation({})
     },
   },
 }
