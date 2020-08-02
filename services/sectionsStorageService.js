@@ -12,6 +12,10 @@ export const storeSectionsState = ({ _id, index }, window, topicLessonId) => {
     return
   }
 
+  if (!topicLessonId) {
+    return
+  }
+
   let sectionState = { index, window, topicLessonId }
   let topicSectionsState = JSON.parse(localStorage.getItem('topicsSectionsState'))
   if (topicSectionsState) {
@@ -37,6 +41,7 @@ export const getTopicSectionsState = ({ index }, lessonId) => {
       (sectionState) => sectionState.index === index && sectionState.topicLessonId === lessonId
     )
     .pop()
+
   return sectionState
 }
 
