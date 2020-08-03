@@ -98,6 +98,7 @@ export default {
   }),
   methods: {
     async evaluateItem(quality) {
+      this.showAnswer = false
       if (this.item.evaluation) {
         this.item.evaluation.quality = quality
       } else {
