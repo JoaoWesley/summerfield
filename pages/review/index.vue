@@ -3,7 +3,7 @@
     <v-container style="background-color: #e5e5e5;">
       <div v-if="item">
         <v-row align="center" justify="center">
-          <v-btn icon>
+          <v-btn icon @click="playWordPhrase">
             <v-icon>mdi-play-circle</v-icon>
           </v-btn>
         </v-row>
@@ -106,6 +106,12 @@ export default {
       }
       await apiService.evaluateStudyItem(this.item)
       this.item = this.studyItems.shift()
+    },
+
+    playWordPhrase() {
+      let speech = new SpeechSynthesisUtterance(this.item.wordPhrase)
+      speech.lang = 'en-US'
+      window.speechSynthesis.speak(speech)
     },
   },
 }
