@@ -51,6 +51,7 @@ export default {
       const lessons = await apiService.getLessons(query)
       return {
         lessons,
+        isSharedLessons: query.shared ? true : false,
       }
     }
   },
@@ -61,11 +62,6 @@ export default {
     showMenu: false,
     x: 0,
     y: 0,
-    menuItems: [
-      { title: 'Editar', id: 'edit' },
-      { title: 'Deletar', id: 'delete' },
-      { title: 'Revisar', id: 'review' },
-    ],
     query: '',
   }),
   computed: {
@@ -75,6 +71,17 @@ export default {
         return this.lessons.filter((lesson) => lesson.title.match(regexString))
       }
       return this.lessons
+    },
+    menuItems: function () {
+      if (this.isSharedLessons) {
+        return [{ title: 'Revisar', id: 'review' }]
+      }
+
+      return [
+        { title: 'Editar', id: 'edit' },
+        { title: 'Deletar', id: 'delete' },
+        { title: 'Revisar', id: 'review' },
+      ]
     },
   },
   created() {
@@ -96,6 +103,10 @@ export default {
     openLesson(lesson) {
       localStorage.setItem('lastUsedLessonId', lesson._id)
       if (lesson.hasTopics) {
+        if (this.isSharedLessons) {
+          location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic?shared=true`
+          return
+        }
         location.href = `${process.env.BASE_URL}/lesson/${lesson._id}/topic`
         return
       }

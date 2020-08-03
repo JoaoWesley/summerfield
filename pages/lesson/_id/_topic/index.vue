@@ -28,7 +28,14 @@
       </v-col>
     </v-row>
 
-    <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+    <v-menu
+      v-if="menuItems.length > 0"
+      v-model="showMenu"
+      :position-x="x"
+      :position-y="y"
+      absolute
+      offset-y
+    >
       <v-list rounded>
         <v-list-item
           v-for="(menuItem, index) in menuItems"
@@ -48,11 +55,12 @@ import { mapGetters, mapActions } from 'vuex'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export default {
-  async asyncData({ params, store }) {
+  async asyncData({ params, store, query }) {
     if (process.server) {
       await store.dispatch('lesson/fetchLessonTopics', params.id)
       return {
         lessonId: params.id,
+        isSharedLessons: query.shared ? true : false,
       }
     }
   },
@@ -63,16 +71,21 @@ export default {
     showMenu: false,
     x: 0,
     y: 0,
-    menuItems: [
-      { title: 'Editar', id: 'edit' },
-      { title: 'Deletar', id: 'delete' },
-    ],
   }),
 
   computed: {
     ...mapGetters({
       lessonTopics: 'lesson/getLessonTopics',
     }),
+    menuItems: function () {
+      if (this.isSharedLessons) {
+        return []
+      }
+      return [
+        { title: 'Editar', id: 'edit' },
+        { title: 'Deletar', id: 'delete' },
+      ]
+    },
   },
 
   mounted() {
@@ -102,7 +115,7 @@ export default {
     },
     async menuOptionSelected(menuItem) {
       if (menuItem.id === 'edit') {
-        this.$eventBus.$emit('editLesson', {...this.lessonClicked})
+        this.$eventBus.$emit('editLesson', { ...this.lessonClicked })
       }
       if (menuItem.id === 'delete') {
         await axios.delete(
