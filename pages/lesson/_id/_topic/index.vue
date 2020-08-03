@@ -102,7 +102,7 @@ export default {
     },
     async menuOptionSelected(menuItem) {
       if (menuItem.id === 'edit') {
-        this.$eventBus.$emit('editLesson', this.lessonClicked)
+        this.$eventBus.$emit('editLesson', {...this.lessonClicked})
       }
       if (menuItem.id === 'delete') {
         await axios.delete(
