@@ -199,6 +199,10 @@ export default {
         location.href = `${process.env.BASE_URL}/lesson/${this.lesson.lessonId}/topic/${this.lesson.index}`
         return
       }
+      if(this.lesson.hasTopics) {
+        location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}/topic`
+        return  
+      }
       location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}`
     },
   },
