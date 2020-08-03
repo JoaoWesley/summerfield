@@ -48,7 +48,7 @@
           </v-row>
 
           <v-checkbox
-            v-if="!lesson.index"
+            v-if="lesson.index === undefined"
             v-model="lesson.shared"
             label="Compartilhar essa lição com outros usuários"
             color="primary"
