@@ -114,8 +114,12 @@ export default {
     }),
 
     async saveLesson() {
-      this.lesson.imageUrl =
-        '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
+      if (this.lesson._id === undefined && this.lesson.index === undefined) {
+        //Se não está editando seta imagem
+        this.lesson.imageUrl =
+          '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
+      }
+
       if (!this.$refs.form.validate()) {
         return false
       }
@@ -199,9 +203,9 @@ export default {
         location.href = `${process.env.BASE_URL}/lesson/${this.lesson.lessonId}/topic/${this.lesson.index}`
         return
       }
-      if(this.lesson.hasTopics) {
+      if (this.lesson.hasTopics) {
         location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}/topic`
-        return  
+        return
       }
       location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}`
     },

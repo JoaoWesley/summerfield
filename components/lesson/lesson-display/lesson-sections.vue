@@ -1,8 +1,26 @@
 <template>
-  <v-card style="width: 68%; margin-right: 2%;" raised shaped outlined>
+  <v-card
+    style="width: 68%; margin-right: 2%;"
+    raised
+    shaped
+    outlined
+    @contextmenu="show($event, lesson)"
+  >
     <audio-player v-if="lesson.audioUrl">
       <source :src="lesson.audioUrl" />
     </audio-player>
+
+    <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+      <v-list rounded>
+        <v-list-item
+          v-for="(menuItem, index) in menuItems"
+          :key="index"
+          @click="menuOptionSelected(menuItem)"
+        >
+          <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
     <v-window
       v-model="window"
@@ -114,6 +132,8 @@ import { mapGetters, mapActions } from 'vuex'
 import * as apiService from '@/services/apiService'
 import * as sectionsStorageService from '@/services/sectionsStorageService'
 import ConfirmModal from '@/components/confirm-modal'
+import axios from 'axios'
+import * as googleStorageApiService from '@/services/googleStorageApiService'
 import { audioPlayer } from 'vue-md-player'
 import 'vue-md-player/dist/vue-md-player.css'
 
@@ -130,6 +150,12 @@ export default {
     notSpacebalePunctuations: ['<br/><br/>', '"', '“', "'"],
     lastWindowBeforeChange: 0,
     showEndOfSectionButtons: false,
+
+    rounded: true,
+    lessonClicked: null,
+    showMenu: false,
+    x: 0,
+    y: 0,
   }),
   computed: {
     ...mapGetters({
@@ -142,6 +168,24 @@ export default {
       getStatusReport: 'getStatusReport',
       lessonId: 'lesson/getLessonId',
     }),
+    menuItems: function () {
+      if (this.isSharedLessons) {
+        return [{ title: 'Revisar', id: 'review' }]
+      }
+
+      if (this.lesson.index !== undefined) {
+        return [
+          { title: 'Editar', id: 'edit' },
+          { title: 'Deletar', id: 'delete' },
+        ]
+      }
+
+      return [
+        { title: 'Editar', id: 'edit' },
+        { title: 'Deletar', id: 'delete' },
+        { title: 'Revisar', id: 'review' },
+      ]
+    },
     wordsKnownCount() {
       return this.getStatusReport.known.count
     },
@@ -321,6 +365,45 @@ export default {
       setTimeout(() => {
         this.showEndOfSectionButtons = true
       }, 160)
+    },
+
+    show(e, lesson) {
+      lesson.lessonId = this.lessonId
+      this.lessonClicked = lesson
+      e.preventDefault()
+      this.showMenu = false
+      this.x = e.clientX
+      this.y = e.clientY
+      this.$nextTick(() => {
+        this.showMenu = true
+      })
+    },
+
+    async menuOptionSelected(menuItem) {
+      if (menuItem.id === 'edit') {
+        this.$eventBus.$emit('editLesson', { ...this.lessonClicked })
+      }
+
+      if (menuItem.id === 'delete') {
+        if (this.lessonClicked.audioUrl) {
+          googleStorageApiService.deleteObjectOnLessonAudioBucket(this.lessonClicked.audioUrl)
+        }
+
+        if (this.lesson.index !== undefined) {
+          await axios.delete(
+            `${process.env.API_URL}/lesson/${this.lessonId}/lesson-topics?topicId=${this.lessonClicked.index}`,
+            { withCredentials: true }
+          )
+          location.href = `${process.env.BASE_URL}/lesson/${this.lessonId}/topic`
+          return
+        }
+        await apiService.deleteLessonById(this.lessonClicked._id)
+        location.href = `${process.env.BASE_URL}/lesson?lessonId=${this.lessonClicked._id}`
+      }
+
+      if (menuItem.id === 'review') {
+        location.href = `${process.env.BASE_URL}/review?lessonId=${this.lessonClicked._id}`
+      }
     },
   },
 }

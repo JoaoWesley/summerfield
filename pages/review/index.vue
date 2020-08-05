@@ -58,19 +58,10 @@
           </v-col>
         </v-row>
       </div>
-      <v-row align="center" justify="center">
-        <v-col class="align-center justify-space-between" cols="8">
-          <v-alert
-            v-show="!item"
-            type="success"
-            height="80"
-            prominent
-            transition="scale-transition"
-          >
-            Todos items foram revisado!
-          </v-alert>
-        </v-col>
-      </v-row>
+
+      <v-alert v-show="!item" type="success" height="80" prominent transition="scale-transition">
+        Todos items foram revisado!
+      </v-alert>
     </v-container>
   </v-card>
 </template>
