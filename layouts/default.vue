@@ -49,7 +49,7 @@
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title style="width: 300px;" class="ml-0 pl-4">
-        <span class="hidden-sm-and-down">English everywhere</span>
+        <span class="hidden-sm-and-down">Summerfield</span>
       </v-toolbar-title>
       <v-text-field
         v-if="currentRoutePath === '/lesson/' || currentRoutePath === '/lesson'"
@@ -58,7 +58,7 @@
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
-        label="Search"
+        label="Buscar lições"
         class="hidden-sm-and-down"
         :change="searchInLessons"
       />
@@ -67,15 +67,10 @@
         <v-icon>mdi-counter</v-icon>
         {{ wordsKnownCount }}
       </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-apps</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
-      </v-btn>
+      &nbsp;
       <v-btn icon large>
         <v-avatar size="32px" item>
-          <v-img src="https://cdn.vuetifyjs.com/images/logos/logo.svg" alt="Vuetify" />
+          <v-img src="/favicon.ico" alt="Vuetify" title="Summerfield" />
         </v-avatar>
       </v-btn>
     </v-app-bar>
@@ -124,34 +119,8 @@ export default {
       { icon: 'mdi-pencil', text: 'Lições compartilhadas', id: 'lessonShared' },
       { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
       { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
-      { icon: 'mdi-message-alert', text: 'Feedback', id: 'feedback' },
+      { icon: 'mdi-message', text: 'Feedback', id: 'feedback' },
       { icon: 'mdi-logout', text: 'Sair', id: 'logout' },
-      { icon: 'mdi-content-copy', text: 'Duplicates' },
-      {
-        icon: 'mdi-chevron-up',
-        'icon-alt': 'mdi-chevron-down',
-        text: 'Labels',
-        model: true,
-        children: [{ icon: 'mdi-plus', text: 'Create label' }],
-      },
-      {
-        icon: 'mdi-chevron-up',
-        'icon-alt': 'mdi-chevron-down',
-        text: 'More',
-        model: false,
-        children: [
-          { text: 'Import' },
-          { text: 'Export' },
-          { text: 'Print' },
-          { text: 'Undo changes' },
-          { text: 'Other contacts' },
-        ],
-      },
-      { icon: 'mdi-settings', text: 'Settings' },
-      { icon: 'mdi-message', text: 'Send feedback' },
-      { icon: 'mdi-help-circle', text: 'Help' },
-      { icon: 'mdi-cellphone-link', text: 'App downloads' },
-      { icon: 'mdi-keyboard', text: 'Go to the old version' },
     ],
     search: '',
     awaitingSearch: false,

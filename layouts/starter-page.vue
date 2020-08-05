@@ -9,7 +9,7 @@
       <v-card class="flex" flat tile>
         <v-card-text dark class="py-2 white--text text-center">
           {{ new Date().getFullYear() }} —
-          <strong>English everywhere (BETA)</strong>
+          <strong>Summerfield (BETA)</strong>
         </v-card-text>
       </v-card>
     </v-footer>

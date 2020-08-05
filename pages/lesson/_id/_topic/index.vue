@@ -98,7 +98,13 @@ export default {
       setLessonTopics: 'lesson/setLessonTopics',
     }),
     openTopic(topic) {
-      location.href += `/${topic.index}`
+      if (this.isSharedLessons) {
+        location.href = location.href.replace(/\?shared=true/, '') + `/${topic.index}/?shared=true`
+        return
+      } else {
+        location.href += `/${topic.index}`
+      }
+
       sectionsStorageService.setLastUsedTopic(this.lessonId, topic.index)
     },
 

@@ -10,7 +10,14 @@
       <source :src="lesson.audioUrl" />
     </audio-player>
 
-    <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
+    <v-menu
+      v-if="menuItems.length > 0"
+      v-model="showMenu"
+      :position-x="x"
+      :position-y="y"
+      absolute
+      offset-y
+    >
       <v-list rounded>
         <v-list-item
           v-for="(menuItem, index) in menuItems"
@@ -169,11 +176,16 @@ export default {
       lessonId: 'lesson/getLessonId',
     }),
     menuItems: function () {
-      if (this.isSharedLessons) {
+      if (this.$route.query.shared) {
+        if (this.lesson.index !== undefined) {
+          //Se é topico
+          return []
+        }
         return [{ title: 'Revisar', id: 'review' }]
       }
 
       if (this.lesson.index !== undefined) {
+        // Se é topico
         return [
           { title: 'Editar', id: 'edit' },
           { title: 'Deletar', id: 'delete' },

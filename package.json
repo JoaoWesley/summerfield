@@ -1,7 +1,7 @@
 {
-  "name": "english-everywhere",
+  "name": "summerfield",
   "version": "1.0.0",
-  "description": "My classy Nuxt.js project",
+  "description": "A place to build vocabulary, the most important skill in language learning",
   "author": "João Wesley",
   "private": true,
   "scripts": {
