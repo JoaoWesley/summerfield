@@ -93,7 +93,7 @@ export default {
   created() {
     if (process.client) {
       this.$eventBus.$on('lessonSaved', async (lesson) => {
-        this.lesson.imageUrl =
+        lesson.imageUrl =
           '/images/lesson/lesson-default-' + (Math.floor(Math.random() * 4) + 1) + '.png'
         this.lessons.push(lesson)
       })
