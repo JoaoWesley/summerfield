@@ -20,7 +20,7 @@ import ResetPassword from '@/components/auth/reset-password'
 export default {
   middleware({ app, redirect, route }) {
     if (route.path === '/' && app.$cookiz.get('token')) {
-      return redirect('/lesson')
+      return redirect('/lesson?shared=true')
     }
   },
   components: {

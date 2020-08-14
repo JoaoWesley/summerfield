@@ -1,8 +1,14 @@
 <template>
   <v-container fluid class="grey lighten-5">
+    <h2 v-if="isSharedLessons">Lições compartilhadas</h2>
+    <h2 v-if="!isSharedLessons">Minhas Lições</h2>
     <v-row class="mb-6" no-gutters>
-      <v-col cols="11" sm="12" md="12" lg="12">
+      <v-col cols="11" sm="12" md="12" lg="12">        
         <v-row class="mb-6" no-gutters>
+          <span v-if="lessonsFiltered.length === 0">
+            Você ainda não possui nenhuma lição cadastrada, clique no &nbsp;<b>+</b>&nbsp; para criar uma
+          </span>
+           
           <v-col v-for="lesson in lessonsFiltered" :key="lesson._id" sm="3" md="3" lg="3">
             <v-card
               class="pa-2"
