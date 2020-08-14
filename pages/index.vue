@@ -7,7 +7,7 @@
       :user-id="userId"
       @showLoginForm="showLoginForm = true"
     />
-    <div class="bg-text">
+    <div class="bg-text" style="margin-top: 50%;">
       <h1>Aprenda inglês com conteúdo do seu interesse</h1>
     </div>
   </v-container>
@@ -46,7 +46,7 @@ export default {
   font-weight: bold;
   border: 3px solid #f1f1f1;
   position: absolute;
-  top: 70%;
+  /* top: 85%; */
   left: 50%;
   margin: 0 auto;
   transform: translate(-50%, -50%);
