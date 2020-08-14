@@ -78,6 +78,7 @@ import { mapActions } from 'vuex'
 import * as apiService from '@/services/apiService'
 import * as googleStorageApiService from '@/services/googleStorageApiService'
 import jwt from 'jsonwebtoken'
+import * as sectionsStorageService from '@/services/sectionsStorageService'
 
 export default {
   data: () => ({
@@ -200,9 +201,11 @@ export default {
 
       const isTopic = this.lesson.index !== undefined
       if (isTopic) {
+        sectionsStorageService.setLastUsedTopic(this.lesson.lessonId, this.lesson.index)
         location.href = `${process.env.BASE_URL}/lesson/${this.lesson.lessonId}/topic/${this.lesson.index}`
         return
       }
+      localStorage.setItem('lastUsedLessonId', this.lesson._id)
       if (this.lesson.hasTopics) {
         location.href = `${process.env.BASE_URL}/lesson/${this.lesson._id}/topic`
         return
