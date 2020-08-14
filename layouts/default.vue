@@ -103,6 +103,7 @@
 import DialogImportEbook from '@/components/lesson/dialog-import-ebook'
 import DialogCreateLesson from '@/components/lesson/dialog-create-lesson'
 import { mapGetters, mapActions } from 'vuex'
+import * as apiService from '@/services/apiService'
 
 export default {
   middleware: 'authMiddleware',
@@ -147,7 +148,7 @@ export default {
     ...mapActions({
       setDialogCreateLesson: 'setDialogCreateLesson',
     }),
-    handleMenuItems(item) {
+    async handleMenuItems(item) {
       switch (item.id) {
         case 'lesson':
           location.href = `${process.env.BASE_URL}/lesson/`
@@ -165,7 +166,7 @@ export default {
           location.href = `${process.env.BASE_URL}/feedback/`
           break
         case 'logout':
-          this.$cookiz.remove('token')
+          await apiService.logout()
           location.href = `${process.env.BASE_URL}/`
           break
       }

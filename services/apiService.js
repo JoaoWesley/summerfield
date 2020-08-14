@@ -112,6 +112,10 @@ export const register = async (user) => {
   return (await axios.post(`/auth/register`, user)).data
 }
 
+export const logout = async () => {
+  return (await axios.post(`/auth/logout`)).data
+}
+
 export const sendResetPasswordEmail = async (user) => {
   return (await axios.post(`/email/send-reset-password-email`, user)).data
 }
