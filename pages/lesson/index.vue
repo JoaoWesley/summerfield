@@ -32,7 +32,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <span v-if="!$route.query.shared">
+    <span v-if="!$route.query.shared && lessonsFiltered.length > 0">
       <b>Dica</b>: Clique com o lado direto do mouse sobre a lição para executar ações como: editar, excluir e revisar.
     </span>
     <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
