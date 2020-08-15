@@ -1,6 +1,9 @@
 <template>
   <v-card>
     <v-container style="background-color: #e5e5e5;">
+      <span v-show="!item && $route.query.lessonId">
+        Obs: Máximo de 20 items por dia, para melhor eficiência no estudo        
+      </span>
       <div v-if="item">
         <v-row align="center" justify="center">
           <v-btn icon @click="playWordPhrase">

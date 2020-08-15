@@ -119,7 +119,7 @@ export default {
       { icon: 'mdi-pencil', text: 'Lições', id: 'lesson' },
       { icon: 'mdi-pencil', text: 'Lições compartilhadas', id: 'lessonShared' },
       { icon: 'fas fa-file upload', text: 'Importar ebook', id: 'importEbook' },
-      { icon: 'mdi-history', text: 'Revisar palavras', id: 'reviewStudy' },
+      { icon: 'mdi-history', text: 'Revisar tudo', id: 'reviewStudy' },
       { icon: 'mdi-message', text: 'Feedback', id: 'feedback' },
       { icon: 'mdi-logout', text: 'Sair', id: 'logout' },
     ],

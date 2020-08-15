@@ -32,6 +32,7 @@
         </v-row>
       </v-col>
     </v-row>
+    <b>Dica</b>: Clique com o lado direto do mouse sobre a lição para executar ações como: editar, excluir e revisar.
 
     <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
       <v-list rounded>
