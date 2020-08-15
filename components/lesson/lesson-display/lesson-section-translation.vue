@@ -18,8 +18,10 @@
         <br />5 - Palavras em azul são palavras novas.
         <br />
         <br />6 - Palavras em amarelo são palavras sendo estudadas.
-        <br />
-        <br />7 - Dica: Clique com o lado direto do mouse sobre a lição para executar ações como: editar, excluir e revisar.
+        <span v-if="!$route.query.shared">
+          <br />
+          <br />7 - Dica: Clique com o lado direto do mouse sobre a lição para executar ações como: editar, excluir e revisar.
+        </span>
         <br />
         <br />
       </v-alert>
