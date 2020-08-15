@@ -1,15 +1,34 @@
 <template>
   <v-container class="fill-height" fluid>
-    <LoginRegisterReset v-if="!token || showLoginForm" />
-    <ResetPassword
-      v-if="token && !showLoginForm"
-      :token="token"
-      :user-id="userId"
-      @showLoginForm="showLoginForm = true"
-    />
-    <div class="bg-text" style="margin-top: 50%;">
-      <h1>Aprenda inglês com conteúdo do seu interesse</h1>
-    </div>
+    <v-row class="mx-2">
+        <v-col class="align-center justify-space-between" cols="12" md="12">
+            <LoginRegisterReset v-if="!token || showLoginForm" />
+        </v-col>
+    </v-row>
+
+    <v-row class="mx-2">
+        <v-col class="align-center justify-space-between" cols="12" md="12">
+           <ResetPassword
+            v-if="token && !showLoginForm"
+            :token="token"
+            :user-id="userId"
+            @showLoginForm="showLoginForm = true"
+          /> 
+        </v-col>
+    </v-row>
+
+    <v-row class="mx-2">
+        <v-col class="align-center justify-space-between" cols="12" md="12">
+              <div class="bg-text" >
+                <h1>Aprenda inglês com conteúdo do seu interesse</h1>
+            </div>         
+        </v-col>
+    </v-row>
+
+
+    
+   
+  
   </v-container>
 </template>
 
@@ -46,10 +65,6 @@ export default {
   font-weight: bold;
   border: 3px solid #f1f1f1;
   position: absolute;
-  /* top: 85%; */
-  left: 50%;
-  margin: 0 auto;
-  transform: translate(-50%, -50%);
   width: 80%;
   padding: 20px;
   text-align: center;
