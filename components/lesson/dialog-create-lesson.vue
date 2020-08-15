@@ -161,7 +161,7 @@ export default {
           this.file
         )
         lesson.audioUrl = bucketObject.data.mediaLink
-        apiService.updateLesson(lesson)
+        await apiService.updateLesson(lesson)
         return lesson
       } catch (error) {
         console.log('error', error)
