@@ -94,3 +94,4 @@ sw.*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 project.zip
+deploy.ssh
