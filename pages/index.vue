@@ -64,8 +64,6 @@ export default {
   color: white;
   font-weight: bold;
   border: 3px solid #f1f1f1;
-  position: absolute;
-  width: 80%;
   padding: 20px;
   text-align: center;
 }
