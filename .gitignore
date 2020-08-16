@@ -95,3 +95,5 @@ sw.*
 !.elasticbeanstalk/*.global.yml
 project.zip
 deploy.ssh
+.env.local
+.env.prd
