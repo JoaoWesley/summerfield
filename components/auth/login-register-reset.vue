@@ -185,7 +185,7 @@ export default {
         await apiService.login(this.user)
         this.setSuccessMessage('Logado com sucesso!')
         this.setIsLoading(false)
-        //location.href = '/lesson?shared=true'
+        location.href = '/lesson?shared=true'
       } catch (error) {
         this.setIsLoading(false)
         if (error.response.status === 401) {
