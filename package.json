@@ -1,7 +1,7 @@
 {
   "name": "summerfield",
   "version": "1.0.0",
-  "description": "A place to build vocabulary, the most important skill in language learning",
+  "description": "Um lugar para construir vocabulário, a habilidade mais importante no aprendizado de idiomas",
   "author": "João Wesley",
   "private": true,
   "scripts": {
