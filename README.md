@@ -1,3 +1,3 @@
 # Summerfield
 
-Front of Summerfield application: https://summerfield.app.br/
+Front-end of Summerfield application: https://summerfield.app.br/
